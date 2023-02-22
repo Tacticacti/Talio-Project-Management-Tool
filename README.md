@@ -11,6 +11,7 @@ Add your own name (do not add the names for others!) to the section below.
 | Profile Picture | Name | Email |
 |---|---|---|
 | ![](https://eu.ui-avatars.com/api/?name=OOPP&length=4&size=50&color=DDD&background=777&font-size=0.325) | Edward Oh Jang Hun | J.oh-2@student.tudelft.nl |
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5789/avatar.png?width=400) | Wiktor Cupiał | wcupial@student.tudelft.nl |
 
 <!-- Instructions (remove once assignment has been completed -->
 <!-- - Add (only!) your own name to the table above (use Markdown formatting) -->
@@ -21,7 +22,5 @@ Add your own name (do not add the names for others!) to the section below.
 ## How to run it
 
 ## How to contribute to it
-
-test
 
 ## Copyright / License (opt.)
