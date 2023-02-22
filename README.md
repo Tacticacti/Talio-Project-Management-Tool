@@ -10,7 +10,7 @@ Add your own name (do not add the names for others!) to the section below.
 
 | Profile Picture | Name | Email |
 |---|---|---|
-| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5816/avatar.png?width=96) | Edward Oh Jang Hun | J.oh-2@student.tudelft.nl |
+| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5816/avatar.png?width=400) | Edward Oh Jang Hun | J.oh-2@student.tudelft.nl |
 | ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5789/avatar.png?width=400) | Wiktor Cupiał | wcupial@student.tudelft.nl |
 |![](https://secure.gravatar.com/avatar/02c6f475180cf71b12eff5f9fb3c36db?s=200&d=identicon)| Eduard Faraon | e.faraon@student.tudelft.nl |
 
