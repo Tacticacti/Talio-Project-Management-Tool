@@ -3,7 +3,7 @@
 
 ## Formative Assessment
 
-- **Chair**:  Jaoud
+- **Chair**:  Jaouad
 - **Notetaker**: Bobi
 
 
