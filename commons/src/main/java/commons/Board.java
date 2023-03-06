@@ -1,3 +1,5 @@
+package commons;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,10 @@ public class Board {
     private String name;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "board_id")
-    private List<Column> columns;
+    private List<Columnn> columns;
+
+    // added to fix repo.findAll()
+    public Board() {}
 
     // constructor
     public Board(String name) {
@@ -34,16 +39,16 @@ public class Board {
     }
 
     // Board functionality
-    public void addColumn(Column column) {
+    public void addColumn(Columnn column) {
         this.columns.add(column);
     }
 
-    public void removeColumn(Column column) {
+    public void removeColumn(Columnn column) {
         this.columns.remove(column);
     }
 
     // other helper methods
-    public List<Column> getColumns() {
+    public List<Columnn> getColumns() {
         return columns;
     }
 
