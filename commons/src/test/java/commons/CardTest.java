@@ -154,5 +154,6 @@ class CardTest {
         var actual = new Card("a", "b").toString();
         assertTrue(actual.contains("\n"));
         assertTrue(actual.contains("Title"));
+        
     }
 }
