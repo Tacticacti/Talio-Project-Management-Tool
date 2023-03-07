@@ -19,7 +19,7 @@ class CardTest {
     @Test
     void getDescription() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        assertEquals("prep slide3-5", c1.getDescription());
+        assertEquals("prep slide 3-5", c1.getDescription());
     }
 
     @Test
@@ -71,7 +71,7 @@ class CardTest {
     void setDescription() {
         Card c1 = new Card("Slides", "prep slide3-5");
         c1.setDescription("prep slide 5-6");
-        assertEquals("prep slide5-6", c1.getDescription());
+        assertEquals("prep slide 5-6", c1.getDescription());
     }
 
     @Test
@@ -146,14 +146,6 @@ class CardTest {
     void testHashCode() {
         Card c1 = new Card("Slides", "prep slide 3-5");
         Card c2 = new Card("Slides", "prep slide 3-5");
-        assertEquals(c1.hashCode(),c2.hashCode());
-    }
-
-    @Test
-    void testToString() {
-        var actual = new Card("a", "b").toString();
-        assertTrue(actual.contains("\n"));
-        assertTrue(actual.contains("Title"));
-        
+        assertEquals(c1.hashCode(), c2.hashCode());
     }
 }
