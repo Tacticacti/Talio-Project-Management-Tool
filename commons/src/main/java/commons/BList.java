@@ -1,8 +1,5 @@
 package commons;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,34 +8,33 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-public class Board {
-    
-    // instance variables
+public class BList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long board_id;
+    private Long list_id;
     private String name;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "board_id")
-    private List<BList> lists;
+    @JoinColumn(name = "list_id")
+    private List<Card> cards;
 
     // added to fix repo.findAll()
-    public Board() {}
-
-    // constructor
-    public Board(String name) {
+    public BList() {}
+    public BList(String name) {
         this.name = name;
-        this.lists = new ArrayList<>();
+        this.cards = new ArrayList<>();
     }
 
     // getters and setters
     public Long getId() {
-        return board_id;
+        return list_id;
     }
 
-    public void setId(long board_id) {
-        this.board_id = board_id;
+    public void setId(long list_id) {
+        this.list_id = list_id;
     }
 
     public String getName() {
@@ -50,26 +46,24 @@ public class Board {
     }
 
     // Board functionality
-    public void addList(BList list) {
-        this.lists.add(list);
+    public void addCard(Card card) {
+        this.cards.add(card);
     }
 
-    public void removeList(BList list) {
-        this.lists.remove(list);
+    public void removeCard(Card card) {
+        this.cards.remove(card);
     }
 
     // other helper methods
-    public List<BList> getLists() {
-        return lists;
+    public List<Card> getCards() {
+        return cards;
     }
 
-    // toString() method for debugging purposes
     @Override
     public String toString() {
-        return "Board{" +
-                "id=" + board_id +
+        return "BList{" +
+                "id=" + list_id +
                 ", name='" + name + '\'' +
-                ", lists=" + lists +
                 '}';
     }
 }

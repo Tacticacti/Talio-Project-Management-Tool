@@ -1,8 +1,12 @@
 package commons;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ElementCollection;
+
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -22,9 +26,9 @@ public class Card implements Serializable {
     //instance variables
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    public long card_id;
 
-    public long columnId;
+    public long list_id;
 
 
     public String title;
@@ -51,11 +55,11 @@ public class Card implements Serializable {
     //getters and setters
 
     public long getId() {
-        return id;
+        return card_id;
     }
 
-    public long getColumnId() {
-        return columnId;
+    public long getListId() {
+        return list_id;
     }
 
 
@@ -79,8 +83,8 @@ public class Card implements Serializable {
         return completedSubs;
     }
 
-    public void setColumnId(long columnId) {
-        this.columnId = columnId;
+    public void setListId(long list_id) {
+        this.list_id = list_id;
     }
     
     public void setTitle(String title) {
