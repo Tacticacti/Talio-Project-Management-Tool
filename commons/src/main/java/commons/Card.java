@@ -30,8 +30,6 @@ public class Card implements Serializable {
     public long id;
 
     public long columnId;
-    
-    @ManyToOne(cascade = CascadeType.ALL,targetEntity= Board.class)
 
 
     public String title;
