@@ -2,7 +2,7 @@ package server.api;
 
 import java.util.List;
 import commons.Board;
-import commons.BList;
+import commons.BoardList;
 import server.database.BoardRepository;
 
 import org.springframework.data.util.Pair;
@@ -66,7 +66,7 @@ public class BoardController {
         // Blist list = req.getSecond();
         Long list_id = req.getSecond();
         Board board = null;
-        BList list = null;
+        BoardList list = null;
         System.err.println("reached milestone 1");
         try {
             board = repo.findById(boardId).get();
