@@ -27,9 +27,9 @@ public class Card implements Serializable {
     //instance variables
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    public long card_id;
 
-    public long columnId;
+    public long list_id;
 
 
     public String title;
@@ -56,11 +56,11 @@ public class Card implements Serializable {
     //getters and setters
 
     public long getId() {
-        return id;
+        return card_id;
     }
 
-    public long getColumnId() {
-        return columnId;
+    public long getListId() {
+        return list_id;
     }
 
 
@@ -84,8 +84,8 @@ public class Card implements Serializable {
         return completedSubs;
     }
 
-    public void setColumnId(long columnId) {
-        this.columnId = columnId;
+    public void setListId(long list_id) {
+        this.list_id = list_id;
     }
     
     public void setTitle(String title) {

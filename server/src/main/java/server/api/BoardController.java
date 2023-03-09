@@ -2,7 +2,7 @@ package server.api;
 
 import java.util.List;
 import commons.Board;
-import commons.Columnn;
+import commons.BoardList;
 import server.database.BoardRepository;
 
 import org.springframework.data.util.Pair;
@@ -58,15 +58,15 @@ public class BoardController {
 
     // wip
     // -------
-    // the idea is to pass id of a column and board and this function will be able
-    // to add this column to the board
-    @PostMapping(path = "/addColumnToBoard")
-    public ResponseEntity<Board> addColumnToBoard(@RequestBody Pair<Long, Long> req) {
+    // the idea is to pass id of a list and board and this function will be able
+    // to add this list to the board
+    @PostMapping(path = "/addListToBoard")
+    public ResponseEntity<Board> addListToBoard(@RequestBody Pair<Long, Long> req) {
         Long boardId = req.getFirst();
-        // Columnn columnn = req.getSecond();
-        Long columnId = req.getSecond();
+        // Blist list = req.getSecond();
+        Long list_id = req.getSecond();
         Board board = null;
-        Columnn column = null;
+        BoardList list = null;
         System.err.println("reached milestone 1");
         try {
             board = repo.findById(boardId).get();

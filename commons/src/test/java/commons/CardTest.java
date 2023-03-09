@@ -75,10 +75,10 @@ class CardTest {
     }
 
     @Test
-    void setColumnId() {
+    void setListId() {
         Card c1 = new Card("Slides", "prep slide3-5");
-        c1.setColumnId(4563);
-        assertEquals(4563, c1.getColumnId());
+        c1.setListId(4563);
+        assertEquals(4563, c1.getListId());
     }
 
 
@@ -147,7 +147,7 @@ class CardTest {
     void testEquals() {
         Card c1 = new Card("Slides", "prep slide 3-5");
         Card c2 = new Card("Slides", "prep slide 3-5");
-        assertEquals(true, c1.equals(c2));
+        assertEquals(c1, c2);
     }
 
     @Test
