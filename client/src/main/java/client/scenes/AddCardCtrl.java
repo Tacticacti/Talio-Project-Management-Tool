@@ -3,22 +3,17 @@ import com.google.inject.Inject;
 
 import client.utils.ServerUtils;
 import commons.Card;
-import commons.Person;
-import commons.Quote;
+
 import jakarta.ws.rs.WebApplicationException;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class AddCardCtrl {
 
