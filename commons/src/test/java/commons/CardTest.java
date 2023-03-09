@@ -75,6 +75,14 @@ class CardTest {
     }
 
     @Test
+    void setColumnId() {
+        Card c1 = new Card("Slides", "prep slide3-5");
+        c1.setColumnId(4563);
+        assertEquals(4563, c1.getColumnId());
+    }
+
+
+    @Test
     void addSubTask() {
         Card c1 = new Card("Slides", "prep slide 3-5");
         c1.addSubTask("research otters");
