@@ -6,17 +6,27 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="430.0" prefWidth="499.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
+<AnchorPane prefHeight="393.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
    <children>
-      <Button fx:id="doneTaskButton" layoutX="431.0" layoutY="384.0" mnemonicParsing="false" text="Done" />
-      <Button fx:id="cancelTaskButton" cancelButton="true" layoutX="307.0" layoutY="384.0" mnemonicParsing="false" text="Cancel" />
-      <TextField fx:id="taskTitle" layoutX="28.0" layoutY="43.0" promptText="Task Title" />
-      <Label layoutX="28.0" layoutY="229.0" prefHeight="18.0" prefWidth="68.0" text="Sub-Tasks" />
-      <Label layoutX="27.0" layoutY="25.0" text="Title" />
-      <Label layoutX="28.0" layoutY="79.0" text="Description" />
-      <ListView fx:id="subTasksList" layoutX="28.0" layoutY="247.0" prefHeight="92.0" prefWidth="433.0" />
-      <TextArea fx:id="taskDescription" layoutX="27.0" layoutY="97.0" prefHeight="130.0" prefWidth="453.0" promptText="Description" />
-      <Button fx:id="deleteTaskButton" cancelButton="true" layoutX="369.0" layoutY="384.0" mnemonicParsing="false" text="Delete" />
+      <Button fx:id="doneTaskButton" layoutX="407.0" layoutY="360.0" mnemonicParsing="false" text="Done" />
+      <Button fx:id="cancelTaskButton" cancelButton="true" layoutX="283.0" layoutY="360.0" mnemonicParsing="false" text="Cancel" />
+      <TextField fx:id="taskTitle" layoutX="5.0" layoutY="23.0" promptText="Task Title" />
+      <Label layoutX="4.0" layoutY="205.0" prefHeight="18.0" prefWidth="83.0" text="Sub-Tasks">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label layoutX="3.0" layoutY="1.0" text="Title">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label layoutX="4.0" layoutY="55.0" text="Description">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <ListView fx:id="subTasksList" layoutX="5.0" layoutY="227.0" prefHeight="92.0" prefWidth="453.0" />
+      <TextArea fx:id="taskDescription" layoutX="4.0" layoutY="77.0" prefHeight="130.0" prefWidth="453.0" promptText="Description" />
+      <Button fx:id="deleteTaskButton" cancelButton="true" layoutX="345.0" layoutY="360.0" mnemonicParsing="false" text="Delete" />
    </children>
 </AnchorPane>
