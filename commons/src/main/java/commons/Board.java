@@ -50,7 +50,7 @@ public class Board {
     }
 
     // Board functionality
-    public void addList(Boardist list) {
+    public void addList(BoardList list) {
         this.lists.add(list);
     }
 
