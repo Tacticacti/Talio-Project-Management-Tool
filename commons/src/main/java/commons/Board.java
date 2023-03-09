@@ -21,7 +21,7 @@ public class Board {
     private String name;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "board_id")
-    private List<BList> lists;
+    private List<BoardList> lists;
 
     // added to fix repo.findAll()
     public Board() {}
@@ -50,16 +50,16 @@ public class Board {
     }
 
     // Board functionality
-    public void addList(BList list) {
+    public void addList(Boardist list) {
         this.lists.add(list);
     }
 
-    public void removeList(BList list) {
+    public void removeList(BoardList list) {
         this.lists.remove(list);
     }
 
     // other helper methods
-    public List<BList> getLists() {
+    public List<BoardList> getLists() {
         return lists;
     }
 

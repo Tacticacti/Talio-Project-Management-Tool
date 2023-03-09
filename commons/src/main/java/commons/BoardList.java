@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class BList {
+public class BoardList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long list_id;
@@ -22,8 +22,8 @@ public class BList {
     private List<Card> cards;
 
     // added to fix repo.findAll()
-    public BList() {}
-    public BList(String name) {
+    public BoardList() {}
+    public BoardList(String name) {
         this.name = name;
         this.cards = new ArrayList<>();
     }
@@ -61,7 +61,7 @@ public class BList {
 
     @Override
     public String toString() {
-        return "BList{" +
+        return "BoardList{" +
                 "id=" + list_id +
                 ", name='" + name + '\'' +
                 '}';
