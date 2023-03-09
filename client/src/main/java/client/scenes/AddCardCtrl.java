@@ -63,7 +63,7 @@ public class AddCardCtrl {
         try {
             added.setTitle(title.getText());
             added.setDescription(description.getText());
-            server.addCard(added);
+           // server.addCard(added);
         } catch (WebApplicationException e){
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
