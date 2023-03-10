@@ -50,6 +50,13 @@ public class Card implements Serializable {
         completedSubs = 0;
     }
 
+    public Card(String title){
+        this.title = title;
+        subtasks = new ArrayList<>();
+        tags = new ArrayList<>();
+        completedSubs = 0;
+    }
+
     public Card() {
 
     }
