@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="371.0" prefWidth="338.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CustomizationPage">
+   <children>
+      <Label layoutX="7.0" layoutY="2.0" prefHeight="23.0" prefWidth="133.0" text="Customization" textAlignment="CENTER">
+         <font>
+            <Font name="System Italic" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="10.0" layoutY="55.0" prefHeight="17.0" prefWidth="122.0" text="Board Colors">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Button fx:id="boardResetButton" cancelButton="true" layoutX="100.0" layoutY="52.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="47.0" text="Reset">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Label layoutX="10.0" layoutY="160.0" text="List Colors">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Button fx:id="listResetButton" cancelButton="true" layoutX="87.0" layoutY="156.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="47.0" text="Reset">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+      <Label layoutX="23.0" layoutY="81.0" text="Background" />
+      <Label layoutX="23.0" layoutY="116.0" text="Font" />
+      <Label layoutX="23.0" layoutY="184.0" text="Background" />
+      <Label layoutX="23.0" layoutY="219.0" text="Font" />
+      <Rectangle fx:id="boardBackgroundColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="78.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Rectangle fx:id="boardFontColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="113.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Rectangle fx:id="listBackgroundColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="181.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Rectangle fx:id="listFontColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="216.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Label layoutX="10.0" layoutY="253.0" text="Task Colors">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="24.0" layoutY="279.0" text="Background" />
+      <Label layoutX="24.0" layoutY="314.0" text="Font" />
+      <Label layoutX="24.0" layoutY="345.0" text="Tag Alignment" />
+      <MenuButton fx:id="tagAlignment" layoutX="249.0" layoutY="341.0" mnemonicParsing="false" text="Alignment">
+        <items>
+          <MenuItem fx:id="tagTopAlignment" mnemonicParsing="false" text="Top" />
+          <MenuItem fx:id="tagBottomAlignment" mnemonicParsing="false" text="Bottom" />
+        </items>
+         <contextMenu>
+            <ContextMenu>
+              <items>
+                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+              </items>
+            </ContextMenu>
+         </contextMenu>
+      </MenuButton>
+      <Rectangle fx:id="taskBackgroundColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="276.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Rectangle fx:id="taskFontColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="311.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Line endX="164.0" endY="-3.814697265625E-6" layoutX="174.0" layoutY="39.0" startX="-174.00001525878906" startY="-3.814697265625E-6" stroke="#00000063" />
+      <Line endX="164.0" layoutX="174.0" layoutY="249.0" startX="-174.00001525878906" stroke="#00000063" />
+      <Line endX="164.0" endY="-3.814697265625E-6" layoutX="174.0" layoutY="150.0" startX="-174.00001525878906" startY="-3.814697265625E-6" stroke="#00000063" />
+      <Button fx:id="taskResetButton" cancelButton="true" layoutX="93.0" layoutY="253.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="47.0" text="Reset">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
