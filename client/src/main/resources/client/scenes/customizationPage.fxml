@@ -41,8 +41,8 @@
       <Label layoutX="23.0" layoutY="116.0" text="Font" />
       <Label layoutX="23.0" layoutY="184.0" text="Background" />
       <Label layoutX="23.0" layoutY="219.0" text="Font" />
-      <Rectangle fx:id="boardBackgroundColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="74.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
-      <Rectangle fx:id="boardFontColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="109.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Rectangle fx:id="boardBackgroundColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="78.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
+      <Rectangle fx:id="boardFontColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="113.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Rectangle fx:id="listBackgroundColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="181.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Rectangle fx:id="listFontColor" arcHeight="5.0" arcWidth="5.0" fill="#1f93ff" height="17.0" layoutX="284.0" layoutY="216.0" stroke="BLACK" strokeType="INSIDE" width="18.0" />
       <Label layoutX="10.0" layoutY="253.0" text="Task Colors">
@@ -50,9 +50,9 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Label layoutX="15.0" layoutY="279.0" text="Background" />
-      <Label layoutX="15.0" layoutY="314.0" text="Font" />
-      <Label layoutX="15.0" layoutY="345.0" text="Tag Alignment" />
+      <Label layoutX="24.0" layoutY="279.0" text="Background" />
+      <Label layoutX="24.0" layoutY="314.0" text="Font" />
+      <Label layoutX="24.0" layoutY="345.0" text="Tag Alignment" />
       <MenuButton fx:id="tagAlignment" layoutX="249.0" layoutY="341.0" mnemonicParsing="false" text="Alignment">
         <items>
           <MenuItem fx:id="tagTopAlignment" mnemonicParsing="false" text="Top" />
