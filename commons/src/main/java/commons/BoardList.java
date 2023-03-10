@@ -58,12 +58,4 @@ public class BoardList {
     public List<Card> getCards() {
         return cards;
     }
-
-    @Override
-    public String toString() {
-        return "BoardList{" +
-                "id=" + list_id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

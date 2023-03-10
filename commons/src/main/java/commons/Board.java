@@ -62,14 +62,4 @@ public class Board {
     public List<BoardList> getLists() {
         return lists;
     }
-
-    // toString() method for debugging purposes
-    @Override
-    public String toString() {
-        return "Board{" +
-                "id=" + board_id +
-                ", name='" + name + '\'' +
-                ", lists=" + lists +
-                '}';
-    }
 }
