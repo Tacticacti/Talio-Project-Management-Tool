@@ -27,8 +27,23 @@ public class MainCtrl {
     private QuoteOverviewCtrl overviewCtrl;
     private Scene overview;
 
+    private BoardOverviewCtrl boardOverviewCtrl;
+    private Scene boverview;
+
+    private AddCardCtrl addCardCtrl;
+    private Scene addCard;
+
+    private SingleBoardCtrl singleBoardCtrl ;
+    private Scene singleBoard;
+
+    private ConnectHomeCtrl connectHomeCtrl;
+    private Scene home;
+
     private AddQuoteCtrl addCtrl;
     private Scene add;
+
+
+
 
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
             Pair<AddQuoteCtrl, Parent> add) {
@@ -43,6 +58,27 @@ public class MainCtrl {
         primaryStage.show();
     }
 
+    public void initialize1(Stage primaryStage, Pair<ConnectHomeCtrl, Parent> homePair,
+                            Pair<BoardOverviewCtrl, Parent> boverviewPair,
+                            Pair<SingleBoardCtrl, Parent> singleBoardPair,
+                           Pair<AddCardCtrl, Parent> addCardPair) {
+        this.primaryStage = primaryStage;
+        this.boardOverviewCtrl = boverviewPair.getKey();
+        this.boverview = new Scene(boverviewPair.getValue());
+
+        this.addCardCtrl = addCardPair.getKey();
+        this.addCard = new Scene(addCardPair.getValue());
+
+        this.connectHomeCtrl = homePair.getKey();
+        this.home = new Scene(homePair.getValue());
+
+        this.singleBoardCtrl = singleBoardPair.getKey();
+        this.singleBoard = new Scene(singleBoardPair.getValue());
+
+        showHome();
+        primaryStage.show();
+    }
+
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");
         primaryStage.setScene(overview);
@@ -53,5 +89,24 @@ public class MainCtrl {
         primaryStage.setTitle("Quotes: Adding Quote");
         primaryStage.setScene(add);
         add.setOnKeyPressed(e -> addCtrl.keyPressed(e));
+    }
+
+    public void showAddCard() {
+        primaryStage.setTitle("Add Card");
+        primaryStage.setScene(addCard);
+        addCard.setOnKeyPressed(e -> addCardCtrl.keyPressed(e));
+    }
+    public void showBoard(){
+        primaryStage.setTitle("Board");
+        primaryStage.setScene(singleBoard);
+    }
+
+    public void showBoardOverview(){
+        primaryStage.setTitle("Board overview");
+        primaryStage.setScene(boverview);
+    }
+    public void showHome(){
+        primaryStage.setTitle("Talio: Home connection page");
+        primaryStage.setScene(home);
     }
 }
