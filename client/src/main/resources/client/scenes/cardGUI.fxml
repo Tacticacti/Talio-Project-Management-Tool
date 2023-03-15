@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="56.0" prefWidth="315.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CardGUI">
    <children>
-      <Label fx:id="taskTitle" layoutX="3.0" layoutY="7.0" prefHeight="45.0" prefWidth="309.0" text="Task title">
+      <Label fx:id="taskTitle" alignment="CENTER" layoutX="3.0" layoutY="7.0" prefHeight="45.0" prefWidth="309.0" text="Task title" textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
+      <Button alignment="TOP_CENTER" layoutX="282.0" layoutY="-15.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="41.0" style="-fx-background-color: transparent;" text="...">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
