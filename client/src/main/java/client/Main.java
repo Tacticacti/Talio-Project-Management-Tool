@@ -20,7 +20,11 @@ import static com.google.inject.Guice.createInjector;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import client.scenes.*;
+import client.scenes.MainCtrl;
+import client.scenes.AddCardCtrl;
+import client.scenes.BoardOverviewCtrl;
+import client.scenes.SingleBoardCtrl;
+import client.scenes.ConnectHomeCtrl;
 import com.google.inject.Injector;
 
 import javafx.application.Application;
