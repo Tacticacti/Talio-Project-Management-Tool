@@ -47,9 +47,14 @@ public class AddCardCtrl {
         added = new Card();
     }
     public void cancel() {
-        clearFields();//clearing all fields
-        mainCtrl.showOverview();//returning to the board overview
+        //clearFields();//clearing all fields
+        mainCtrl.showBoard();//returning to the board overview
     }
+
+    public void done(){
+        mainCtrl.showBoard();
+    }
+
 
     public void saveCard(){
         //since we auto create a card in a column,

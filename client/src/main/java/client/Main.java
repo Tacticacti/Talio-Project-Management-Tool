@@ -20,11 +20,13 @@ import static com.google.inject.Guice.createInjector;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import client.scenes.MainCtrl;
+import client.scenes.AddCardCtrl;
+import client.scenes.BoardOverviewCtrl;
+import client.scenes.SingleBoardCtrl;
+import client.scenes.ConnectHomeCtrl;
 import com.google.inject.Injector;
 
-import client.scenes.AddQuoteCtrl;
-import client.scenes.MainCtrl;
-import client.scenes.QuoteOverviewCtrl;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -40,10 +42,13 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-        var overview = FXML.load(QuoteOverviewCtrl.class, "client", "scenes", "QuoteOverview.fxml");
-        var add = FXML.load(AddQuoteCtrl.class, "client", "scenes", "AddQuote.fxml");
+        var boverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
+        var addcard = FXML.load(AddCardCtrl.class, "client", "scenes", "AddCard.fxml");
+        var singleBoard = FXML.load(SingleBoardCtrl.class, "client", "scenes", "SingleBoard.fxml");
+        var home = FXML.load(ConnectHomeCtrl.class, "client", "scenes", "ConnectHomePage.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, overview, add);
+
+        mainCtrl.initialize1(primaryStage, home, boverview, singleBoard, addcard);
     }
 }
