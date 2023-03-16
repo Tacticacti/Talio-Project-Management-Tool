@@ -123,14 +123,16 @@ public class TestBoardRepository implements BoardRepository {
 
     @Override
     public Optional<Board> findById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        call("findById");
+        return Optional.of(boards.get(id.intValue()));
     }
 
     @Override
     public boolean existsById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existsById'");
+        call("existsById");
+        if(id == null || id < 0 || id >= (long)boards.size())
+            return false;
+        return true;
     }
 
     @Override
