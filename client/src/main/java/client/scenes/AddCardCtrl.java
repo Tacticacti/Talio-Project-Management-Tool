@@ -48,7 +48,7 @@ public class AddCardCtrl {
     }
     public void cancel() {
         //clearFields();//clearing all fields
-        mainCtrl.showOverview();//returning to the board overview
+        mainCtrl.showBoard();//returning to the board overview
     }
 
     public void done(){
