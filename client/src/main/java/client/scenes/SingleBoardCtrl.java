@@ -2,11 +2,12 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import javafx.fxml.FXML;
 
 public class SingleBoardCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
+    
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -20,6 +21,7 @@ public class SingleBoardCtrl {
     public void card(){
         mainCtrl.showAddCard();
     }
+
 
 
 }

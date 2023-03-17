@@ -8,39 +8,27 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="391.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.SingleBoardCtrl">
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.SingleBoardCtrl">
    <children>
-      <TextField alignment="BOTTOM_LEFT" layoutX="163.0" layoutY="15.0" prefHeight="46.0" prefWidth="272.0" promptText="Board Name">
+      <TextField alignment="BOTTOM_LEFT" layoutX="118.0" layoutY="17.0" prefHeight="46.0" prefWidth="391.0" promptText="Board Name">
          <font>
             <Font size="20.0" />
          </font>
       </TextField>
-      <Line endX="466.33331298828125" endY="-3.814697265625E-6" layoutX="115.0" layoutY="60.0" startX="-100.0" />
-      <ScrollPane layoutX="15.0" layoutY="75.0" prefHeight="291.0" prefWidth="568.0">
+      <ScrollPane layoutX="-1.0" layoutY="89.0" prefHeight="993.0" prefWidth="1918.0">
          <content>
-            <GridPane gridLinesVisible="true" prefHeight="289.0" prefWidth="568.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" maxWidth="278.66668701171875" minWidth="10.0" prefWidth="233.66666666666666" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="334.6666259765625" minWidth="10.0" prefWidth="125.33333333333334" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="334.6666259765625" minWidth="10.0" prefWidth="212.99997965494794" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+            <HBox prefHeight="1012.0" prefWidth="1916.0" spacing="20.0">
                <children>
-                  <Button mnemonicParsing="false" text="+ Add new list" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <AnchorPane prefHeight="273.0" prefWidth="273.0">
+                  <AnchorPane prefHeight="976.0" prefWidth="230.0">
                      <children>
-                        <TextField fx:id="list_title" alignment="CENTER" layoutX="30.0" layoutY="6.0" prefHeight="39.0" prefWidth="149.0" promptText="List Title" />
+                        <TextField fx:id="list_title1" alignment="CENTER" layoutX="30.0" layoutY="6.0" prefHeight="39.0" prefWidth="149.0" promptText="List Title" />
                         <Line endX="51.5" layoutX="167.0" layoutY="53.0" startX="-157.99998474121094" startY="-1.1444091796875E-5" />
-                        <Button fx:id="deleteBtn2" layoutX="191.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="34.0">
+                        <Button fx:id="deleteBtn21" layoutX="191.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="34.0">
                            <graphic>
                               <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -56,7 +44,7 @@
                         </Label>
                         <VBox layoutX="14.0" layoutY="62.0" prefHeight="209.0" prefWidth="188.0">
                            <children>
-                              <Button fx:id="addNewCardButton" mnemonicParsing="false" prefHeight="22.0" prefWidth="272.0" text="+ Add New Card">
+                              <Button fx:id="addNewCardButton1" mnemonicParsing="false" prefHeight="22.0" prefWidth="272.0" text="+ Add New Card">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -73,19 +61,19 @@
                         </VBox>
                      </children>
                   </AnchorPane>
+                  <Button fx:id="addNewList" mnemonicParsing="false" onAction="#createNewList" prefHeight="25.0" prefWidth="200.0" text="+ Add new list" textAlignment="CENTER" wrapText="true" />
                </children>
-            </GridPane>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+               </padding>
+            </HBox>
          </content>
       </ScrollPane>
-      <Button fx:id="deleteBtn" layoutX="573.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="31.0">
-         <graphic>
-            <ImageView fitHeight="21.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../../../Downloads/delete+remove+trash+trash+bin+trash+can+icon-1320073117929397588.png" />
-               </image>
-            </ImageView>
-         </graphic>
+      <Button fx:id="deleteBtn1" layoutX="29.0" layoutY="22.0" mnemonicParsing="false" onAction="#back" prefHeight="40.0" prefWidth="70.0" text="Back">
+         <font>
+            <Font size="18.0" />
+         </font>
       </Button>
-      <Button fx:id="deleteBtn1" mnemonicParsing="false" onAction="#back" prefHeight="29.0" prefWidth="44.0" text="Back" />
+      <Line endX="1802.0" endY="15.0" layoutX="118.0" layoutY="73.0" startX="-122.0" startY="16.0" strokeWidth="3.0" />
    </children>
 </AnchorPane>
