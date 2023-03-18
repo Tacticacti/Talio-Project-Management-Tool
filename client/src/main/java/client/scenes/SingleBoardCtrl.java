@@ -17,7 +17,7 @@ public class SingleBoardCtrl {
     private final MainCtrl mainCtrl;
 
     @FXML
-    private HBox board_lists;
+    private HBox hbox_lists;
 
     @FXML
     private ScrollPane main_pane;
@@ -39,13 +39,13 @@ public class SingleBoardCtrl {
 
 
     public void createNewList(ActionEvent e) throws IOException {
-        var lists = board_lists.getChildren();
+        var board_lists = hbox_lists.getChildren();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
         Node list = loader.load();
-        lists.add(lists.size()-2, list);
+        board_lists.add(board_lists.size()-1, list);
 
-
+        board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
 
     }
 
