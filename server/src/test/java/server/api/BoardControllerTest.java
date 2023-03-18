@@ -56,4 +56,10 @@ public class BoardControllerTest {
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals(b1, ret.getBody());
     }
+
+    @Test
+    public void getByIdNotPresent() {
+        var ret = controller.getById(99);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
 }
