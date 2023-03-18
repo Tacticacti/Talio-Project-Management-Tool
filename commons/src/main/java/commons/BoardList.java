@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import java.util.ArrayList;
@@ -16,13 +17,23 @@ public class BoardList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long list_id;
+
+    @ManyToOne
+    @JoinColumn(name = "BOARD_ID")
+    public Board board;
+
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "list_id")
+
+    @OneToMany(mappedBy = "card_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    // @JoinColumn(name = "list_id")
     private List<Card> cards;
 
     // added to fix repo.findAll()
-    public BoardList() {}
+    public BoardList() {
+        this.name = "";
+        this.cards = new ArrayList<>();
+    }
+        
     public BoardList(String name) {
         this.name = name;
         this.cards = new ArrayList<>();
