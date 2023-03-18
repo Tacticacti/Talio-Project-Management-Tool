@@ -16,7 +16,7 @@ import java.util.List;
 public class BoardList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long list_id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "BOARD_ID")
@@ -24,7 +24,7 @@ public class BoardList {
 
     private String name;
 
-    @OneToMany(mappedBy = "card_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     // @JoinColumn(name = "list_id")
     private List<Card> cards;
 
@@ -41,11 +41,11 @@ public class BoardList {
 
     // getters and setters
     public Long getId() {
-        return list_id;
+        return id;
     }
 
     public void setId(long list_id) {
-        this.list_id = list_id;
+        this.id = list_id;
     }
 
     public String getName() {
@@ -58,6 +58,7 @@ public class BoardList {
 
     // Board functionality
     public void addCard(Card card) {
+        // card.boardList = this;
         this.cards.add(card);
     }
 

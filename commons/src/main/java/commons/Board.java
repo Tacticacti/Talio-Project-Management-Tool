@@ -16,11 +16,11 @@ public class Board {
     // instance variables
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long board_id;
+    private Long id;
 
     private String name;
 
-    @OneToMany(mappedBy = "list_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     // @JoinColumn(name = "board_id")
     private List<BoardList> lists;
 
@@ -38,11 +38,11 @@ public class Board {
 
     // getters and setters
     public Long getId() {
-        return board_id;
+        return id;
     }
 
     public void setId(long board_id) {
-        this.board_id = board_id;
+        this.id = board_id;
     }
 
     public String getName() {
@@ -55,7 +55,7 @@ public class Board {
 
     // Board functionality
     public void addList(BoardList list) {
-        list.board = this;
+        // list.board = this;
         this.lists.add(list);
     }
 

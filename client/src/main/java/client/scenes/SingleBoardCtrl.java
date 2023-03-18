@@ -1,15 +1,15 @@
 package client.scenes;
 
-// import commons.Board;
+import commons.Board;
 import commons.BoardList;
 import client.utils.ServerUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,17 +32,34 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void pullLists(Long id) {
-        var tmp = server.getListsFrom(id);
-        lists = FXCollections.observableList(tmp);
+        Board tmpBoard = server.getBoardById(id);
+        lists = FXCollections.observableList(tmpBoard.getLists());
+    }
+
+    public AnchorPane wrapBoardList(BoardList boardList) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
+        AnchorPane node;
+        try {
+            node = loader.load();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return new AnchorPane();
+        }
+        ((TextField) node.getChildren().get(0)).setText(boardList.getName());
+        return node;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        pullLists(1L);
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(new Label("test"));
-        mainAnchor.getChildren().addAll(vbox);
-        // test.setItems(data);
+
+        pullLists(1L); // TODO change 1L -> board_id if we are going multiboard
+
+        for(BoardList bl : lists) {
+            System.out.println("processing: " + bl.getName());
+            var node = wrapBoardList(bl);
+            mainAnchor.getChildren().addAll(node);
+        }
     }
 
     public void back(){

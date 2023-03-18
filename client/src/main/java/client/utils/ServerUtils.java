@@ -27,7 +27,6 @@ import java.util.List;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Board;
-import commons.BoardList;
 import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -63,12 +62,12 @@ public class ServerUtils {
         return res;
     }
 
-    public List<BoardList> getListsFrom(Long id) {
+    public Board getBoardById(Long id) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/"+id.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<BoardList>>() {});
+                .get(new GenericType<Board>() {});
     }
 
     public List<Board> getBoards() {
