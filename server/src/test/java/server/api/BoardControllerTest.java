@@ -54,6 +54,6 @@ public class BoardControllerTest {
         controller.add(b1);
         var ret = controller.getById(0);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        // assertEquals(b1, ret.getBody());
+        assertEquals(b1, ret.getBody());
     }
 }
