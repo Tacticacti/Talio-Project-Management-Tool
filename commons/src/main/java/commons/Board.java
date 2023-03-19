@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -17,14 +16,19 @@ public class Board {
     // instance variables
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long board_id;
+    private Long id;
+
     private String name;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "board_id")
+    // @JoinColumn(name = "board_id")
     private List<BoardList> lists;
 
     // added to fix repo.findAll()
-    public Board() {}
+    public Board() {
+        this.name = "";
+        this.lists = new ArrayList<>();
+    }
 
     // constructor
     public Board(String name) {
@@ -34,11 +38,11 @@ public class Board {
 
     // getters and setters
     public Long getId() {
-        return board_id;
+        return id;
     }
 
     public void setId(long board_id) {
-        this.board_id = board_id;
+        this.id = board_id;
     }
 
     public String getName() {
@@ -51,6 +55,7 @@ public class Board {
 
     // Board functionality
     public void addList(BoardList list) {
+        // list.board = this;
         this.lists.add(list);
     }
 

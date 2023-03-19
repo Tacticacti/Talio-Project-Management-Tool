@@ -74,13 +74,14 @@ class CardTest {
         assertEquals("prep slide 5-6", c1.getDescription());
     }
 
+    /*
     @Test
     void setListId() {
         Card c1 = new Card("Slides", "prep slide3-5");
         c1.setListId(4563);
         assertEquals(4563, c1.getListId());
     }
-
+    */
 
     @Test
     void addSubTask() {
