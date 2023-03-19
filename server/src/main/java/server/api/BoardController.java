@@ -2,7 +2,7 @@ package server.api;
 
 import java.util.List;
 import commons.Board;
-import commons.BoardList;
+import commons.Card;
 import server.database.BoardRepository;
 
 import org.springframework.data.util.Pair;
@@ -76,32 +76,25 @@ public class BoardController {
         return ResponseEntity.ok(saved);
     }
 
-    // wip
-    // -------
-    // the idea is to pass id of a list and board and this function will be able
-    // to add this list to the board
-    @PostMapping(path = "/addListToBoard")
-    public ResponseEntity<Board> addListToBoard(@RequestBody Pair<Long, Long> req) {
-        Long boardId = req.getFirst();
-        // Blist list = req.getSecond();
-        Long list_id = req.getSecond();
-        Board board = null;
-        BoardList list = null;
-        System.err.println("reached milestone 1");
-        try {
-            board = repo.findById(boardId).get();
-            // column = columnRepo.findById(columnId).get();
-        }
-        catch(Exception e) {
-            System.err.println("findById failed: " + boardId);
-            e.printStackTrace();
+    @PostMapping(path = "/add/{id}")
+    public ResponseEntity<Board> addCardToId(@PathVariable("id") long boardId, 
+        @RequestBody Pair<Long, Card> req) {
+
+        if(!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
-        System.err.println("reached milestone 2");
-        System.err.println(board);
-        if(board == null) {
+
+        Board board = repo.findById(boardId).get();
+
+        Long listId = req.getFirst();
+        Card card = req.getSecond();
+        if(board.getLists().size() <= listId || listId < 0) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(board);
+
+        board.addToList(listId.intValue(), card);
+        Board saved = repo.save(board);
+
+        return ResponseEntity.ok(saved);
     }
 }
