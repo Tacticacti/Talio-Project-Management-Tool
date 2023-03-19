@@ -39,7 +39,6 @@ public class BoardOverviewCtrl {
     public void createBoard() throws IOException {
 
         var last_row = (HBox) board_rows.getChildren().get(board_rows.getChildren().size()-1);
-        System.out.println(last_row.getChildren().size());
 
         // add board to current hbox
         if (last_row.getChildren().size() < MAX_BOARDS_IN_ROW) {
