@@ -27,10 +27,21 @@ import java.util.List;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Board;
+import commons.Card;
 import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+
+class CustomPairLongCard {
+    public Long first;
+    public Card second;
+
+    CustomPairLongCard(Long first, Card second) {
+        this.first = first;
+        this.second = second;
+    }
+}
 
 public class ServerUtils {
 
@@ -76,6 +87,15 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .get(new GenericType<List<Board>>() {});
+    }
+
+    public Board addCardToList(Long boardId, Long boardListId, Card card) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/add/" + boardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(new CustomPairLongCard(boardListId, card),
+                    APPLICATION_JSON), Board.class);
     }
 
     // TODO remove if no longer useful
