@@ -83,17 +83,33 @@ public class AddCardCtrl {
         //delete button
         //return to board overview
     }
-    public void addSubTask(){
+   public void addSubTask(){
+
         //showcase a textfield for user input
         //get input and place in a checkboxlistcell in the listview, which has to be editable
+        TextField sub = new TextField();
+        sub.setPromptText("Enter subtask here");
+        subtaskVbox.getChildren().add(0,sub);
+        sub.setOnKeyPressed(event ->
+        {
+            if(event.getCode() == KeyCode.ENTER){
+                subtaskVbox.getChildren().remove(sub);
+                displaySubs(sub.getText());
+            }
+            });
 
-        CheckBoxListCell newcell = new CheckBoxListCell();
-        subtasks.getItems()
-                .add(subtasks.getItems().size()-1,
-                        newcell);
 
-        added.addSubTask("");
+       // added.addSubTask("");
         //adding a subtask
+    }
+    public void displaySubs(String text){
+        CheckBox cb = new CheckBox();
+        cb.setText(text);
+        if(subtaskVbox.getChildren().size()<2){
+            subtaskVbox.getChildren().add(0,cb);
+        }else{
+            subtaskVbox.getChildren().add(subtaskVbox.getChildren().size()-1,cb);
+        }
     }
     public void deleteSubTask(){
         //clicking the delete button on the interface for a subtask
@@ -126,7 +142,7 @@ public class AddCardCtrl {
     private void clearFields() {
         title.clear();
         description.clear();
-        subtasks.getItems().clear();//removing all added subtasks
+       // subtasks.getItems().clear();//removing all added subtasks
     }
 
     public void keyPressed(KeyEvent e) {

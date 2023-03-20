@@ -67,12 +67,38 @@ public class SingleBoardCtrl {
                 throw new RuntimeException(e);
             }
         });
-
+        Button btn2 =  (Button) list.lookup("#addNewCardButton");
+        btn2.setOnAction(event ->{
+                    VBox par = (VBox) btn2.getParent();
+                    addCard(par);
+        });
 
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
 
 
     }
+
+    
+
+
+
+
+    public void addCard(VBox parent){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
+        try {
+            Node card = (Node) fxmlLoader.load();
+            Button det = (Button) card.lookup("#details");
+            det.setOnAction(event -> mainCtrl.showAddCard());
+            int index =parent.getChildren().size()-2;
+            if(parent.getChildren().size()<2){
+                index=0;
+            }
+            parent.getChildren().add(index,card);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public void deleteList() {
 
