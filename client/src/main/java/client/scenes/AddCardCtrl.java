@@ -10,9 +10,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.control.CheckBox;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import org.w3c.dom.Text;
 
 
 public class AddCardCtrl {
@@ -35,7 +38,7 @@ public class AddCardCtrl {
     private Label column;
 
     @FXML
-    private ListView subtasks;
+    private VBox subtaskVbox;
 
     @FXML
     private ListView tags;
@@ -83,7 +86,7 @@ public class AddCardCtrl {
         //delete button
         //return to board overview
     }
-   public void addSubTask(){
+    public void addSubTask(){
 
         //showcase a textfield for user input
         //get input and place in a checkboxlistcell in the listview, which has to be editable
@@ -142,7 +145,7 @@ public class AddCardCtrl {
     private void clearFields() {
         title.clear();
         description.clear();
-       // subtasks.getItems().clear();//removing all added subtasks
+        //subtasks.getItems().clear();//removing all added subtasks
     }
 
     public void keyPressed(KeyEvent e) {
