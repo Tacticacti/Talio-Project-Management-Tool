@@ -94,10 +94,10 @@ public class AddCardCtrl {
         subtaskVbox.getChildren().add(0,sub);
         sub.setOnKeyPressed(event ->
         {
-        if(event.getCode() == KeyCode.ENTER){
-            subtaskVbox.getChildren().remove(sub);
-            displaySubs(sub.getText());
-        }
+            if(event.getCode() == KeyCode.ENTER){
+                subtaskVbox.getChildren().remove(sub);
+                displaySubs(sub.getText());
+            }
         });
         // added.addSubTask("");
         //adding a subtask
