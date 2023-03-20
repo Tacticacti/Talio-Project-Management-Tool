@@ -67,4 +67,8 @@ public class Board {
     public List<BoardList> getLists() {
         return lists;
     }
+
+    public void addToList(int listId, Card card) {
+        lists.get(listId).addCard(card);
+    }
 }
