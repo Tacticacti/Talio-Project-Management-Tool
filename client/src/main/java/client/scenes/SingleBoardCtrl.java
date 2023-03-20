@@ -71,8 +71,8 @@ public class SingleBoardCtrl {
         });
         Button btn2 =  (Button) list.lookup("#addNewCardButton");
         btn2.setOnAction(event ->{
-                    VBox par = (VBox) btn2.getParent();
-                    addCard(par);
+            VBox par = (VBox) btn2.getParent();
+            addCard(par);
         });
 
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();

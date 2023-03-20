@@ -15,7 +15,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import org.w3c.dom.Text;
 
 
 public class AddCardCtrl {
@@ -95,14 +94,12 @@ public class AddCardCtrl {
         subtaskVbox.getChildren().add(0,sub);
         sub.setOnKeyPressed(event ->
         {
-            if(event.getCode() == KeyCode.ENTER){
-                subtaskVbox.getChildren().remove(sub);
-                displaySubs(sub.getText());
-            }
-            });
-
-
-       // added.addSubTask("");
+        if(event.getCode() == KeyCode.ENTER){
+            subtaskVbox.getChildren().remove(sub);
+            displaySubs(sub.getText());
+        }
+        });
+        // added.addSubTask("");
         //adding a subtask
     }
     public void displaySubs(String text){
