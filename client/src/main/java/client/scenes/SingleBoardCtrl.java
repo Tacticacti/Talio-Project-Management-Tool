@@ -6,8 +6,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
@@ -24,7 +26,10 @@ public class SingleBoardCtrl {
     private HBox hbox_lists;
 
     @FXML
-    private ScrollPane main_pane;
+    private AnchorPane sb_anchor;
+
+    @FXML
+    private Button settingsBtn;
 
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) throws IOException {
@@ -57,6 +62,18 @@ public class SingleBoardCtrl {
         Button btn =  (Button) list.lookup("#deleteBtn");
         btn.setOnAction(event -> board_lists.remove(btn.getParent()));
 
+        TextField title = (TextField) list.lookup("#list_title");
+
+        title.setOnAction(event -> {
+            try {
+                if (!title.getText().isEmpty()) {
+                    createNewList();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
 
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
 
@@ -69,8 +86,44 @@ public class SingleBoardCtrl {
 
     }
 
+    // is this setup only for title (?)
     public void enterOnTextField() throws IOException {
         createNewList();
+    }
+
+
+    public void openBoardSettings() throws IOException {
+        System.out.println("running!");
+
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("customizationPage.fxml"));
+        AnchorPane customization = loader.load();
+
+        customization.setLayoutY(250);
+        customization.setLayoutX(770);
+
+        customization.setScaleX(1.5);
+        customization.setScaleY(1.5);
+
+
+        Button closebtn =  (Button) customization.lookup("#closeCustomizationMenu");
+        closebtn.setOnAction(event -> sb_anchor.getChildren().remove(closebtn.getParent()));
+
+        // doesn't actually delete anything just goes back to board overview
+        Button delbtn =  (Button) customization.lookup("#deleteBoard");
+        delbtn.setOnAction(event -> {
+            // remove this specific board
+
+
+            mainCtrl.showBoardOverview();
+
+        });
+
+
+
+        sb_anchor.getChildren().add(customization);
+
+
     }
 
 

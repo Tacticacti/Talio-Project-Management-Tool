@@ -15,10 +15,16 @@
  */
 package client.scenes;
 
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class MainCtrl {
 
@@ -41,8 +47,6 @@ public class MainCtrl {
 
     private AddQuoteCtrl addCtrl;
     private Scene add;
-
-
 
 
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,

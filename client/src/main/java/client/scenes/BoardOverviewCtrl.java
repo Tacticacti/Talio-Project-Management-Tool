@@ -62,6 +62,7 @@ public class BoardOverviewCtrl {
             // create bord and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             Node board = loader.load();
+
             HBox hbox = new HBox();
             hbox.setSpacing(100);
             //hbox.setPadding(new Insets(102, 0, 0, 102));
@@ -81,7 +82,6 @@ public class BoardOverviewCtrl {
 
         mainCtrl.showBoard();
     }
-
 
 
 }
