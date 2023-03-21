@@ -83,7 +83,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     @Override
-    public void initialize throws IOException(URL location, ResourceBundle resources) {
+    public void initialize (URL location, ResourceBundle resources) throws IOException {
         createNewList();
         //server.addCardToList(1L, 0L, new Card("card from init"));
 
