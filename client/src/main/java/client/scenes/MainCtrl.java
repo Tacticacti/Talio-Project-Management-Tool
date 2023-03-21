@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+
 public class MainCtrl {
 
     private Stage primaryStage;
@@ -41,8 +42,6 @@ public class MainCtrl {
 
     private AddQuoteCtrl addCtrl;
     private Scene add;
-
-
 
 
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
