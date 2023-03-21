@@ -83,8 +83,13 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     @Override
-    public void initialize (URL location, ResourceBundle resources) throws IOException {
-        createNewList();
+    public void initialize (URL location, ResourceBundle resources){
+        try {
+            createNewList();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
         //server.addCardToList(1L, 0L, new Card("card from init"));
 
         //  TODO change 1L -> board_id if we are going multiboard
