@@ -31,7 +31,6 @@ public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
 
-<<<<<<< client/src/main/java/client/scenes/SingleBoardCtrl.java
 
     @FXML
     private HBox hbox_lists;
