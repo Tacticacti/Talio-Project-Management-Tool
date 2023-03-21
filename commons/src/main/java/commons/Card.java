@@ -5,9 +5,9 @@ import javax.persistence.ElementCollection;
 import javax.persistence.GenerationType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.GeneratedValue;
-
-
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,11 +26,13 @@ public class Card implements Serializable {
 
     //instance variables
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public long card_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long id;
 
-    public long list_id;
-
+    //public long list_id;
+    @ManyToOne
+    @JoinColumn(name = "BOARDLIST_ID")
+    public BoardList boardList;
 
     public String title;
     public String description;
@@ -63,13 +65,14 @@ public class Card implements Serializable {
     //getters and setters
 
     public long getId() {
-        return card_id;
+        return id;
     }
 
+    /*
     public long getListId() {
         return list_id;
     }
-
+    */
 
     public String getTitle() {
         return title;
@@ -91,9 +94,11 @@ public class Card implements Serializable {
         return completedSubs;
     }
 
+    /*
     public void setListId(long list_id) {
         this.list_id = list_id;
     }
+    */
     
     public void setTitle(String title) {
         this.title = title;

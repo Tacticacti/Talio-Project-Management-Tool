@@ -20,20 +20,34 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.List;
 
 import org.glassfish.jersey.client.ClientConfig;
 
+import commons.Board;
+import commons.Card;
 import commons.Quote;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 
+class CustomPairLongCard {
+    public Long first;
+    public Card second;
+
+    CustomPairLongCard(Long first, Card second) {
+        this.first = first;
+        this.second = second;
+    }
+}
+
 public class ServerUtils {
 
-    private static final String SERVER = "http://localhost:8080/";
+    private static String server = "http://localhost:8080/";
 
+    // TODO remove if no longer useful
     public void getQuotesTheHardWay() throws IOException {
         var url = new URL("http://localhost:8080/api/quotes");
         var is = url.openConnection().getInputStream();
@@ -44,17 +58,59 @@ public class ServerUtils {
         }
     }
 
+    // returns true if connection is succesful 
+    // flase otherwise
+    public boolean setServerAddress(String addr) {
+        // server = addr;
+        boolean res = false;
+        try {
+            res = InetAddress.getByName(server).isReachable(1000);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return res;
+    }
+
+    public Board getBoardById(Long id) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/"+id.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .get(new GenericType<Board>() {});
+    }
+
+    public List<Board> getBoards() {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .get(new GenericType<List<Board>>() {});
+    }
+
+    public Board addCardToList(Long boardId, Long boardListId, Card card) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/add/" + boardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(new CustomPairLongCard(boardListId, card),
+                    APPLICATION_JSON), Board.class);
+    }
+
+    // TODO remove if no longer useful
     public List<Quote> getQuotes() {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
+                .target(server).path("api/quotes") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .get(new GenericType<List<Quote>>() {});
     }
 
+    // TODO remove if no longer useful
     public Quote addQuote(Quote quote) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/quotes") //
+                .target(server).path("api/quotes") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);

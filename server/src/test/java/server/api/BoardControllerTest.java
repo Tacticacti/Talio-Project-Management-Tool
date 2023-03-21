@@ -8,18 +8,30 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 
 import commons.Board;
+import commons.BoardList;
+import commons.Card;
 
 public class BoardControllerTest {
 
     private TestBoardRepository boardRepo;
     private BoardController controller;
+    private Board b1, b2;
+    private BoardList bl1;
+    private Card c1;
 
     @BeforeEach
     public void setup() {
         boardRepo = new TestBoardRepository();
         controller = new BoardController(boardRepo);
+        b1 = new Board("b1");
+        b2 = new Board("b2");
+        bl1 = new BoardList("bl1");
+        b1.addList(bl1);
+
+        c1 = new Card("c1");
     }
 
     @Test
@@ -37,8 +49,6 @@ public class BoardControllerTest {
 
     @Test
     public void getAll() {
-        Board b1 = new Board("b1");
-        Board b2 = new Board("b2");
         controller.add(b1);
         controller.add(b2);
         var x = controller.getAll();
@@ -50,10 +60,38 @@ public class BoardControllerTest {
 
     @Test
     public void getById() {
-        Board b1 = new Board("b1");
         controller.add(b1);
         var ret = controller.getById(0);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals(b1, ret.getBody());
+    }
+
+    @Test
+    public void getByIdNotPresent() {
+        var ret = controller.getById(99);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void addCardWrongId() {
+        var ret = controller.addCardToId(99, null);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void addCardWrongRequest() {
+        controller.add(b1);
+        Pair<Long, Card> req = Pair.of(-1L, c1);
+        var ret = controller.addCardToId(0, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void addCardOk() {
+        controller.add(b1);
+        Pair<Long, Card> req = Pair.of(0L, c1);
+        var ret = controller.addCardToId(0, req);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(c1, ret.getBody().getLists().get(0).getCards().get(0));
     }
 }
