@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -36,6 +37,11 @@ public class SingleBoardCtrl {
 
     public void initialize() throws IOException {
         createNewList();
+        ImageView imageView = new ImageView(getClass().getResource("../images/settings_icon.png").toExternalForm());
+        imageView.setFitWidth(settingsBtn.getPrefWidth());
+        imageView.setFitHeight(settingsBtn.getPrefHeight());
+        imageView.setPreserveRatio(true);
+        settingsBtn.setGraphic(imageView);
     }
 
 

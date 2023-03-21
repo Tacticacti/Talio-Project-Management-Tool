@@ -6,13 +6,13 @@ import commons.Card;
 
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.CheckBox;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 
@@ -103,13 +103,24 @@ public class AddCardCtrl {
         //adding a subtask
     }
     public void displaySubs(String text){
+        HBox sub = new HBox();
         CheckBox cb = new CheckBox();
         cb.setText(text);
-        if(subtaskVbox.getChildren().size()<2){
-            subtaskVbox.getChildren().add(0,cb);
-        }else{
-            subtaskVbox.getChildren().add(subtaskVbox.getChildren().size()-1,cb);
-        }
+        Button delBtn = new Button();
+        HBox button = new HBox();
+        button.setAlignment(Pos.TOP_CENTER);
+        delBtn.setOnAction(event -> subtaskVbox.getChildren().remove(delBtn.getParent()));
+        delBtn.setPrefHeight(20);
+        ImageView imageView = new ImageView(getClass().getResource("../images/trash.png").toExternalForm());
+        imageView.setFitWidth(delBtn.getPrefWidth());
+        imageView.setFitHeight(delBtn.getPrefHeight());
+        imageView.setPreserveRatio(true);
+        delBtn.setGraphic(imageView);
+        button.getChildren().add(delBtn);
+        sub.getChildren().add(cb);
+        sub.getChildren().add(delBtn);
+        sub.setPrefWidth(subtaskVbox.getWidth());
+        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(),sub);
     }
     public void deleteSubTask(){
         //clicking the delete button on the interface for a subtask

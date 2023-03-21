@@ -46,17 +46,10 @@
             <Font size="14.0" />
          </font>
       </Button>
-      <Button fx:id="deleteBtn11" focusTraversable="false" layoutX="496.0" layoutY="25.0" mnemonicParsing="false" onAction="#openBoardSettings" prefHeight="40.0" prefWidth="40.0" style="-fx-padding: 0;">
+      <Button fx:id="settingsBtn" focusTraversable="false" layoutX="496.0" layoutY="25.0" mnemonicParsing="false" onAction="#openBoardSettings" prefHeight="40.0" prefWidth="40.0" style="-fx-padding: 0;">
          <font>
             <Font size="18.0" />
          </font>
-         <graphic>
-            <ImageView fitHeight="40.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/settings_icon.png" />
-               </image>
-            </ImageView>
-         </graphic>
       </Button>
       <Line endX="1923.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
    </children>
