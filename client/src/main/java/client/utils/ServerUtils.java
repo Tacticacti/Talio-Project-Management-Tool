@@ -20,8 +20,9 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -46,6 +47,7 @@ class CustomPairLongCard {
 public class ServerUtils {
 
     private static String server = "http://localhost:8080/";
+    // private static String server = "";
 
     // TODO remove if no longer useful
     public void getQuotesTheHardWay() throws IOException {
@@ -60,17 +62,22 @@ public class ServerUtils {
 
     // returns true if connection is succesful 
     // flase otherwise
-    public boolean setServerAddress(String addr) {
-        // server = addr;
+    public boolean check(String addr) throws UnknownHostException, IOException {
+
         boolean res = false;
-        try {
-            res = InetAddress.getByName(server).isReachable(1000);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        
+        URL url = new URL(addr+"/api/boards/TalioPresent");
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        urlConn.connect();
+
+        if(urlConn.getResponseCode() == HttpURLConnection.HTTP_OK)
+            res = true;
 
         return res;
+    }
+
+    public void setServer(String addr) {
+        server = addr;
     }
 
     public Board getBoardById(Long id) {

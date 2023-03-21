@@ -66,10 +66,13 @@ public class SingleBoardCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        server.addCardToList(1L, 0L, new Card("card from init"));
+        // server.addCardToList(1L, 0L, new Card("card from init"));
 
         // TODO change 1L -> board_id if we are going multiboard
-        pullLists(1L); 
+        // pullLists(1L); 
+
+        if(true || !false && true)
+            return;
 
         for(BoardList bl : lists) {
             System.out.println("processing: " + bl.getName());
