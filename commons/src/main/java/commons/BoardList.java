@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import java.util.ArrayList;
@@ -15,14 +16,24 @@ import java.util.List;
 public class BoardList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long list_id;
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "BOARD_ID")
+    public Board board;
+
     private String name;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "list_id")
+    // @JoinColumn(name = "list_id")
     private List<Card> cards;
 
     // added to fix repo.findAll()
-    public BoardList() {}
+    public BoardList() {
+        this.name = "";
+        this.cards = new ArrayList<>();
+    }
+        
     public BoardList(String name) {
         this.name = name;
         this.cards = new ArrayList<>();
@@ -30,11 +41,11 @@ public class BoardList {
 
     // getters and setters
     public Long getId() {
-        return list_id;
+        return id;
     }
 
     public void setId(long list_id) {
-        this.list_id = list_id;
+        this.id = list_id;
     }
 
     public String getName() {
@@ -47,6 +58,7 @@ public class BoardList {
 
     // Board functionality
     public void addCard(Card card) {
+        // card.boardList = this;
         this.cards.add(card);
     }
 

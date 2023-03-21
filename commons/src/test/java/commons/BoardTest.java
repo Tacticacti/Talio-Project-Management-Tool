@@ -4,6 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +15,7 @@ public class BoardTest {
 
     private Board board;
     private BoardList list1, list2;
+    private Card card1;
 
     // initialize the Board object before each test
     @BeforeEach
@@ -18,6 +23,7 @@ public class BoardTest {
         board = new Board("Board 1");
         list1 = new BoardList("List 1");
         list2 = new BoardList("List 2");
+        card1 = new Card("card 1");
     }
 
     // test the constructor
@@ -70,5 +76,19 @@ public class BoardTest {
         expectedLists.add(list1);
         expectedLists.add(list2);
         Assertions.assertEquals(expectedLists, board.getLists(), "getLists() should return the list of lists");
+    }
+
+    @Test
+    public void testDefConstructor() {
+        Board b = new Board();
+        assertEquals("",b.getName());
+        assertNotNull(b.getLists());
+    }
+
+    @Test
+    public void testAddToList() {
+        board.addList(list1);
+        board.addToList(0, card1);
+        assertTrue(board.getLists().get(0).getCards().contains(card1));
     }
 }
