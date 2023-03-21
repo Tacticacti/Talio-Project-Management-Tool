@@ -24,31 +24,38 @@ public class BoardListTest {
     @Test
     public void testConstructor() {
         BoardList newList = new BoardList("New List");
-        Assertions.assertEquals("New List", newList.getName(), "Constructor should set the list name");
-        Assertions.assertNotNull(newList.getCards(), "Constructor should initialize the cards variable");
-        Assertions.assertEquals(0, newList.getCards().size(), "Constructor should initialize an empty cards variable");
+        Assertions.assertEquals("New List", newList.getName(),
+			"Constructor should set the list name");
+        Assertions.assertNotNull(newList.getCards(),
+			"Constructor should initialize the cards variable");
+        Assertions.assertEquals(0, newList.getCards().size(),
+			"Constructor should initialize an empty cards variable");
     }
 
     // test the getId() and setId() methods
     @Test
     public void testId() {
         boardList.setId(123L);
-        Assertions.assertEquals(123L, boardList.getId(), "setId() should set the id");
+        Assertions.assertEquals(123L, boardList.getId(),
+			"setId() should set the id");
     }
 
     // test the getName() and setName() methods
     @Test
     public void testName() {
         boardList.setName("New Name");
-        Assertions.assertEquals("New Name", boardList.getName(), "setName() should set the list name");
+        Assertions.assertEquals("New Name", boardList.getName(),
+			"setName() should set the list name");
     }
 
     // test the addCard() method
     @Test
     public void testAddCard() {
         boardList.addCard(card1);
-        Assertions.assertTrue(boardList.getCards().contains(card1), "addCard() should add a card to the list");
-        Assertions.assertEquals(1, boardList.getCards().size(), "addCard() should increase the size of the cards variable by 1");
+        Assertions.assertTrue(boardList.getCards().contains(card1), 
+			"addCard() should add a card to the list");
+        Assertions.assertEquals(1, boardList.getCards().size(), 
+			"addCard() should increase the size of the cards variable by 1");
     }
 
     // test the removeCard() method
@@ -57,8 +64,10 @@ public class BoardListTest {
         boardList.addCard(card1);
         boardList.addCard(card2);
         boardList.removeCard(card1);
-        Assertions.assertFalse(boardList.getCards().contains(card1), "removeCard() should remove a card from the list");
-        Assertions.assertEquals(1, boardList.getCards().size(), "removeCard() should decrease the size of the cards variable by 1");
+        Assertions.assertFalse(boardList.getCards().contains(card1),
+			"removeCard() should remove a card from the list");
+        Assertions.assertEquals(1, boardList.getCards().size(),
+			"removeCard() should decrease the size of the cards variable by 1");
     }
 
     // test the getCards() method
@@ -69,6 +78,7 @@ public class BoardListTest {
         List<Card> expectedCards = new ArrayList<>();
         expectedCards.add(card1);
         expectedCards.add(card2);
-        Assertions.assertEquals(expectedCards, boardList.getCards(), "getCards() should return the list of cards");
+        Assertions.assertEquals(expectedCards, boardList.getCards(),
+			"getCards() should return the list of cards");
     }
 }

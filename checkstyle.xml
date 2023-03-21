@@ -14,7 +14,23 @@
             <property name="ignoreOverriddenMethods" value="true"/>
             <property name="allowedAbbreviationLength" value="3"/>
         </module>
+        <module name="ParameterNumber">
+            <property name="severity" value="warning"/>
+            <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
+            <property name="max" value="8"/>
+        </module>
+		<module name="ConstantName">
+		  <property name="applyToPublic" value="false"/>
+		  <property name="applyToProtected" value="false"/>
+		</module>
+		<module name="EmptyBlock"/>
     </module>
+
+	<module name="NewlineAtEndOfFile"/>
+	<module name="LineLength">
+		<property name="fileExtensions" value="java"/>
+        <property name="max" value="100"/>
+	</module>
 
     <!-- TODO: decide in your team with other checkers to add! -->
 

@@ -15,3 +15,4 @@ public class SomeController {
         return "Hello world!";
     }
 }
+

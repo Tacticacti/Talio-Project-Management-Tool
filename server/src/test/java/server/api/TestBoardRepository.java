@@ -196,7 +196,8 @@ public class TestBoardRepository implements BoardRepository {
     }
 
     @Override
-    public <S extends Board, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Board, R> R findBy(Example<S> example,
+		Function<FetchableFluentQuery<S>, R> queryFunction) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findBy'");
     }
