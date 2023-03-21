@@ -10,6 +10,7 @@ public class CardGUICtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     public AnchorPane card;
+    ClipboardContent content;
 
     private Dragboard board;
 
@@ -25,16 +26,23 @@ public class CardGUICtrl {
 
     public void dragDetected(MouseEvent event) {
         board = card.startDragAndDrop(TransferMode.MOVE);
-        ClipboardContent content = new ClipboardContent();
+        content = new ClipboardContent();
         content.putString(card.getId());
         board.setContent(content);
         event.consume();
     }
 
     public void onDrag(DragEvent event) {
-        System.out.println(card + " is being dragged!");
-
+        System.out.println(card + " is being dragged!");//test statment
+        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+        event.consume();
     }
 
-
+    public void onDragDone(DragEvent event) {
+        if (event.getTransferMode() == TransferMode.MOVE) {
+            //TODO:remove unnecessary things
+        }
+        System.out.println("Drag is done!");
+        event.consume();
+    }
 }
