@@ -12,7 +12,7 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="cardOptionButton" alignment="TOP_CENTER" layoutX="280.0" layoutY="-17.0" mnemonicParsing="false" onAction="#details" prefHeight="25.0" prefWidth="41.0" style="-fx-background-color: transparent;" text="...">
+      <Button fx:id="details" alignment="TOP_CENTER" layoutX="280.0" layoutY="-17.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="41.0" style="-fx-background-color: transparent;" text="...">
          <font>
             <Font size="20.0" />
          </font>
