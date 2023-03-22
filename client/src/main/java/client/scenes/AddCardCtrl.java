@@ -6,12 +6,18 @@ import commons.Card;
 
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 
 
@@ -35,7 +41,7 @@ public class AddCardCtrl {
     private Label column;
 
     @FXML
-    private ListView subtasks;
+    private VBox subtaskVbox;
 
     @FXML
     private ListView tags;
@@ -84,16 +90,41 @@ public class AddCardCtrl {
         //return to board overview
     }
     public void addSubTask(){
+
         //showcase a textfield for user input
         //get input and place in a checkboxlistcell in the listview, which has to be editable
-
-        CheckBoxListCell newcell = new CheckBoxListCell();
-        subtasks.getItems()
-                .add(subtasks.getItems().size()-1,
-                        newcell);
-
-        added.addSubTask("");
+        TextField sub = new TextField();
+        sub.setPromptText("Enter subtask here");
+        subtaskVbox.getChildren().add(0,sub);
+        sub.setOnKeyPressed(event ->
+        {
+            if(event.getCode() == KeyCode.ENTER){
+                subtaskVbox.getChildren().remove(sub);
+                displaySubs(sub.getText());
+            }
+        });
+        // added.addSubTask("");
         //adding a subtask
+    }
+    public void displaySubs(String text){
+        HBox sub = new HBox();
+        CheckBox cb = new CheckBox();
+        cb.setText(text);
+        Button delBtn = new Button();
+        HBox button = new HBox();
+        button.setAlignment(Pos.TOP_CENTER);
+        delBtn.setOnAction(event -> subtaskVbox.getChildren().remove(delBtn.getParent()));
+        delBtn.setPrefHeight(20);
+        ImageView imageView = new ImageView(getClass().getResource("../images/trash.png").toExternalForm());
+        imageView.setFitWidth(delBtn.getPrefWidth());
+        imageView.setFitHeight(delBtn.getPrefHeight());
+        imageView.setPreserveRatio(true);
+        delBtn.setGraphic(imageView);
+        button.getChildren().add(delBtn);
+        sub.getChildren().add(cb);
+        sub.getChildren().add(delBtn);
+        sub.setPrefWidth(subtaskVbox.getWidth());
+        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(),sub);
     }
     public void deleteSubTask(){
         //clicking the delete button on the interface for a subtask
@@ -126,7 +157,7 @@ public class AddCardCtrl {
     private void clearFields() {
         title.clear();
         description.clear();
-        subtasks.getItems().clear();//removing all added subtasks
+        //subtasks.getItems().clear();//removing all added subtasks
     }
 
     public void keyPressed(KeyEvent e) {
