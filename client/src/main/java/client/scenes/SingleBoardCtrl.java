@@ -119,6 +119,7 @@ public class SingleBoardCtrl implements Initializable {
         mainCtrl.showAddCard();
     }
 
+
     public void createNewList() throws IOException {
         var board_lists = hbox_lists.getChildren();
 
@@ -147,7 +148,14 @@ public class SingleBoardCtrl implements Initializable {
         });
 
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
+
+
     }
+
+    
+
+
+
 
     public void addCard(VBox parent){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
@@ -212,24 +220,5 @@ public class SingleBoardCtrl implements Initializable {
 
     }
 
-    public void refresh() {
-        pullLists(1L); 
-        draw();
-    }
 
-    public void draw() {
-        for(BoardList boardList : lists) {
-            Node curr;
-            try {
-                curr = createNewList();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            for(Card card : boardList.getCards()) {
-                addCard(curr, card);
-            }
-        }
-    }
 }
