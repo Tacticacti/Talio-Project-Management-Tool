@@ -13,6 +13,7 @@ import org.springframework.data.util.Pair;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+import server.DatabaseUtils;
 
 public class BoardControllerTest {
 
@@ -25,7 +26,7 @@ public class BoardControllerTest {
     @BeforeEach
     public void setup() {
         boardRepo = new TestBoardRepository();
-        controller = new BoardController(boardRepo);
+        controller = new BoardController(boardRepo, new DatabaseUtils());
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");
@@ -63,7 +64,7 @@ public class BoardControllerTest {
         controller.add(b1);
         var ret = controller.getById(0);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        // assertEquals(b1, ret.getBody());
+        assertEquals(b1, ret.getBody());
     }
 
     @Test
@@ -92,6 +93,6 @@ public class BoardControllerTest {
         Pair<Long, Card> req = Pair.of(0L, c1);
         var ret = controller.addCardToId(0, req);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        //assertEquals(c1, ret.getBody().getLists().get(0).getCards().get(0));
+        assertEquals(c1, ret.getBody().getLists().get(0).getCards().get(0));
     }
 }

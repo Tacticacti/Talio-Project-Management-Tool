@@ -1,12 +1,12 @@
 package server.api;
 
 import java.util.List;
+
 import commons.Board;
 import commons.Card;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,31 +22,19 @@ public class BoardController {
 
     private final BoardRepository repo;
 
-    @Autowired
     private DatabaseUtils databaseUtils;
 
-    public BoardController(BoardRepository repo) {
+    public BoardController(BoardRepository repo, 
+        DatabaseUtils databaseUtils) {
         this.repo = repo;
+        this.databaseUtils = databaseUtils;
+        
 
-        // TODO STUPID DEBUG I HAVE TO REMOVE THIS ASAP!!!!!
+        // TODO uncomment **ONLY** for debug!!
         /*
-        Board board = new Board("test board");
-        BoardList l1 = new BoardList("test list 1");
-        l1.addCard(new Card("aa"));
-        l1.addCard(new Card("bb"));
-        l1.addCard(new Card("ca"));
-
-        board.addList(l1);
-
-        BoardList l2 = new BoardList("test list 2");
-        l2.addCard(new Card("az"));
-        l2.addCard(new Card("bz"));
-        l2.addCard(new Card("cz"));
-
-        board.addList(l2);
+        Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
         */
-        // TODO END OF DEBUG!!!!
     }
 
     @GetMapping(path = "/TalioPresent")

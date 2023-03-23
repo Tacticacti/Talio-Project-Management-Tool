@@ -27,6 +27,7 @@ public class Card implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
+    public Long boardId;
     public Long listId;
 
     /*
