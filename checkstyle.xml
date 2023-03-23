@@ -24,6 +24,9 @@
 		  <property name="applyToProtected" value="false"/>
 		</module>
 		<module name="EmptyBlock"/>
+        <module name="WhitespaceAfter">
+			<property name="tokens" value="COMMA, TYPECAST" />
+		</module>
     </module>
 
 	<module name="NewlineAtEndOfFile"/>
@@ -31,7 +34,5 @@
 		<property name="fileExtensions" value="java"/>
         <property name="max" value="100"/>
 	</module>
-
-    <!-- TODO: decide in your team with other checkers to add! -->
 
 </module>

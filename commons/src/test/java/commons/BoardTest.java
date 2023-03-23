@@ -90,7 +90,7 @@ public class BoardTest {
     @Test
     public void testDefConstructor() {
         Board b = new Board();
-        assertEquals("",b.getName());
+        assertEquals("", b.getName());
         assertNotNull(b.getLists());
     }
 
