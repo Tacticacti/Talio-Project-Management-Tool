@@ -26,27 +26,4 @@ public class CardGUICtrl {
     public void details(){
         mainCtrl.showAddCard();
     }
-
-    public void dragDetected(MouseEvent event) {
-        board = card.startDragAndDrop(TransferMode.MOVE);
-        content = new ClipboardContent();
-        content.putString(card.getId());
-        board.setContent(content);
-        event.consume();
-    }
-
-    public void onDrag(DragEvent event) {
-        System.out.println(card + " is being dragged!");//test statment
-        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-        event.consume();
-    }
-
-    public void onDragDone(DragEvent event) {
-        if (event.getTransferMode() == TransferMode.MOVE) {
-            //TODO:remove unnecessary things
-            System.out.println("todo");
-        }
-        System.out.println("Drag is done!");
-        event.consume();
-    }
 }
