@@ -4,6 +4,7 @@ import java.util.List;
 
 import commons.Board;
 import commons.Card;
+import commons.BoardList;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
 
@@ -35,11 +36,6 @@ public class BoardController {
         Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
         */
-    }
-
-    @GetMapping(path = "/TalioPresent")
-    public ResponseEntity<String> talioPresenceCheck() {
-        return ResponseEntity.ok("Welcome to Talio!");
     }
 
     @GetMapping(path = {"", "/"})
@@ -101,12 +97,26 @@ public class BoardController {
         return ResponseEntity.ok(saved);
     }
 
+    @PostMapping(path = "/add/list/{id}")
+    public ResponseEntity<Board> addListToBoard(@PathVariable("id") long boardId,
+        @RequestBody String listName) {
+
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Board board = repo.findById(boardId).get();
+        board.addList(new BoardList(listName));
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
+    }
+
     @PostMapping(path = "/refresh/{id}")
-    public ResponseEntity<Void> postMethodName(@PathVariable("id") long boardId) {
+    public ResponseEntity<Board> refreshBoardById(@PathVariable("id") long boardId) {
         Board board = repo.getById(boardId);
         databaseUtils.PopagateIDs(board);
         repo.save(board);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(board);
     }
     
 }

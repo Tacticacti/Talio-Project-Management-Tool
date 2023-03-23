@@ -52,7 +52,7 @@ public class ServerUtils {
 
         boolean res = false;
         
-        URL url = new URL(addr+"/api/boards/TalioPresent");
+        URL url = new URL(addr+"/TalioPresent");
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.connect();
 
