@@ -43,8 +43,8 @@ class CustomPairLongCard {
 
 public class ServerUtils {
 
-    private static String server = "http://localhost:8080/";
-    // private static String server = "";
+    // private static String server = "http://localhost:8080/";
+    private static String server = "";
 
     // returns true if connection is succesful 
     // flase otherwise
