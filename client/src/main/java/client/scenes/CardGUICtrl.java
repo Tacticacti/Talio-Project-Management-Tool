@@ -44,6 +44,7 @@ public class CardGUICtrl {
     public void onDragDone(DragEvent event) {
         if (event.getTransferMode() == TransferMode.MOVE) {
             //TODO:remove unnecessary things
+            System.out.println("todo");
         }
         System.out.println("Drag is done!");
         event.consume();
