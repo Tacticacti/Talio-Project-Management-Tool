@@ -102,11 +102,11 @@ public class BoardController {
     }
 
     @PostMapping(path = "/refresh/{id}")
-    public void postMethodName(@PathVariable("id") long boardId) {
+    public ResponseEntity<Void> postMethodName(@PathVariable("id") long boardId) {
         Board board = repo.getById(boardId);
         databaseUtils.PopagateIDs(board);
         repo.save(board);
+        return ResponseEntity.noContent().build();
     }
     
 }
-
