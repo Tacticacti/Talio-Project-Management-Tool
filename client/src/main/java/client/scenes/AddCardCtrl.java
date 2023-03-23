@@ -95,7 +95,7 @@ public class AddCardCtrl {
         //get input and place in a checkboxlistcell in the listview, which has to be editable
         TextField sub = new TextField();
         sub.setPromptText("Enter subtask here");
-        subtaskVbox.getChildren().add(0,sub);
+        subtaskVbox.getChildren().add(0, sub);
         sub.setOnKeyPressed(event ->
         {
             if(event.getCode() == KeyCode.ENTER){
@@ -115,7 +115,9 @@ public class AddCardCtrl {
         button.setAlignment(Pos.TOP_CENTER);
         delBtn.setOnAction(event -> subtaskVbox.getChildren().remove(delBtn.getParent()));
         delBtn.setPrefHeight(20);
-        ImageView imageView = new ImageView(getClass().getResource("../images/trash.png").toExternalForm());
+        ImageView imageView = new ImageView(getClass()
+            .getResource("../images/trash.png")
+            .toExternalForm());
         imageView.setFitWidth(delBtn.getPrefWidth());
         imageView.setFitHeight(delBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
@@ -124,7 +126,7 @@ public class AddCardCtrl {
         sub.getChildren().add(cb);
         sub.getChildren().add(delBtn);
         sub.setPrefWidth(subtaskVbox.getWidth());
-        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(),sub);
+        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
     }
     public void deleteSubTask(){
         //clicking the delete button on the interface for a subtask

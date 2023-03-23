@@ -108,3 +108,4 @@ public class BoardController {
         return ResponseEntity.ok(saved);
     }
 }
+

@@ -42,7 +42,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-        var boverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes", "BoardOverview.fxml");
+        var boverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes",
+			"BoardOverview.fxml");
         var addcard = FXML.load(AddCardCtrl.class, "client", "scenes", "AddCard.fxml");
         var singleBoard = FXML.load(SingleBoardCtrl.class, "client", "scenes", "SingleBoard.fxml");
         var home = FXML.load(ConnectHomeCtrl.class, "client", "scenes", "ConnectHomePage.fxml");

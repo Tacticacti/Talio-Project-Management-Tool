@@ -120,9 +120,7 @@ public class Card implements Serializable {
     //complete a subtask
     public void completeSubTask()  {
 
-        if(completedSubs==subtasks.size()){
-            
-        }else
+        if(completedSubs!=subtasks.size())
             completedSubs++;
     }
     //add a tag to card

@@ -43,6 +43,6 @@ public class ListGUICtrl implements Initializable {
     public void addCard() throws IOException {
         FXMLLoader card = new FXMLLoader(getClass().getResource("CardGUI.fxml"));
         Node cardadded = card.load();
-        CardsList.getChildren().add(CardsList.getChildren().size()-2,cardadded);
+        CardsList.getChildren().add(CardsList.getChildren().size()-2, cardadded);
     }
 }

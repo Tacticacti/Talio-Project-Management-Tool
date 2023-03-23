@@ -6,3 +6,4 @@ import commons.Card;
 
 public interface CardRepository extends JpaRepository<Card, Long> {
 }
+

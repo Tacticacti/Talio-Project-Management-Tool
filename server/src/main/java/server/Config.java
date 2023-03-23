@@ -28,3 +28,4 @@ public class Config {
         return new Random();
     }
 }
+

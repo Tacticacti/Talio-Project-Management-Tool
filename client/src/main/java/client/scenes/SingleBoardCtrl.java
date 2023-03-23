@@ -85,7 +85,9 @@ public class SingleBoardCtrl implements Initializable {
 
     @Override
     public void initialize (URL location, ResourceBundle resources){
-        ImageView imageView = new ImageView(getClass().getResource("../images/settings_icon.png").toExternalForm());
+        ImageView imageView = new ImageView(getClass()
+            .getResource("../images/settings_icon.png")
+            .toExternalForm());
         imageView.setFitWidth(settingsBtn.getPrefWidth());
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
@@ -165,7 +167,7 @@ public class SingleBoardCtrl implements Initializable {
             if(parent.getChildren().size()<2){
                 index=0;
             }
-            parent.getChildren().add(index,card);
+            parent.getChildren().add(index, card);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
