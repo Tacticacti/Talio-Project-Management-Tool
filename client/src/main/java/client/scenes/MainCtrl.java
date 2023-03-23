@@ -61,7 +61,7 @@ public class MainCtrl {
     public void showAddCard() {
         primaryStage.setTitle("Add Card");
         primaryStage.setScene(addCard);
-        addCard.setOnKeyPressed(e -> addCardCtrl.keyPressed(e));
+       // addCard.setOnKeyPressed(e -> addCardCtrl.keyPressed(e));
     }
     public void showBoard(){
         primaryStage.setTitle("Board");

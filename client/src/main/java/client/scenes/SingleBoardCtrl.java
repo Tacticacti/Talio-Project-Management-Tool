@@ -23,8 +23,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import java.io.IOException;
 
 public class SingleBoardCtrl implements Initializable {
@@ -50,8 +53,6 @@ public class SingleBoardCtrl implements Initializable {
         this.server = server;
 
     }
-
-
 
     public void pullLists(Long id) {
         Board tmpBoard = server.getBoardById(id);
@@ -84,6 +85,11 @@ public class SingleBoardCtrl implements Initializable {
 
     @Override
     public void initialize (URL location, ResourceBundle resources){
+        ImageView imageView = new ImageView(getClass().getResource("../images/settings_icon.png").toExternalForm());
+        imageView.setFitWidth(settingsBtn.getPrefWidth());
+        imageView.setFitHeight(settingsBtn.getPrefHeight());
+        imageView.setPreserveRatio(true);
+        settingsBtn.setGraphic(imageView);
         try {
             createNewList();
         }
@@ -133,12 +139,38 @@ public class SingleBoardCtrl implements Initializable {
                 throw new RuntimeException(e);
             }
         });
-
+        Button btn2 =  (Button) list.lookup("#addNewCardButton");
+        btn2.setOnAction(event ->{
+            VBox par = (VBox) btn2.getParent();
+            addCard(par);
+        });
 
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
 
 
     }
+
+    
+
+
+
+
+    public void addCard(VBox parent){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
+        try {
+            Node card = (Node) fxmlLoader.load();
+            Button det = (Button) card.lookup("#details");
+            det.setOnAction(event -> mainCtrl.showAddCard());
+            int index =parent.getChildren().size()-2;
+            if(parent.getChildren().size()<2){
+                index=0;
+            }
+            parent.getChildren().add(index,card);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public void deleteList() {
 
