@@ -3,8 +3,10 @@ package server.api;
 import java.util.List;
 import commons.Board;
 import commons.Card;
+import server.DatabaseUtils;
 import server.database.BoardRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class BoardController {
 
     private final BoardRepository repo;
+
+    @Autowired
+    private DatabaseUtils databaseUtils;
 
     public BoardController(BoardRepository repo) {
         this.repo = repo;
@@ -107,5 +112,13 @@ public class BoardController {
 
         return ResponseEntity.ok(saved);
     }
+
+    @PostMapping(path = "/refresh/{id}")
+    public void postMethodName(@PathVariable("id") long boardId) {
+        Board board = repo.getById(boardId);
+        databaseUtils.PopagateIDs(board);
+        repo.save(board);
+    }
+    
 }
 

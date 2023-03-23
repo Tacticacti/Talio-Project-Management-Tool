@@ -5,8 +5,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.GenerationType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.GeneratedValue;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -29,10 +27,13 @@ public class Card implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
-    //public long list_id;
+    public Long listId;
+
+    /*
     @ManyToOne
     @JoinColumn(name = "BOARDLIST_ID")
     public BoardList boardList;
+    */
 
     public String title;
     public String description;
