@@ -32,7 +32,7 @@ public class ConnectHomeCtrl {
         catch(Exception e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
+            alert.setContentText("No talio instant present on: " + addr);
             alert.showAndWait();
             exception = true;
             return;
