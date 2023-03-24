@@ -60,7 +60,9 @@ public class Card implements Serializable {
     }
 
     public Card() {
-
+        subtasks = new ArrayList<>();
+        tags = new ArrayList<>();
+        completedSubs = 0;
     }
     //getters and setters
 

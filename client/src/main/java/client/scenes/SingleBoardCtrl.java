@@ -224,7 +224,7 @@ public class SingleBoardCtrl implements Initializable {
         for(Node hb: subs.getChildren()){
             CheckBox cb = (CheckBox) ((HBox) hb).getChildren().get(0);
 
-            if( current.getSubtasks()!=null && !current.getSubtasks().contains(cb.getText()))
+            if(!current.getSubtasks().contains(cb.getText()))
                 current.addSubTask(cb.getText());
         }
         server.addCard(current);

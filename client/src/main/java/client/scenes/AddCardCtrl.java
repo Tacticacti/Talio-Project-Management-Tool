@@ -170,13 +170,6 @@ public class AddCardCtrl {
         HBox parent = (HBox) delBtn.getParent();
         CheckBox cb = (CheckBox) parent.getChildren().get(0);
         current.removeSubTask(cb.getText());
-        //clicking the delete button on the interface for a subtask
-        //getting selected subtask and index form listview using getSelected
-        // and placing in two list of String and int
-        //removing them from the interface (Listview)
-        //removing them from card
-        //  added.removeSubTask("");
-        //adding a subtask
 
     }
     public void addTag(){
