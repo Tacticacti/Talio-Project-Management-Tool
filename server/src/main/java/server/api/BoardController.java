@@ -107,5 +107,31 @@ public class BoardController {
 
         return ResponseEntity.ok(saved);
     }
+    @PostMapping(path="/delete/{id}")
+    public void deleteCardFromId(@PathVariable ("id") long boardId
+            ,@RequestBody Pair<Long,Card> req)
+    {
+        if(!repo.existsById(boardId)) {
+            throw new RuntimeException();
+        }
+
+        System.out.println("--------------------------");
+        System.out.println(boardId + " " + req.getFirst() + " " +
+                req.getSecond());
+        System.out.println("--------------------------");
+
+        Board board = repo.findById(boardId).get();
+
+        Long listId = req.getFirst();
+        Card card = req.getSecond();
+        if(board.getLists().size() <= listId || listId < 0) {
+            throw new RuntimeException();
+        }
+
+        board.getLists().get(listId.intValue()).removeCard(card);
+        repo.save(board);
+    }
+
+
 }
 
