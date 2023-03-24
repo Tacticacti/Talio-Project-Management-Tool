@@ -8,19 +8,6 @@ import commons.Card;
 
 @Service
 public class DatabaseUtils {
-
-    public Board PopagateIDs(Board board) {
-        for(BoardList bl : board.getLists()) {
-            bl.boardId = board.getId();
-            for(Card c : bl.getCards()) {
-                c.listId = bl.getId();
-                c.boardId = board.getId();
-            }
-        }
-
-        return board;
-    }
-
     public Board mockSimpleBoard() {
         Board board = new Board("test board");
         BoardList l1 = new BoardList("test list 1");

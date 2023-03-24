@@ -32,10 +32,8 @@ public class BoardController {
         
 
         // TODO uncomment **ONLY** for debug!!
-        /*
         Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
-        */
     }
 
     @GetMapping(path = {"", "/"})
@@ -110,13 +108,4 @@ public class BoardController {
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }
-
-    @PostMapping(path = "/refresh/{id}")
-    public ResponseEntity<Board> refreshBoardById(@PathVariable("id") long boardId) {
-        Board board = repo.getById(boardId);
-        databaseUtils.PopagateIDs(board);
-        repo.save(board);
-        return ResponseEntity.ok(board);
-    }
-    
 }

@@ -5,10 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class BoardList {
@@ -16,13 +20,10 @@ public class BoardList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "BOARD_ID")
     public Board board;
-    */
-
-    public Long boardId;
 
     private String name;
 
@@ -61,6 +62,8 @@ public class BoardList {
     // Board functionality
     public void addCard(Card card) {
         // card.boardList = this;
+        card.board = this.board;
+        card.boardList = this;
         this.cards.add(card);
     }
 
