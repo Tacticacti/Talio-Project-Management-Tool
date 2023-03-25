@@ -312,7 +312,7 @@ public class SingleBoardCtrl implements Initializable {
 
     public void updateCardFromList(Long boardId, Long listidindex, Card current){
         try{
-            server.updateCardFromList(boardId,listidindex,current);
+            server.updateCardFromList(boardId, listidindex, current);
         }catch(WebApplicationException e){
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
