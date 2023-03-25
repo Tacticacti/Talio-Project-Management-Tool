@@ -50,6 +50,33 @@ public class ConnectHomeCtrl {
         mainCtrl.showBoardOverview();
     }
 
+    public void connectDefault() {
+        boolean ok = false;
+        boolean exception = false;
+        String addr = "http://localhost:8080";
+        try {
+            addr = addr.trim();
+            ok = server.check(addr);
+        }
+        catch(Exception e) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("No talio instant present on: " + addr);
+            alert.showAndWait();
+            exception = true;
+            return;
+        }
+        if(!ok && !exception) {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Invalid url: " + addr);
+            alert.showAndWait();
+            return;
+        }
+        server.setServer(addr);
+        mainCtrl.showBoardOverview();
+    }
+
     public void keyPressed(KeyEvent e) {
         switch(e.getCode()) {
             case ENTER:

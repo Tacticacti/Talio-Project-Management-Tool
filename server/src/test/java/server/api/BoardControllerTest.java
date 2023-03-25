@@ -104,4 +104,44 @@ public class BoardControllerTest {
         var ret = controller.addListToBoard(1000, "custom name");
         assertEquals(BAD_REQUEST, ret.getStatusCode());
     }
+
+    @Test
+    public void addListOK() {
+        controller.add(b1);
+        String name = "custom list";
+        var ret = controller.addListToBoard(0, name);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(name, ret.getBody().getName());
+    }
+
+    @Test
+    public void changeListNameWrongBoardId() {
+        controller.add(b1);
+        String name = "custom list";
+        Pair<String, Long> req = Pair.of(name, 0L);
+        var ret = controller.changeListsName(1000, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void changeListNameWrongListId() {
+        controller.add(b1);
+        String name = "custom list";
+        Pair<String, Long> req = Pair.of(name, 1000L);
+        var ret = controller.changeListsName(0, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void changeListNameOk() {
+        BoardList bl2 = new BoardList();
+        bl2.setId(10);
+        b1.addList(bl2);
+        controller.add(b1);
+        String name = "custom list";
+        Pair<String, Long> req = Pair.of(name, 10L);
+        var ret = controller.changeListsName(0, req);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(name, ret.getBody().getName());
+    }
 }
