@@ -185,7 +185,7 @@ public class SingleBoardCtrl implements Initializable {
             });
             card.setOnDragOver(event -> {
                 if (board.hasString()) {
-//                    System.out.println("Card " + board.getString() + " is being dragged!");//test statment
+//                    System.out.println("Card " + board.getString() + " is being dragged!");
                     event.acceptTransferModes(TransferMode.MOVE);
                 }
                 event.consume();
