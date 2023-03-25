@@ -9,6 +9,8 @@ import jakarta.ws.rs.WebApplicationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -20,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -153,6 +156,9 @@ public class AddCardCtrl {
         CheckBox cb = new CheckBox();
         cb.setText(text);
         Button delBtn = new Button();
+        HBox.setHgrow(delBtn, Priority.ALWAYS);
+        sub.setAlignment(Pos.BASELINE_LEFT);
+        sub.setPadding(new Insets(0));
         delBtn.setOnAction(event -> deleteSubTask(delBtn, current));
         delBtn.setPrefHeight(20);
         ImageView imageView = new ImageView(getClass()

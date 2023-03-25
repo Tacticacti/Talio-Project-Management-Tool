@@ -310,6 +310,16 @@ public class SingleBoardCtrl implements Initializable {
         //refreshList(1l, 0l);
     }
 
+    public void updateCardFromList(Long boardId, Long listidindex, Card current){
+        try{
+            server.updateCardFromList(boardId,listidindex,current);
+        }catch(WebApplicationException e){
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
     public void saveCardToList(Long boardId, Long listidindex, Card current){
         try{
             server.addCardToList(boardId, listidindex, current);
@@ -332,12 +342,14 @@ public class SingleBoardCtrl implements Initializable {
         VBox par = (VBox) hbox.getParent();
         par.getChildren().remove(hbox);
         nodeCardMap.remove(hbox, current);
-        //server.deleteCard(current.getId());
+        server.deleteCard(current.getId());
        // server.deleteCardFromList(1l, 0l, current);
         Button source = (Button) event.getSource();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
     }
+
+
 
 
 
