@@ -148,7 +148,7 @@ public class SingleBoardCtrl implements Initializable {
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
     }
 
-    public void addCard(VBox parent) {
+    public void addCard(VBox parentList) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
         CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
         fxmlLoader.setController(controller);
@@ -156,8 +156,8 @@ public class SingleBoardCtrl implements Initializable {
             Node cardNode = fxmlLoader.load();
             Button detailsButton = (Button) cardNode.lookup("#details");
             detailsButton.setOnAction(event -> mainCtrl.showAddCard());
-            int insertIndex = parent.getChildren().size() - 2;
-            if (parent.getChildren().size() < 2) {
+            int insertIndex = parentList.getChildren().size() - 2;
+            if (parentList.getChildren().size() < 2) {
                 insertIndex = 0;
             }
             cardNode.setOnDragDetected(event -> {
@@ -168,7 +168,6 @@ public class SingleBoardCtrl implements Initializable {
                 dragboard.setDragView(cardNode.snapshot(null, null));
                 event.consume();
             });
-
             cardNode.setOnDragOver(event -> {
                 Dragboard dragboard = event.getDragboard();
                 if (dragboard.hasString()) {
@@ -182,13 +181,13 @@ public class SingleBoardCtrl implements Initializable {
                 boolean success = false;
                 if (dragboard.hasString()) {
                     String cardId = dragboard.getString();
-                    Node draggedCardNode = parent.lookup("#" + cardId);
+                    Node draggedCardNode = parentList.lookup("#" + cardId);
                     if (draggedCardNode != null) {
                         VBox draggedCardParent = (VBox) draggedCardNode.getParent();
-                        if (draggedCardParent != parent) {
+                        if (draggedCardParent != parentList) {
                             draggedCardParent.getChildren().remove(draggedCardNode);
-                            int dropIndex = parent.getChildren().size() - 1;
-                            parent.getChildren().add(dropIndex, draggedCardNode);
+                            int dropIndex = parentList.getChildren().size() - 1;
+                            parentList.getChildren().add(dropIndex, draggedCardNode);
                             success = true;
                         }
                     }
@@ -198,7 +197,7 @@ public class SingleBoardCtrl implements Initializable {
             });
 
             System.out.println("Insert Index: " + insertIndex + ", Card Node: " + cardNode);
-            parent.getChildren().add(insertIndex, cardNode);
+            parentList.getChildren().add(insertIndex, cardNode);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
