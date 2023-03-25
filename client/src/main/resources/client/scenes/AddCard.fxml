@@ -33,6 +33,6 @@
             <VBox fx:id="subtaskVbox" prefHeight="116.0" prefWidth="453.0" />
          </content>
       </ScrollPane>
-      <Button layoutX="88.0" layoutY="206.0" mnemonicParsing="false" onAction="#addSubTask" text="+" AnchorPane.leftAnchor="88.0" AnchorPane.topAnchor="206.0" />
+      <Button fx:id="addSubtaskButton" layoutX="88.0" layoutY="206.0" mnemonicParsing="false" text="+" AnchorPane.leftAnchor="88.0" AnchorPane.topAnchor="206.0" />
    </children>
 </AnchorPane>

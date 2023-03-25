@@ -132,7 +132,7 @@ public class AddCardCtrl {
         //delete button
         //return to board overview
     }
-    public void addSubTask(){
+    public void addSubTask(Card current){
 
         //showcase a textfield for user input
         TextField sub = new TextField();
@@ -142,18 +142,18 @@ public class AddCardCtrl {
         {
             if(event.getCode() == KeyCode.ENTER){
                 subtaskVbox.getChildren().remove(sub);
-                displaySubs(sub.getText());
+                displaySubs(sub.getText(), current);
             }
         });
         // added.addSubTask("");
         //adding a subtask
     }
-    public void displaySubs(String text){
+    public void displaySubs(String text, Card current){
         HBox sub = new HBox();
         CheckBox cb = new CheckBox();
         cb.setText(text);
         Button delBtn = new Button();
-        delBtn.setOnAction(event -> deleteSubTask(delBtn));
+        delBtn.setOnAction(event -> deleteSubTask(delBtn, current));
         delBtn.setPrefHeight(20);
         ImageView imageView = new ImageView(getClass()
                 .getResource("../images/trash.png").toExternalForm());
@@ -168,12 +168,11 @@ public class AddCardCtrl {
 
 
     }
-    public void deleteSubTask(Button delBtn){
+    public void deleteSubTask(Button delBtn, Card current){
         subtaskVbox.getChildren().remove(delBtn.getParent());
         HBox parent = (HBox) delBtn.getParent();
         CheckBox cb = (CheckBox) parent.getChildren().get(0);
         current.removeSubTask(cb.getText());
-
     }
     public void addTag(){
         //adding a tag

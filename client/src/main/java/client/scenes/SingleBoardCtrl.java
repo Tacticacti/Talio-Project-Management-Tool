@@ -4,6 +4,7 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 import client.utils.ServerUtils;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,11 +13,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -34,14 +37,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
 
     @FXML
     private HBox hbox_lists;
@@ -57,8 +58,6 @@ public class SingleBoardCtrl implements Initializable {
     private Map<Node, Card> nodeCardMap;
 
     private Map<VBox, BoardList> boxBoardListMap;
-
-    private Random Ids;
 
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) throws IOException {
@@ -165,6 +164,7 @@ public class SingleBoardCtrl implements Initializable {
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
     }
 
+
     public Node displayList(BoardList boardList) throws IOException {
         var board_lists = hbox_lists.getChildren();
 
@@ -213,28 +213,36 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void addCard(VBox parent){
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
-        CardGUICtrl cgc = new CardGUICtrl(server, mainCtrl);
-        fxmlLoader.setController(cgc);
-        Card newCard = new Card();
-        try {
-            Node card = fxmlLoader.load();
-            card.setId(UUID.randomUUID().toString());
-            Button det = (Button) card.lookup("#details");
-            det.setOnAction(event -> enterCard(card));
-            nodeCardMap.put(card, newCard);
-            int index = parent.getChildren().size()-1;
-            if(parent.getChildren().size()==1){
-                index=0;
+        TextInputDialog titleinput = new TextInputDialog();
+        titleinput.setTitle("Card Title");
+        titleinput.setContentText("Enter card title:");
+        titleinput.showAndWait().ifPresent(title ->{
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
+            CardGUICtrl cgc = new CardGUICtrl(server, mainCtrl);
+            fxmlLoader.setController(cgc);
+            Card newCard = new Card(title);
+            try {
+                Node card = fxmlLoader.load();
+                card.setId(UUID.randomUUID().toString());
+                Button det = (Button) card.lookup("#details");
+                Label titleLabel = (Label) card.lookup("#taskTitle");
+                titleLabel.setText(title);
+                det.setOnAction(event -> enterCard(card));
+                nodeCardMap.put(card, newCard);
+                int index = parent.getChildren().size()-1;
+                if(parent.getChildren().size()==1){
+                    index=0;
+                }
+                parent.getChildren().add(index, card);
+                Card saved = server.addCard(newCard);
+                newCard.setId(saved.getId());
+                // server.addCardToList(1L, 0L, newCard);
+                //enterCard(card);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            parent.getChildren().add(index, card);
-            Card saved = server.addCard(newCard);
-            newCard.setId(saved.getId());
-           // server.addCardToList(1L, 0L, newCard);
-            enterCard(card);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        });
+
     }
 
     public void enterCard(Node card){
@@ -264,10 +272,12 @@ public class SingleBoardCtrl implements Initializable {
         title.setText(current.getTitle());
         TextArea desc =  (TextArea) root.lookup("#taskDescription");
         desc.setText(current.getDescription());
+        Button addSub = (Button) root.lookup("#addSubtaskButton");
+        AddCardCtrl addCardCtrl = fxmlLoader.getController();
+        addSub.setOnAction(event ->  addCardCtrl.addSubTask(current));
         if(current.getSubtasks()!=null){
             for(String s: current.getSubtasks()){
-                AddCardCtrl addCardCtrl = fxmlLoader.getController();
-                addCardCtrl.displaySubs(s);
+                addCardCtrl.displaySubs(s, current);
             }
         }
         Scene scene = new Scene(root);
@@ -293,10 +303,22 @@ public class SingleBoardCtrl implements Initializable {
                 current.addSubTask(cb.getText());
         }
         server.addCard(current);
-       // server.updateCardFromList(1L, 0L, current);
+        // saveCardToList(1l,0l,current);
+        // server.updateCardFromList(1L, 0L, current);
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         //refreshList(1l, 0l);
+    }
+
+    public void saveCardToList(Long boardId, Long listidindex, Card current){
+        try{
+            server.addCardToList(boardId, listidindex, current);
+        }catch(WebApplicationException e){
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     public void refreshList(long boardId, long listid) throws IOException {
@@ -317,17 +339,13 @@ public class SingleBoardCtrl implements Initializable {
         popup.close();
     }
 
+
+
     public void cancel(ActionEvent event, Node hboxCard){
         Button cancel = (Button) event.getSource();
         Stage popup = (Stage) cancel.getScene().getWindow();
         popup.close();
         TextField title = (TextField) cancel.getParent().lookup("#taskTitle");
-        if(title.getText()==null){
-            VBox list = (VBox) hboxCard.getParent();
-            list.getChildren().remove(hboxCard);
-            server.deleteCard(nodeCardMap.get(hboxCard).getId());
-        }
-
     }
 
 
