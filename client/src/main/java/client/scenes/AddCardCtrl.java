@@ -7,6 +7,7 @@ import commons.Card;
 import jakarta.ws.rs.WebApplicationException;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
 import javafx.geometry.Insets;
@@ -24,6 +25,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -155,6 +157,18 @@ public class AddCardCtrl {
         HBox sub = new HBox();
         CheckBox cb = new CheckBox();
         cb.setText(text);
+        cb.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(cb.isSelected()){
+                    current.completeSubTask(cb.getText());
+                    cb.setOpacity(0.5);
+                }else{
+                    current.uncompleteSubTask(cb.getText());
+                    cb.setOpacity(1);
+                }
+            }
+        });
         Button delBtn = new Button();
         HBox.setHgrow(delBtn, Priority.ALWAYS);
         sub.setAlignment(Pos.BASELINE_LEFT);
@@ -171,8 +185,42 @@ public class AddCardCtrl {
         sub.getChildren().add(delBtn);
         sub.setPrefWidth(subtaskVbox.getWidth());
         subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
+    }
 
-
+    public void displayCompletedSubs(String text, Card current){
+        HBox sub = new HBox();
+        CheckBox cb = new CheckBox();
+        cb.setText(text);
+        cb.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(cb.isSelected()){
+                    current.completeSubTask(cb.getText());
+                    cb.setOpacity(0.5);
+                }else{
+                    current.uncompleteSubTask(cb.getText());
+                    cb.setOpacity(1);
+                }
+            }
+        });
+        cb.setSelected(true);
+        cb.setOpacity(0.5);
+        Button delBtn = new Button();
+        HBox.setHgrow(delBtn, Priority.ALWAYS);
+        sub.setAlignment(Pos.BASELINE_LEFT);
+        sub.setPadding(new Insets(0));
+        delBtn.setOnAction(event -> deleteSubTask(delBtn, current));
+        delBtn.setPrefHeight(20);
+        ImageView imageView = new ImageView(getClass()
+                .getResource("../images/trash.png").toExternalForm());
+        imageView.setFitWidth(delBtn.getPrefWidth());
+        imageView.setFitHeight(delBtn.getPrefHeight());
+        imageView.setPreserveRatio(true);
+        delBtn.setGraphic(imageView);
+        sub.getChildren().add(cb);
+        sub.getChildren().add(delBtn);
+        sub.setPrefWidth(subtaskVbox.getWidth());
+        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
     }
     public void deleteSubTask(Button delBtn, Card current){
         subtaskVbox.getChildren().remove(delBtn.getParent());

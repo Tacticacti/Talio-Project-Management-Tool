@@ -277,7 +277,11 @@ public class SingleBoardCtrl implements Initializable {
         addSub.setOnAction(event ->  addCardCtrl.addSubTask(current));
         if(current.getSubtasks()!=null){
             for(String s: current.getSubtasks()){
-                addCardCtrl.displaySubs(s, current);
+                if(current.getCompletedTasks().contains(s)){
+                    addCardCtrl.displayCompletedSubs(s, current);
+                }else{
+                    addCardCtrl.displaySubs(s, current);
+                }
             }
         }
         Scene scene = new Scene(root);
@@ -308,6 +312,17 @@ public class SingleBoardCtrl implements Initializable {
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         //refreshList(1l, 0l);
+    }
+
+    public int getListIndex(Long boardId, Long listid){
+        Board b = server.getBoardById(boardId);
+        for(int i=0; i<b.getLists().size();i++){
+            if(b.getLists().get(i).getId()==listid){
+                return i;
+            }
+        }
+        return -1;
+
     }
 
     public void updateCardFromList(Long boardId, Long listidindex, Card current){
@@ -348,8 +363,6 @@ public class SingleBoardCtrl implements Initializable {
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
     }
-
-
 
 
 
