@@ -152,57 +152,52 @@ public class SingleBoardCtrl implements Initializable {
 
     }
 
-    
 
 
 
 
-    public void addCard(VBox parent){
+
+    public void addCard(VBox parent) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
         CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
         fxmlLoader.setController(controller);
         try {
-            Node card = fxmlLoader.load();
-            Button det = (Button) card.lookup("#details");
-            det.setOnAction(event -> mainCtrl.showAddCard());
-            int index =parent.getChildren().size()-2;
-            if(parent.getChildren().size()<2){
-                index=0;
+            Node cardNode = fxmlLoader.load();
+            Button detailsButton = (Button) cardNode.lookup("#details");
+            detailsButton.setOnAction(event -> mainCtrl.showAddCard());
+            int insertIndex = parent.getChildren().size() - 2;
+            if (parent.getChildren().size() < 2) {
+                insertIndex = 0;
             }
-            card.setOnDragDetected(event -> {
-                Dragboard db = card.startDragAndDrop(TransferMode.MOVE);
+            cardNode.setOnDragDetected(event -> {
+                Dragboard dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
-                content.putString(card.getId());
-                db.setContent(content);
-                // set custom data format
-                db.setDragView(card.snapshot(null, null));
+                content.putString(cardNode.getId());
+                dragboard.setContent(content);
+                dragboard.setDragView(cardNode.snapshot(null, null));
                 event.consume();
             });
 
-            card.setOnDragOver(event -> {
-                Dragboard db = event.getDragboard();
-                // check if dragboard contains data with custom data format
-                if (db.hasString()) {
-                    // accept transfer mode
+            cardNode.setOnDragOver(event -> {
+                Dragboard dragboard = event.getDragboard();
+                if (dragboard.hasString()) {
                     event.acceptTransferModes(TransferMode.MOVE);
                 }
                 event.consume();
             });
 
-            card.setOnDragDropped(event -> {
-                Dragboard db = event.getDragboard();
+            cardNode.setOnDragDropped(event -> {
+                Dragboard dragboard = event.getDragboard();
                 boolean success = false;
-                if (db.hasString()) {
-                    String cardId = db.getString();
-                    Node draggedCard = parent.lookup("#" + cardId);
-                    if (draggedCard != null) {
-                        VBox cardParent = (VBox) draggedCard.getParent();
-                        if (cardParent != parent) {
-                            // remove the card from its current parent
-                            cardParent.getChildren().remove(draggedCard);
-                            // add the card to the new parent
+                if (dragboard.hasString()) {
+                    String cardId = dragboard.getString();
+                    Node draggedCardNode = parent.lookup("#" + cardId);
+                    if (draggedCardNode != null) {
+                        VBox draggedCardParent = (VBox) draggedCardNode.getParent();
+                        if (draggedCardParent != parent) {
+                            draggedCardParent.getChildren().remove(draggedCardNode);
                             int dropIndex = parent.getChildren().size() - 1;
-                            parent.getChildren().add(dropIndex, draggedCard);
+                            parent.getChildren().add(dropIndex, draggedCardNode);
                             success = true;
                         }
                     }
@@ -211,10 +206,8 @@ public class SingleBoardCtrl implements Initializable {
                 event.consume();
             });
 
-
-
-            System.out.println("Index: " + index + ", Card: " + card);
-            parent.getChildren().add(index, card);
+            System.out.println("Insert Index: " + insertIndex + ", Card Node: " + cardNode);
+            parent.getChildren().add(insertIndex, cardNode);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
