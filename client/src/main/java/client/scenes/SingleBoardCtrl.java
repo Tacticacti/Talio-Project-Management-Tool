@@ -226,7 +226,7 @@ public class SingleBoardCtrl implements Initializable {
             parent.getChildren().add(index, card);
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
-            server.addCardToList(1L,0L,newCard);
+            server.addCardToList(1L, 0L, newCard);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
