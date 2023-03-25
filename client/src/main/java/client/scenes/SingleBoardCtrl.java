@@ -15,7 +15,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -24,7 +28,6 @@ import java.net.URL;
 
 import com.google.inject.Inject;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -93,7 +96,8 @@ public class SingleBoardCtrl implements Initializable {
 
     @Override
     public void initialize (URL location, ResourceBundle resources){
-        ImageView imageView = new ImageView(getClass().getResource("../images/settings_icon.png").toExternalForm());
+        ImageView imageView = new ImageView(getClass()
+                .getResource("../images/settings_icon.png").toExternalForm());
         imageView.setFitWidth(settingsBtn.getPrefWidth());
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
@@ -172,7 +176,7 @@ public class SingleBoardCtrl implements Initializable {
         Button btn2 =  (Button) list.lookup("#addNewCardButton");
         VBox par = (VBox) btn2.getParent();
         for(Card c: boardList.getCards()){
-            placeCard(par,c);
+            placeCard(par, c);
         }
         btn2.setOnAction(event ->{
             addCard(par);
@@ -283,7 +287,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void delete(ActionEvent event, Node hbox, Card current){
-        VBox par = (VBox)hbox.getParent();
+        VBox par = (VBox) hbox.getParent();
         par.getChildren().remove(hbox);
         nodeCardMap.remove(hbox, current);
         server.deleteCard(current.getId());

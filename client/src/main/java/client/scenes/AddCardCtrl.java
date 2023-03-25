@@ -112,8 +112,7 @@ public class AddCardCtrl {
         // it is already in the column list and we need to find it via its id
         //and then change the values of its attributes
         try {
-
-             server.addCard(new Card());
+            server.addCard(new Card());
         } catch (WebApplicationException e){
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
