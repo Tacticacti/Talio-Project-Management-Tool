@@ -1,40 +1,38 @@
 package client.scenes;
 
-import client.utils.ServerUtils;
-import com.google.inject.Inject;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+import client.utils.ServerUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.google.inject.Inject;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import java.io.IOException;
+
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
-
-    private ClipboardContent content;
-
-    private Dragboard board;
     private final MainCtrl mainCtrl;
-
-    public AnchorPane card;
 
 
     @FXML
@@ -161,8 +159,6 @@ public class SingleBoardCtrl implements Initializable {
 
     public void addCard(VBox parent){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
-        CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
-        fxmlLoader.setController(controller);
         try {
             Node card = (Node) fxmlLoader.load();
             Button det = (Button) card.lookup("#details");
@@ -171,29 +167,6 @@ public class SingleBoardCtrl implements Initializable {
             if(parent.getChildren().size()<2){
                 index=0;
             }
-            card.setOnDragDetected(event -> {
-                board = card.startDragAndDrop(TransferMode.MOVE);
-                content = new ClipboardContent();
-                content.putString(card.getId());
-                board.setContent(content);
-                event.consume();
-            });
-            card.setOnDragOver(event -> {
-                System.out.println(card + " is being dragged!");//test statment
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                event.consume();
-            });
-            card.setOnDragDone(event -> {
-                if (event.getTransferMode() == TransferMode.MOVE) {
-                    //TODO:remove unnecessary things
-                    System.out.println("todo");
-                }
-                System.out.println("Drag is done!");
-                var cardParent = (VBox) card.getParent();
-                cardParent.getChildren().remove(card);
-                
-                event.consume();
-            });
             parent.getChildren().add(index, card);
         } catch (IOException e) {
             throw new RuntimeException(e);
