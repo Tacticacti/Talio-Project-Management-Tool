@@ -2,6 +2,7 @@ package server.api;
 
 import java.util.List;
 import commons.Board;
+import commons.BoardList;
 import commons.Card;
 import server.database.BoardRepository;
 
@@ -23,8 +24,7 @@ public class BoardController {
     public BoardController(BoardRepository repo) {
         this.repo = repo;
 
-        // TODO STUPID DEBUG I HAVE TO REMOVE THIS ASAP!!!!!
-        /*
+
         Board board = new Board("test board");
         BoardList l1 = new BoardList("test list 1");
         l1.addCard(new Card("aa"));
@@ -40,8 +40,7 @@ public class BoardController {
 
         board.addList(l2);
         repo.save(board);
-        */
-        // TODO END OF DEBUG!!!!
+
     }
 
     @GetMapping(path = "/TalioPresent")
@@ -130,6 +129,42 @@ public class BoardController {
 
         board.getLists().get(listId.intValue()).removeCard(card);
         repo.save(board);
+    }
+
+    @PostMapping(path="/update/{id}")
+    public ResponseEntity<Board> updateCardInId(@PathVariable("id") long boardId
+            , @RequestBody Pair<Long,Card> req){
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        System.out.println("--------------------------");
+        System.out.println(boardId + " " + req.getFirst() + " " +
+                req.getSecond());
+        System.out.println("--------------------------");
+
+        Board board = repo.findById(boardId).get();
+
+        Long listId = req.getFirst();
+        Card card = req.getSecond();
+        if(board.getLists().size() <= listId || listId < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        int cardIndex = 0;
+        for(int i=0; i< board.getLists().get(listId.intValue()).getCards().size(); i++){
+            if(board.getLists().get(listId.intValue()).getCards().get(i).equals(card)){
+                cardIndex = i;
+                break;
+            }
+        }
+        Card toupdate = board.getLists().get(listId.intValue()).getCards().get(cardIndex);
+        toupdate.setTitle(card.getTitle());
+        toupdate.setDescription(card.getDescription());
+        for(String s: card.getSubtasks()){
+            toupdate.addSubTask(s);
+        }
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
     }
 
 

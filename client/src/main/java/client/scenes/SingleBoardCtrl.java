@@ -221,6 +221,7 @@ public class SingleBoardCtrl implements Initializable {
             parent.getChildren().add(index, card);
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
+            server.addCardToList(3L,0L,newCard);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -306,7 +307,6 @@ public class SingleBoardCtrl implements Initializable {
             list.getChildren().remove(hboxCard);
             server.deleteCard(nodeCardMap.get(hboxCard).getId());
         }
-
 
     }
 
