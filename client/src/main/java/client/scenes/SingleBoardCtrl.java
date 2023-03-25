@@ -290,16 +290,16 @@ public class SingleBoardCtrl implements Initializable {
                 current.addSubTask(cb.getText());
         }
         server.addCard(current);
-        server.updateCardFromList(1L,0L,current);
+        server.updateCardFromList(1L, 0L, current);
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
-        refreshList(1l,0l);
+        refreshList(1l, 0l);
     }
 
     public void refreshList(long boardId, long listid) throws IOException {
         Board b = server.getBoardById(boardId);
-        hbox_lists.getChildren().remove((int)listid);
-        hbox_lists.getChildren().add((int)listid, displayList(b.getLists().get((int)listid)));
+        hbox_lists.getChildren().remove((int) listid);
+        hbox_lists.getChildren().add((int) listid, displayList(b.getLists().get((int) listid)));
 
     }
 
@@ -308,7 +308,7 @@ public class SingleBoardCtrl implements Initializable {
         par.getChildren().remove(hbox);
         nodeCardMap.remove(hbox, current);
         //server.deleteCard(current.getId());
-        server.deleteCardFromList(1l,0l,current);
+        server.deleteCardFromList(1l, 0l, current);
         Button source = (Button) event.getSource();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
