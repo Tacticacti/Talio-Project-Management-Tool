@@ -5,8 +5,11 @@ import commons.BoardList;
 import commons.Card;
 import client.utils.ServerUtils;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,8 +20,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 
-
-import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.*;
 
@@ -153,8 +154,52 @@ public class SingleBoardCtrl implements Initializable {
         });
 
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
+    }
+
+    public void displayList(BoardList boardList) throws IOException {
+        var board_lists = hbox_lists.getChildren();
 
 
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
+        Node list = loader.load();
+        TextField title = (TextField) list.lookup("#list_title");
+        title.setText(boardList.getName());
+
+        board_lists.add(board_lists.size()-1, list);
+
+        Button btn =  (Button) list.lookup("#deleteBtn");
+        btn.setOnAction(event -> board_lists.remove(btn.getParent()));
+
+        Button btn2 =  (Button) list.lookup("#addNewCardButton");
+        VBox par = (VBox) btn2.getParent();
+        for(Card c: boardList.getCards()){
+            placeCard(par,c);
+        }
+        btn2.setOnAction(event ->{
+            addCard(par);
+        });
+
+        board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
+    }
+
+    public void placeCard(VBox parent,Card card){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
+        CardGUICtrl cgc = new CardGUICtrl(server,mainCtrl);
+        fxmlLoader.setController(cgc);
+        try {
+            Node hbox = fxmlLoader.load();
+            Button det = (Button) hbox.lookup("#details");
+            det.setOnAction(event -> enterCard(hbox));
+            nodeCardMap.put(hbox, card);
+            int index = parent.getChildren().size()-1;
+            if(parent.getChildren().size()==1){
+                index=0;
+            }
+            parent.getChildren().add(index,hbox);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void addCard(VBox parent){
@@ -172,16 +217,19 @@ public class SingleBoardCtrl implements Initializable {
                 index=0;
             }
             parent.getChildren().add(index,card);
+            Card saved = server.addCard(newCard);
+            newCard.setId(saved.getId());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void enterCard(Node card){
-        Card current = nodeCardMap.get(card);
+        Card blah = nodeCardMap.get(card);
+        Card current = server.getCardById(nodeCardMap.get(card).getId());
+        StringProperty ti = new SimpleStringProperty(current.getTitle());
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddCard.fxml"));
         Parent root = null;
-
         try {
             root = fxmlLoader.load();
         } catch (IOException e) {
@@ -191,12 +239,12 @@ public class SingleBoardCtrl implements Initializable {
         Button doneBtn = (Button) root.lookup("#doneTaskButton");
         doneBtn.setOnAction(event -> done(event,current));
         Button deleteBtn = (Button) root.lookup("#deleteTaskButton");
+        deleteBtn.setOnAction(event -> delete(event,card,current));
         Button cancelBtn = (Button) root.lookup("#cancelTaskButton");
-
+        cancelBtn.setOnAction(event -> cancel(event,card));
         TextField title = (TextField) root.lookup("#taskTitle");
         Label titlel = (Label) card.lookup("#taskTitle");
-        Bindings.bindBidirectional(title.textProperty(), titlel.textProperty());
-        title.setText(current.getTitle());
+        Bindings.bindBidirectional(title.textProperty(),ti);
         TextArea desc =  (TextArea) root.lookup("#taskDescription");
         desc.setText(current.getDescription());
         if(current.getSubtasks()!=null){
@@ -232,7 +280,31 @@ public class SingleBoardCtrl implements Initializable {
         popup.close();
     }
 
-    public void delete(){
+    public void refresh(){
+
+    }
+
+    public void delete(ActionEvent event,Node hbox, Card current){
+        VBox par = (VBox)hbox.getParent();
+        par.getChildren().remove(hbox);
+        nodeCardMap.remove(hbox,current);
+        server.deleteCard(current.getId());
+        Button source = (Button) event.getSource();
+        Stage popup = (Stage) source.getScene().getWindow();
+        popup.close();
+    }
+
+    public void cancel(ActionEvent event, Node hboxCard){
+        Button cancel = (Button) event.getSource();
+        Stage popup = (Stage) cancel.getScene().getWindow();
+        popup.close();
+        TextField title = (TextField) cancel.getParent().lookup("#taskTitle");
+        if(title.getText()==null){
+            VBox list = (VBox) hboxCard.getParent();
+            list.getChildren().remove(hboxCard);
+            server.deleteCard(nodeCardMap.get(hboxCard).getId());
+        }
+
 
     }
 

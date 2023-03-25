@@ -7,6 +7,7 @@ import commons.Card;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,7 +20,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +74,7 @@ public class AddCardCtrl {
     public void setUp(Node card){
 
     }
-    public void cancel() {
+    public void cancel(ActionEvent event) {
         //node.getParent();
 
 //        for(String s: additions){
