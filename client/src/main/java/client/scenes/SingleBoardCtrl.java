@@ -51,7 +51,6 @@ public class SingleBoardCtrl implements Initializable {
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) throws IOException {
         this.mainCtrl = mainCtrl;
         this.server = server;
-
     }
 
     public void pullLists(Long id) {
@@ -121,14 +120,14 @@ public class SingleBoardCtrl implements Initializable {
 
 
     public void createNewList() throws IOException {
-        var board_lists = hbox_lists.getChildren();
+        ObservableList<Node> board_lists = hbox_lists.getChildren();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
         Node list = loader.load();
         board_lists.add(board_lists.size()-1, list);
 
-        Button btn =  (Button) list.lookup("#deleteBtn");
-        btn.setOnAction(event -> board_lists.remove(btn.getParent()));
+        Button deleteList =  (Button) list.lookup("#deleteBtn");
+        deleteList.setOnAction(event -> board_lists.remove(deleteList.getParent()));
 
         TextField title = (TextField) list.lookup("#list_title");
 
@@ -141,21 +140,13 @@ public class SingleBoardCtrl implements Initializable {
                 throw new RuntimeException(e);
             }
         });
-        Button btn2 =  (Button) list.lookup("#addNewCardButton");
-        btn2.setOnAction(event ->{
-            VBox par = (VBox) btn2.getParent();
+        Button newCard =  (Button) list.lookup("#addNewCardButton");
+        newCard.setOnAction(event ->{
+            VBox par = (VBox) newCard.getParent();
             addCard(par);
         });
-
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
-
-
     }
-
-
-
-
-
 
     public void addCard(VBox parent) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
