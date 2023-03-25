@@ -133,7 +133,7 @@ public class BoardController {
 
     @PostMapping(path="/update/{id}")
     public ResponseEntity<Board> updateCardInId(@PathVariable("id") long boardId
-            , @RequestBody Pair<Long,Card> req){
+            , @RequestBody Pair<Long, Card> req){
         if(!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
