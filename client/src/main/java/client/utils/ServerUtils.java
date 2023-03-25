@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import commons.BoardList;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Board;
@@ -105,24 +106,25 @@ public class ServerUtils {
                 .target(server).path("api/boards/add/" + boardId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair<Long, Card>(boardListId, card),
+                .post(Entity.entity(new CustomPair<>(boardListId, card),
                         APPLICATION_JSON), Board.class);
     }
 
-    public Board addEmptyList(Long boardId, String name) {
+    public BoardList addEmptyList(Long boardId, String name) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/boards/add/list/" + boardId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(name, APPLICATION_JSON), Board.class);
+                .post(Entity.entity(name, APPLICATION_JSON),
+                        BoardList.class);
     }
 
-    public Board changeListName(Long boardId, Long listId, String name) {
+    public BoardList changeListName(Long boardId, Long listId, String name) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/boards/list/changeName/" + boardId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(new CustomPair<String, Long>(name, listId),
-                        APPLICATION_JSON), Board.class);
+                .post(Entity.entity(new CustomPair<>(name, listId),
+                        APPLICATION_JSON), BoardList.class);
     }
 }

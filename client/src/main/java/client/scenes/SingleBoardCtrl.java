@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -28,13 +29,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+
 import java.io.IOException;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
 
-
+    private final Long boardId = 1L;
     @FXML
     private HBox hbox_lists;
 
@@ -46,6 +49,7 @@ public class SingleBoardCtrl implements Initializable {
 
     private ObservableList<BoardList> lists;
 
+    // Map<Node, BoardList> nodeToList;
 
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) throws IOException {
@@ -85,6 +89,7 @@ public class SingleBoardCtrl implements Initializable {
 
     @Override
     public void initialize (URL location, ResourceBundle resources){
+        //nodeToList = new HashMap<>();
         ImageView imageView = new ImageView(getClass()
             .getResource("../images/settings_icon.png")
             .toExternalForm());
@@ -92,12 +97,14 @@ public class SingleBoardCtrl implements Initializable {
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
         settingsBtn.setGraphic(imageView);
+        /*
         try {
             createNewList();
         }
         catch(IOException e) {
             e.printStackTrace();
         }
+        */
         //server.addCardToList(1L, 0L, new Card("card from init"));
 
         //  TODO change 1L -> board_id if we are going multiboard
@@ -127,6 +134,9 @@ public class SingleBoardCtrl implements Initializable {
         Node list = loader.load();
         board_lists.add(board_lists.size()-1, list);
 
+        BoardList boardList = server.addEmptyList(1L, " ");
+        list.setUserData(boardList);
+
         Button btn =  (Button) list.lookup("#deleteBtn");
         btn.setOnAction(event -> board_lists.remove(btn.getParent()));
 
@@ -135,10 +145,17 @@ public class SingleBoardCtrl implements Initializable {
         title.setOnAction(event -> {
             try {
                 if (!title.getText().isEmpty()) {
-                    createNewList();
+                    System.out.println(title.getText());
+                    BoardList tmp = (BoardList) list.getUserData();
+                    System.out.println("requesting change name: " + boardId +  " " + tmp.getId() +
+                            " " + title.getText());
+                    server.changeListName(boardId, tmp.getId(), title.getText());
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                var alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Error changing list's name!");
+                alert.showAndWait();
             }
         });
         Button btn2 =  (Button) list.lookup("#addNewCardButton");

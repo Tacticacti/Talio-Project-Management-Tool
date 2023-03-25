@@ -111,12 +111,7 @@ public class BoardControllerTest {
         String name = "custom list";
         var ret = controller.addListToBoard(0, name);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        boolean ok = false;
-        for(BoardList bl : ret.getBody().getLists()) {
-            if(bl.getName().equals(name))
-                ok = true;
-        }
-        assertTrue(ok);
+        assertEquals(name, ret.getBody().getName());
     }
 
     @Test
@@ -138,12 +133,15 @@ public class BoardControllerTest {
     }
 
     @Test
-    public void changeListNameWrongOk() {
+    public void changeListNameOk() {
+        BoardList bl2 = new BoardList();
+        bl2.setId(10);
+        b1.addList(bl2);
         controller.add(b1);
         String name = "custom list";
-        Pair<String, Long> req = Pair.of(name, 0L);
+        Pair<String, Long> req = Pair.of(name, 10L);
         var ret = controller.changeListsName(0, req);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertEquals(name, ret.getBody().getLists().get(0).getName());
+        assertEquals(name, ret.getBody().getName());
     }
 }

@@ -1,6 +1,7 @@
 package server.api;
 
 import java.util.List;
+import java.util.Objects;
 
 import commons.Board;
 import commons.Card;
@@ -98,8 +99,15 @@ public class BoardController {
     }
 
     @PostMapping(path = "/add/list/{id}")
-    public ResponseEntity<Board> addListToBoard(@PathVariable("id") long boardId,
+    public ResponseEntity<BoardList> addListToBoard(@PathVariable("id") long boardId,
         @RequestBody String listName) {
+
+        // String listName = nameIn.getBody();
+
+        System.out.println("---------------------------");
+        System.out.println("addListToBoard: ");
+        System.out.println(boardId + " " + listName);
+        System.out.println("---------------------------");
 
         if (!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
@@ -108,11 +116,12 @@ public class BoardController {
         Board board = repo.findById(boardId).get();
         board.addList(new BoardList(listName));
         Board saved = repo.save(board);
-        return ResponseEntity.ok(saved);
+        Long listId = saved.getLists().size()-1L;
+        return ResponseEntity.ok(saved.getLists().get(listId.intValue()));
     }
 
     @PostMapping(path = "/list/changeName/{id}")
-    public ResponseEntity<Board> changeListsName(@PathVariable("id") long boardId,
+    public ResponseEntity<BoardList> changeListsName(@PathVariable("id") long boardId,
         @RequestBody Pair<String, Long> req) {
 
         if (!repo.existsById(boardId)) {
@@ -124,13 +133,23 @@ public class BoardController {
 
 
         Board board = repo.findById(boardId).get();
+        BoardList saved = null;
 
-        if(listId < 0 || listId >= board.getLists().size()) {
+        boolean found = false;
+        for(BoardList bl : board.getLists()) {
+            if(Objects.equals(bl.getId(), listId)) {
+                found = true;
+                bl.setName(listName);
+                saved = bl;
+                break;
+            }
+        }
+
+        if(!found) {
             return ResponseEntity.badRequest().build();
         }
 
-        board.getLists().get(listId.intValue()).setName(listName);
-        Board saved = repo.save(board);
+        repo.save(board);
         return ResponseEntity.ok(saved);
     }
 }
