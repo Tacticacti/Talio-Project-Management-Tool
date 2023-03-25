@@ -90,6 +90,15 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPairLongCard(boardListId, card),
                     APPLICATION_JSON), Board.class);
     }
+
+    public Board updateCardFromList(Long boardId, Long boardListId, Card card) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/update/" + boardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(new CustomPairLongCard(boardListId, card),
+                        APPLICATION_JSON), Board.class);
+    }
     public Card addCard(Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/cards/add") //

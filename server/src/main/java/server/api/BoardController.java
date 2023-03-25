@@ -137,7 +137,6 @@ public class BoardController {
         if(!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
-
         System.out.println("--------------------------");
         System.out.println(boardId + " " + req.getFirst() + " " +
                 req.getSecond());
