@@ -162,7 +162,7 @@ public class SingleBoardCtrl implements Initializable {
         CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
         fxmlLoader.setController(controller);
         try {
-            Node card = (Node) fxmlLoader.load();
+            Node card = fxmlLoader.load();
             Button det = (Button) card.lookup("#details");
             det.setOnAction(event -> mainCtrl.showAddCard());
             int index =parent.getChildren().size()-2;
@@ -170,28 +170,50 @@ public class SingleBoardCtrl implements Initializable {
                 index=0;
             }
             card.setOnDragDetected(event -> {
-                board = card.startDragAndDrop(TransferMode.MOVE);
-                content = new ClipboardContent();
+                Dragboard db = card.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
                 content.putString(card.getId());
-                board.setContent(content);
+                db.setContent(content);
+                // set custom data format
+                db.setDragView(card.snapshot(null, null));
                 event.consume();
             });
-            card.setOnDragOver(event -> {
-                System.out.println(card + " is being dragged!");//test statment
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                event.consume();
-            });
-            card.setOnDragDone(event -> {
-                if (event.getTransferMode() == TransferMode.MOVE) {
-                    //TODO:remove unnecessary things
-                    System.out.println("todo");
-                }
-                System.out.println("Drag is done!");
-                var cardParent = (VBox) card.getParent();
-                cardParent.getChildren().remove(card);
 
+            card.setOnDragOver(event -> {
+                Dragboard db = event.getDragboard();
+                // check if dragboard contains data with custom data format
+                if (db.hasString()) {
+                    // accept transfer mode
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
                 event.consume();
             });
+
+            card.setOnDragDropped(event -> {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasString()) {
+                    String cardId = db.getString();
+                    Node draggedCard = parent.lookup("#" + cardId);
+                    if (draggedCard != null) {
+                        VBox cardParent = (VBox) draggedCard.getParent();
+                        if (cardParent != parent) {
+                            // remove the card from its current parent
+                            cardParent.getChildren().remove(draggedCard);
+                            // add the card to the new parent
+                            int dropIndex = parent.getChildren().size() - 1;
+                            parent.getChildren().add(dropIndex, draggedCard);
+                            success = true;
+                        }
+                    }
+                }
+                event.setDropCompleted(success);
+                event.consume();
+            });
+
+
+
+            System.out.println("Index: " + index + ", Card: " + card);
             parent.getChildren().add(index, card);
         } catch (IOException e) {
             throw new RuntimeException(e);
