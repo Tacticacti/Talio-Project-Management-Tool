@@ -296,7 +296,7 @@ public class SingleBoardCtrl implements Initializable {
        // server.updateCardFromList(1L, 0L, current);
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
-        refreshList(1l, 0l);
+        //refreshList(1l, 0l);
     }
 
     public void refreshList(long boardId, long listid) throws IOException {
