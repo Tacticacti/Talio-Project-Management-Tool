@@ -101,12 +101,35 @@ public class BoardController {
     public ResponseEntity<Board> addListToBoard(@PathVariable("id") long boardId,
         @RequestBody String listName) {
 
-        if(!repo.existsById(boardId)) {
+        if (!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
 
         Board board = repo.findById(boardId).get();
         board.addList(new BoardList(listName));
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PostMapping(path = "/list/changeName/{id}")
+    public ResponseEntity<Board> changeListsName(@PathVariable("id") long boardId,
+        @RequestBody Pair<String, Long> req) {
+
+        if (!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Long listId = req.getSecond();
+        String listName = req.getFirst();
+
+
+        Board board = repo.findById(boardId).get();
+
+        if(listId < 0 || listId >= board.getLists().size()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        board.getLists().get(listId.intValue()).setName(listName);
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }
