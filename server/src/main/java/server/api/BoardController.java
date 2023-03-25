@@ -109,7 +109,7 @@ public class BoardController {
     }
     @PostMapping(path="/delete/{id}")
     public void deleteCardFromId(@PathVariable ("id") long boardId
-            ,@RequestBody Pair<Long,Card> req)
+            , @RequestBody Pair<Long, Card> req)
     {
         if(!repo.existsById(boardId)) {
             throw new RuntimeException();
