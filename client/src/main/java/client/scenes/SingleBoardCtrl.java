@@ -1,38 +1,30 @@
 package client.scenes;
 
+import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
-import client.utils.ServerUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
-
-import java.awt.datatransfer.Clipboard;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import com.google.inject.Inject;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
