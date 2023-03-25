@@ -152,4 +152,20 @@ public class BoardController {
         repo.save(board);
         return ResponseEntity.ok(saved);
     }
+
+    @PostMapping(path = "/list/delete/{id}")
+    public ResponseEntity<Void> deleteList(@PathVariable("id") long boardId,
+        @RequestBody long listId) {
+
+        if (!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        System.out.println("deleteting " + boardId + " " + listId);
+
+        Board board = repo.findById(boardId).get();
+        board.getLists().removeIf(x -> Objects.equals(x.getId(), listId));
+        repo.save(board);
+        return ResponseEntity.ok().build();
+    }
 }

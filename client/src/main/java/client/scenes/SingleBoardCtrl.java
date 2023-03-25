@@ -101,7 +101,20 @@ public class SingleBoardCtrl implements Initializable {
         list.setUserData(boardList);
 
         Button btn =  (Button) list.lookup("#deleteBtn");
-        btn.setOnAction(event -> board_lists.remove(btn.getParent()));
+        // btn.setOnAction(event -> board_lists.remove(btn.getParent()));
+        btn.setOnAction(event -> {
+                server.removeBoardList(boardId, boardList.getId());
+                try {
+                    refresh();
+                }
+                catch(Exception e) {
+                    var alert = new Alert(Alert.AlertType.ERROR);
+                    alert.initModality(Modality.APPLICATION_MODAL);
+                    alert.setContentText("Error removing list!");
+                    alert.showAndWait();
+                }
+            }
+        );
 
         TextField title = (TextField) list.lookup("#list_title");
         title.setText(boardList.getName());

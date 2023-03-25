@@ -127,4 +127,12 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair<>(name, listId),
                         APPLICATION_JSON), BoardList.class);
     }
+
+    public Void removeBoardList(Long boardId, Long listId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/boards/list/delete/" + boardId.toString())
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(listId, APPLICATION_JSON), Void.class);
+    }
 }
