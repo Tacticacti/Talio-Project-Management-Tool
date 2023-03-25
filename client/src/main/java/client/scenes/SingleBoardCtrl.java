@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -21,6 +22,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.WritableImage;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -148,61 +151,72 @@ public class SingleBoardCtrl implements Initializable {
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
     }
 
-    public void addCard(VBox parentList) {
+
+    public void addCard(VBox parent){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
         CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
         fxmlLoader.setController(controller);
         try {
-            Node cardNode = fxmlLoader.load();
-            Button detailsButton = (Button) cardNode.lookup("#details");
-            detailsButton.setOnAction(event -> mainCtrl.showAddCard());
-            int insertIndex = parentList.getChildren().size() - 2;
-            if (parentList.getChildren().size() < 2) {
-                insertIndex = 0;
+            Node card = (Node) fxmlLoader.load();
+            Button detailButton = (Button) card.lookup("#details");
+            detailButton.setOnAction(event -> mainCtrl.showAddCard());
+            int index =parent.getChildren().size()-2;
+            if(parent.getChildren().size()<2){
+                index=0;
             }
-            cardNode.setOnDragDetected(event -> {
-                Dragboard dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-                content.putString(cardNode.getId());
-                dragboard.setContent(content);
-                dragboard.setDragView(cardNode.snapshot(null, null));
+            parent.getChildren().add(index, card);
+            card.setOnDragDetected(event -> {
+                board = card.startDragAndDrop(TransferMode.MOVE);
+                content = new ClipboardContent();
+                content.putString(card.getId());
+                board.setContent(content);
+
+                // Create a snapshot of the current card
+                WritableImage snapshot = card.snapshot(new SnapshotParameters(), null);
+                ImageView imageView = new ImageView(snapshot);
+                imageView.setFitWidth(card.getBoundsInLocal().getWidth());
+                imageView.setFitHeight(card.getBoundsInLocal().getHeight());
+
+                // Set the custom drag view to only show the current card being dragged
+                board.setDragView(imageView.getImage(), event.getX(), event.getY());
+                System.out.println("On Drag Detected: " + parent);
+                System.out.println(parent.getChildren());
                 event.consume();
             });
-            cardNode.setOnDragOver(event -> {
-                Dragboard dragboard = event.getDragboard();
-                if (dragboard.hasString()) {
+            card.setOnDragOver(event -> {
+                if (board.hasString()) {
+//                    System.out.println("Card " + board.getString() + " is being dragged!");//test statment
                     event.acceptTransferModes(TransferMode.MOVE);
                 }
                 event.consume();
             });
-
-            cardNode.setOnDragDropped(event -> {
-                Dragboard dragboard = event.getDragboard();
+            card.setOnDragDone(event -> {
+                if (board.hasString()) {
+                    var cardParent = (VBox) card.getParent();
+                    cardParent.getChildren().remove(card);
+                }
+                System.out.println("On Drag Done: " + parent);
+                System.out.println(parent.getChildren());
+                event.consume();
+            });
+            card.setOnDragDropped(event -> {
+                System.out.println("On Drag Dropped: " + parent);
                 boolean success = false;
-                if (dragboard.hasString()) {
-                    String cardId = dragboard.getString();
-                    Node draggedCardNode = parentList.lookup("#" + cardId);
-                    if (draggedCardNode != null) {
-                        VBox draggedCardParent = (VBox) draggedCardNode.getParent();
-                        if (draggedCardParent != parentList) {
-                            draggedCardParent.getChildren().remove(draggedCardNode);
-                            int dropIndex = parentList.getChildren().size() - 1;
-                            parentList.getChildren().add(dropIndex, draggedCardNode);
-                            success = true;
-                        }
-                    }
+                if (board.hasString()) {
+                    System.out.println("Hello");
+                    System.out.println(parent.getChildren());
+                    parent.getChildren().add(0, card);
+                    System.out.println("world");
+                    success = true;
+                    System.out.println(parent.getChildren());
                 }
                 event.setDropCompleted(success);
                 event.consume();
             });
-
-            System.out.println("Insert Index: " + insertIndex + ", Card Node: " + cardNode);
-            parentList.getChildren().add(insertIndex, cardNode);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
 
     public void deleteList() {
 
