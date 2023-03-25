@@ -5,25 +5,28 @@ import client.utils.ServerUtils;
 import commons.Card;
 
 import jakarta.ws.rs.WebApplicationException;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
+
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.stream.Stream;
+
 
 
 public class AddCardCtrl {
@@ -110,7 +113,7 @@ public class AddCardCtrl {
         //and then change the values of its attributes
         try {
 
-            // server.addCard(added);
+             server.addCard(new Card());
         } catch (WebApplicationException e){
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -135,7 +138,7 @@ public class AddCardCtrl {
         //showcase a textfield for user input
         TextField sub = new TextField();
         sub.setPromptText("Enter subtask here");
-        subtaskVbox.getChildren().add(0,sub);
+        subtaskVbox.getChildren().add(0, sub);
         sub.setOnKeyPressed(event ->
         {
             if(event.getCode() == KeyCode.ENTER){
@@ -153,7 +156,8 @@ public class AddCardCtrl {
         Button delBtn = new Button();
         delBtn.setOnAction(event -> deleteSubTask(delBtn));
         delBtn.setPrefHeight(20);
-        ImageView imageView = new ImageView(getClass().getResource("../images/trash.png").toExternalForm());
+        ImageView imageView = new ImageView(getClass()
+                .getResource("../images/trash.png").toExternalForm());
         imageView.setFitWidth(delBtn.getPrefWidth());
         imageView.setFitHeight(delBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
@@ -161,7 +165,7 @@ public class AddCardCtrl {
         sub.getChildren().add(cb);
         sub.getChildren().add(delBtn);
         sub.setPrefWidth(subtaskVbox.getWidth());
-        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(),sub);
+        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
 
 
     }
