@@ -142,8 +142,8 @@ public class SingleBoardCtrl implements Initializable {
         });
         Button newCard =  (Button) list.lookup("#addNewCardButton");
         newCard.setOnAction(event ->{
-            VBox par = (VBox) newCard.getParent();
-            addCard(par);
+            VBox parentList = (VBox) newCard.getParent();
+            addCard(parentList);
         });
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
     }
