@@ -2,7 +2,6 @@ package client.scenes;
 
 import commons.Board;
 import commons.BoardList;
-import commons.Card;
 import client.utils.ServerUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -38,6 +36,9 @@ public class SingleBoardCtrl implements Initializable {
     private final MainCtrl mainCtrl;
 
     private final Long boardId = 1L;
+
+    private Node newCardBtn;
+
     @FXML
     private HBox hbox_lists;
 
@@ -49,10 +50,8 @@ public class SingleBoardCtrl implements Initializable {
 
     private ObservableList<BoardList> lists;
 
-    // Map<Node, BoardList> nodeToList;
-
     @Inject
-    public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) throws IOException {
+    public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
 
@@ -63,59 +62,16 @@ public class SingleBoardCtrl implements Initializable {
         lists = FXCollections.observableList(tmpBoard.getLists());
     }
 
-    public AnchorPane wrapBoardList(BoardList boardList) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
-        AnchorPane node;
-        try {
-            node = loader.load();
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            return new AnchorPane();
-        }
-
-        ((TextField) node.getChildren().get(0)).setText(boardList.getName());
-
-        VBox target = (VBox) node.getChildren().get(3);
-
-        for(Card c : boardList.getCards()) {
-            System.out.println("processing card: " + c.toString());
-            // temporary solution
-            target.getChildren().addAll(new Label(c.getTitle()));
-        }
-
-        return node;
-    }
-
     @Override
     public void initialize (URL location, ResourceBundle resources){
-        //nodeToList = new HashMap<>();
         ImageView imageView = new ImageView(getClass()
             .getResource("../images/settings_icon.png")
             .toExternalForm());
+        newCardBtn = hbox_lists.getChildren().get(0);
         imageView.setFitWidth(settingsBtn.getPrefWidth());
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
         settingsBtn.setGraphic(imageView);
-        /*
-        try {
-            createNewList();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        */
-        //server.addCardToList(1L, 0L, new Card("card from init"));
-
-        //  TODO change 1L -> board_id if we are going multiboard
-        // pullLists(1L); 
-
-        // for(BoardList bl : lists) {
-        //     System.out.println("processing: " + bl.getName());
-        //     var node = wrapBoardList(bl);
-        //     mainAnchor.getChildren().addAll(node);
-        //     System.out.println(node.getChildren());
-        // }
     }
 
     public void back(){
@@ -126,21 +82,29 @@ public class SingleBoardCtrl implements Initializable {
         mainCtrl.showAddCard();
     }
 
-
-    public void createNewList() throws IOException {
+    public void createNewList() {
         var board_lists = hbox_lists.getChildren();
+        BoardList boardList = server.addEmptyList(1L, " ");
+        Node list;
+        try {
+            list = wrapList(boardList, board_lists);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        refresh();
+    }
 
+    public Node wrapList(BoardList boardList, ObservableList<Node> board_lists) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
         Node list = loader.load();
-        board_lists.add(board_lists.size()-1, list);
 
-        BoardList boardList = server.addEmptyList(1L, " ");
         list.setUserData(boardList);
 
         Button btn =  (Button) list.lookup("#deleteBtn");
         btn.setOnAction(event -> board_lists.remove(btn.getParent()));
 
         TextField title = (TextField) list.lookup("#list_title");
+        title.setText(boardList.getName());
 
         title.setOnAction(event -> {
             try {
@@ -164,15 +128,10 @@ public class SingleBoardCtrl implements Initializable {
             addCard(par);
         });
 
-        board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
-
-
+        // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
+        board_lists.add(list);
+        return list;
     }
-
-    
-
-
-
 
     public void addCard(VBox parent){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
@@ -235,5 +194,24 @@ public class SingleBoardCtrl implements Initializable {
         sb_anchor.getChildren().add(customization);
 
 
+    }
+
+    public void drawLists() throws IOException {
+        var board_lists = hbox_lists.getChildren();
+        board_lists.clear();
+        for(BoardList boardList : lists) {
+            wrapList(boardList, board_lists);
+        }
+        board_lists.add(newCardBtn);
+    }
+
+    public void refresh() {
+        pullLists(boardId);
+        try {
+            drawLists();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }
