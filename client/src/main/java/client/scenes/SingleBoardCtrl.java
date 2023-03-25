@@ -100,13 +100,13 @@ public class SingleBoardCtrl implements Initializable {
         imageView.setPreserveRatio(true);
         settingsBtn.setGraphic(imageView);
         nodeCardMap = new HashMap<>();
-        Board b = server.getBoardById(1l);
+//        Board b = server.getBoardById(1l);
 
         try {
             createNewList();
-            for(BoardList bl: b.getLists()){
-                hbox_lists.getChildren().add((hbox_lists.getChildren().size()-2), displayList(bl));
-            }
+//            for(BoardList bl: b.getLists()){
+//                hbox_lists.getChildren().add((hbox_lists.getChildren().size()-2), displayList(bl));
+//            }
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -225,7 +225,7 @@ public class SingleBoardCtrl implements Initializable {
             parent.getChildren().add(index, card);
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
-            server.addCardToList(1L, 0L, newCard);
+           // server.addCardToList(1L, 0L, newCard);
             enterCard(card);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -288,7 +288,7 @@ public class SingleBoardCtrl implements Initializable {
                 current.addSubTask(cb.getText());
         }
         server.addCard(current);
-        server.updateCardFromList(1L, 0L, current);
+       // server.updateCardFromList(1L, 0L, current);
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         refreshList(1l, 0l);
@@ -306,7 +306,7 @@ public class SingleBoardCtrl implements Initializable {
         par.getChildren().remove(hbox);
         nodeCardMap.remove(hbox, current);
         //server.deleteCard(current.getId());
-        server.deleteCardFromList(1l, 0l, current);
+       // server.deleteCardFromList(1l, 0l, current);
         Button source = (Button) event.getSource();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
