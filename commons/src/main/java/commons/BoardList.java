@@ -12,12 +12,15 @@ import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class BoardList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "BOARD_ID")
     public Board board;
@@ -59,6 +62,8 @@ public class BoardList {
     // Board functionality
     public void addCard(Card card) {
         // card.boardList = this;
+        card.board = this.board;
+        card.boardList = this;
         this.cards.add(card);
     }
 

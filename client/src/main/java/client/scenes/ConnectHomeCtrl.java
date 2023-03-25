@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
+import javafx.scene.input.KeyEvent;
 
 import com.google.inject.Inject;
 
@@ -27,12 +28,13 @@ public class ConnectHomeCtrl {
         String addr = "";
         try {
             addr = serverAddress.getText();
-            ok = server.check(serverAddress.getText());
+            addr = addr.trim();
+            ok = server.check(addr);
         }
         catch(Exception e) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
+            alert.setContentText("No talio instant present on: " + addr);
             alert.showAndWait();
             exception = true;
             return;
@@ -46,5 +48,13 @@ public class ConnectHomeCtrl {
         }
         server.setServer(addr);
         mainCtrl.showBoardOverview();
+    }
+
+    public void keyPressed(KeyEvent e) {
+        switch(e.getCode()) {
+            case ENTER:
+                connect();
+                break;
+        }
     }
 }

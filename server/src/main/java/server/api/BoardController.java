@@ -1,8 +1,11 @@
 package server.api;
 
 import java.util.List;
+
 import commons.Board;
 import commons.Card;
+import commons.BoardList;
+import server.DatabaseUtils;
 import server.database.BoardRepository;
 
 import org.springframework.data.util.Pair;
@@ -20,33 +23,19 @@ public class BoardController {
 
     private final BoardRepository repo;
 
-    public BoardController(BoardRepository repo) {
+    private DatabaseUtils databaseUtils;
+
+    public BoardController(BoardRepository repo, 
+        DatabaseUtils databaseUtils) {
         this.repo = repo;
+        this.databaseUtils = databaseUtils;
+        
 
-        // TODO STUPID DEBUG I HAVE TO REMOVE THIS ASAP!!!!!
+        // TODO uncomment **ONLY** for debug!!
         /*
-        Board board = new Board("test board");
-        BoardList l1 = new BoardList("test list 1");
-        l1.addCard(new Card("aa"));
-        l1.addCard(new Card("bb"));
-        l1.addCard(new Card("ca"));
-
-        board.addList(l1);
-
-        BoardList l2 = new BoardList("test list 2");
-        l2.addCard(new Card("az"));
-        l2.addCard(new Card("bz"));
-        l2.addCard(new Card("cz"));
-
-        board.addList(l2);
+        Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
         */
-        // TODO END OF DEBUG!!!!
-    }
-
-    @GetMapping(path = "/TalioPresent")
-    public ResponseEntity<String> talioPresenceCheck() {
-        return ResponseEntity.ok("Welcome to Talio!");
     }
 
     @GetMapping(path = {"", "/"})
@@ -107,5 +96,18 @@ public class BoardController {
 
         return ResponseEntity.ok(saved);
     }
-}
 
+    @PostMapping(path = "/add/list/{id}")
+    public ResponseEntity<Board> addListToBoard(@PathVariable("id") long boardId,
+        @RequestBody String listName) {
+
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Board board = repo.findById(boardId).get();
+        board.addList(new BoardList(listName));
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
+    }
+}

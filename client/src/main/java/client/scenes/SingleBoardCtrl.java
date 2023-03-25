@@ -219,6 +219,4 @@ public class SingleBoardCtrl implements Initializable {
 
 
     }
-
-
 }

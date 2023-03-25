@@ -5,9 +5,9 @@ import javax.persistence.ElementCollection;
 import javax.persistence.GenerationType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.GeneratedValue;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -29,10 +30,15 @@ public class Card implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
-    //public long list_id;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "BOARDLIST_ID")
     public BoardList boardList;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "BOARD_ID")
+    public Board board;
 
     public String title;
     public String description;

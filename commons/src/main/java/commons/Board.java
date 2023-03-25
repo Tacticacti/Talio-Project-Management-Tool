@@ -55,7 +55,7 @@ public class Board {
 
     // Board functionality
     public void addList(BoardList list) {
-        // list.board = this;
+        list.board = this;
         this.lists.add(list);
     }
 
