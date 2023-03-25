@@ -32,7 +32,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
@@ -105,7 +109,8 @@ public class SingleBoardCtrl implements Initializable {
         try {
             createNewList();
 //            for(BoardList bl: b.getLists()){
-//                hbox_lists.getChildren().add((hbox_lists.getChildren().size()-2), displayList(bl));
+//                hbox_lists.getChildren()
+//                .add((hbox_lists.getChildren().size()-2), displayList(bl));
 //            }
         }
         catch(IOException e) {
