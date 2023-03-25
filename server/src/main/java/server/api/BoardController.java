@@ -2,7 +2,6 @@ package server.api;
 
 import java.util.List;
 import commons.Board;
-import commons.BoardList;
 import commons.Card;
 import server.database.BoardRepository;
 
@@ -24,7 +23,7 @@ public class BoardController {
     public BoardController(BoardRepository repo) {
         this.repo = repo;
 
-
+        /*
         Board board = new Board("test board");
         BoardList l1 = new BoardList("test list 1");
         l1.addCard(new Card("aa"));
@@ -40,6 +39,7 @@ public class BoardController {
 
         board.addList(l2);
         repo.save(board);
+        */
 
     }
 

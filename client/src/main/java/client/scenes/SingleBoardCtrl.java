@@ -4,9 +4,6 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 import client.utils.ServerUtils;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -227,6 +224,7 @@ public class SingleBoardCtrl implements Initializable {
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
             server.addCardToList(1L, 0L, newCard);
+            enterCard(card);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -235,7 +233,6 @@ public class SingleBoardCtrl implements Initializable {
     public void enterCard(Node card){
         Card blah = nodeCardMap.get(card);
         Card current = server.getCardById(nodeCardMap.get(card).getId());
-        StringProperty ti = new SimpleStringProperty(current.getTitle());
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddCard.fxml"));
         Parent root = null;
         try {
@@ -257,8 +254,6 @@ public class SingleBoardCtrl implements Initializable {
         Button cancelBtn = (Button) root.lookup("#cancelTaskButton");
         cancelBtn.setOnAction(event -> cancel(event, card));
         TextField title = (TextField) root.lookup("#taskTitle");
-        Label titlel = (Label) card.lookup("#taskTitle");
-        Bindings.bindBidirectional(title.textProperty(), ti);
         TextArea desc =  (TextArea) root.lookup("#taskDescription");
         desc.setText(current.getDescription());
         if(current.getSubtasks()!=null){
