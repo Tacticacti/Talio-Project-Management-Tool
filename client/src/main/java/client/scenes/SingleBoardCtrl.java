@@ -32,9 +32,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
@@ -55,6 +53,8 @@ public class SingleBoardCtrl implements Initializable {
     private Map<Node, Card> nodeCardMap;
 
     private Map<VBox, BoardList> boxBoardListMap;
+
+    private Random Ids;
 
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) throws IOException {
@@ -191,6 +191,7 @@ public class SingleBoardCtrl implements Initializable {
         fxmlLoader.setController(cgc);
         try {
             Node hbox = fxmlLoader.load();
+            hbox.setId(UUID.randomUUID().toString());
             Button det = (Button) hbox.lookup("#details");
             Label title = (Label) hbox.lookup("#taskTitle");
             title.setText(card.getTitle());
@@ -213,6 +214,7 @@ public class SingleBoardCtrl implements Initializable {
         Card newCard = new Card();
         try {
             Node card = fxmlLoader.load();
+            card.setId(UUID.randomUUID().toString());
             Button det = (Button) card.lookup("#details");
             det.setOnAction(event -> enterCard(card));
             nodeCardMap.put(card, newCard);
@@ -254,6 +256,7 @@ public class SingleBoardCtrl implements Initializable {
         Button cancelBtn = (Button) root.lookup("#cancelTaskButton");
         cancelBtn.setOnAction(event -> cancel(event, card));
         TextField title = (TextField) root.lookup("#taskTitle");
+        title.setText(current.getTitle());
         TextArea desc =  (TextArea) root.lookup("#taskDescription");
         desc.setText(current.getDescription());
         if(current.getSubtasks()!=null){

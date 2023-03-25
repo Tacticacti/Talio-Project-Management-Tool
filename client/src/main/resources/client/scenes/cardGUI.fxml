@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="card"  prefHeight="56.0" prefWidth="315.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="card" prefHeight="56.0" prefWidth="315.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="taskTitle" alignment="CENTER" layoutX="3.0" layoutY="5.0" prefHeight="45.0" prefWidth="309.0" text="Task title" textAlignment="CENTER" wrapText="true">
          <font>
