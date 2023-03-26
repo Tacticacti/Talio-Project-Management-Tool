@@ -324,7 +324,7 @@ public class SingleBoardCtrl implements Initializable {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        })
+        });
     }
 
     public void enterCard(Node card, VBox parent){
