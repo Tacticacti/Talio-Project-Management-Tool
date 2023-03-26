@@ -202,7 +202,7 @@ public class SingleBoardCtrl implements Initializable {
             Button det = (Button) hbox.lookup("#details");
             Label title = (Label) hbox.lookup("#taskTitle");
             title.setText(card.getTitle());
-            det.setOnAction(event -> enterCard(hbox,parent));
+            det.setOnAction(event -> enterCard(hbox, parent));
             nodeCardMap.put(hbox, card);
             int index = parent.getChildren().size()-1;
             if(parent.getChildren().size()==1){
@@ -309,7 +309,8 @@ public class SingleBoardCtrl implements Initializable {
         for(Node hb: subs.getChildren()){
             if(hb instanceof TextField){
                 TextField subtask = (TextField) hb;
-                if(!current.getSubtasks().contains(subtask.getText()) && !subtask.getText().equals(""))
+                if(!current.getSubtasks().contains(subtask.getText())
+                        && !subtask.getText().equals(""))
                     current.addSubTask(subtask.getText());
             }else{
                 CheckBox cb = (CheckBox) ((HBox) hb).getChildren().get(0);
@@ -366,7 +367,7 @@ public class SingleBoardCtrl implements Initializable {
 
     }
 
-    public void delete(ActionEvent event, Node hbox, Card current,long listid){
+    public void delete(ActionEvent event, Node hbox, Card current, long listid){
         VBox par = (VBox) hbox.getParent();
         par.getChildren().remove(hbox);
         nodeCardMap.remove(hbox, current);
