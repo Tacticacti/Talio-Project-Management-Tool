@@ -13,13 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -216,8 +210,9 @@ public class SingleBoardCtrl implements Initializable {
 
     public void addCard(VBox parent){
         TextInputDialog titleinput = new TextInputDialog();
-        titleinput.setTitle("Card Title");
-        titleinput.setContentText("Enter card title:");
+        titleinput.setTitle("Task Title");
+        titleinput.setHeaderText("Create new task");
+        titleinput.setContentText("Enter task title:");
         titleinput.showAndWait().ifPresent(title ->{
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
             CardGUICtrl cgc = new CardGUICtrl(server, mainCtrl);
@@ -368,20 +363,29 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void delete(ActionEvent event, Node hbox, Card current, long listid){
-        VBox par = (VBox) hbox.getParent();
-        par.getChildren().remove(hbox);
-        nodeCardMap.remove(hbox, current);
-        server.deleteCard(current.getId());
-       // long listIndex = getListIndex(boardId,listid);
-       // server.deleteCardFromList(1l, listIndex, current);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("Delete Task");
+        alert.setContentText("Are you sure you want to delete this task? (Irreversible)");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                VBox par = (VBox) hbox.getParent();
+                par.getChildren().remove(hbox);
+                nodeCardMap.remove(hbox, current);
+                server.deleteCard(current.getId());
+                // long listIndex = getListIndex(boardId,listid);
+                // server.deleteCardFromList(1l, listIndex, current);
 //        try {
 ////            refreshList(boardId,listIndex);
 ////        } catch (IOException e) {
 ////            throw new RuntimeException(e);
 ////        }
-        Button source = (Button) event.getSource();
-        Stage popup = (Stage) source.getScene().getWindow();
-        popup.close();
+                Button source = (Button) event.getSource();
+                Stage popup = (Stage) source.getScene().getWindow();
+                popup.close();
+            }
+        });
+
     }
 
 
@@ -390,19 +394,6 @@ public class SingleBoardCtrl implements Initializable {
         Button cancel = (Button) event.getSource();
         Stage popup = (Stage) cancel.getScene().getWindow();
         popup.close();
-    }
-
-
-
-    public void deleteList() {
-
-        hbox_lists.getChildren().remove(0);
-
-    }
-
-    // is this setup only for title (?)
-    public void enterOnTextField() throws IOException {
-        createNewList();
     }
 
 

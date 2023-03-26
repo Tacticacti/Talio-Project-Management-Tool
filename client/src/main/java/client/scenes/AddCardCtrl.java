@@ -61,8 +61,6 @@ public class AddCardCtrl {
     private Button cancelTaskButton;
 
     private Card current;
-    private List<String> additions;
-    private List<String> deletions;
 
 
 
@@ -155,6 +153,12 @@ public class AddCardCtrl {
     }
     public void displaySubs(String text, Card current){
         HBox sub = new HBox();
+        CheckBox cb = createCheckbox(text, current);
+        sub.getChildren().add(cb);
+        createSubtask(sub,current);
+    }
+
+    public CheckBox createCheckbox(String text, Card current){
         CheckBox cb = new CheckBox();
         cb.setText(text);
         cb.setOnAction(new EventHandler<ActionEvent>() {
@@ -169,6 +173,18 @@ public class AddCardCtrl {
                 }
             }
         });
+        return cb;
+    }
+
+    public void displayCompletedSubs(String text, Card current){
+        HBox sub = new HBox();
+        CheckBox cb = createCheckbox(text, current);
+        cb.setSelected(true);
+        cb.setOpacity(0.5);
+        sub.getChildren().add(cb);
+        createSubtask(sub,current);
+    }
+    private void createSubtask(HBox sub, Card current){
         Button delBtn = new Button();
         HBox.setHgrow(delBtn, Priority.ALWAYS);
         sub.setAlignment(Pos.BASELINE_LEFT);
@@ -181,47 +197,11 @@ public class AddCardCtrl {
         imageView.setFitHeight(delBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
         delBtn.setGraphic(imageView);
-        sub.getChildren().add(cb);
         sub.getChildren().add(delBtn);
         sub.setPrefWidth(subtaskVbox.getWidth());
         subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
     }
 
-    public void displayCompletedSubs(String text, Card current){
-        HBox sub = new HBox();
-        CheckBox cb = new CheckBox();
-        cb.setText(text);
-        cb.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(cb.isSelected()){
-                    current.completeSubTask(cb.getText());
-                    cb.setOpacity(0.5);
-                }else{
-                    current.uncompleteSubTask(cb.getText());
-                    cb.setOpacity(1);
-                }
-            }
-        });
-        cb.setSelected(true);
-        cb.setOpacity(0.5);
-        Button delBtn = new Button();
-        HBox.setHgrow(delBtn, Priority.ALWAYS);
-        sub.setAlignment(Pos.BASELINE_LEFT);
-        sub.setPadding(new Insets(0));
-        delBtn.setOnAction(event -> deleteSubTask(delBtn, current));
-        delBtn.setPrefHeight(20);
-        ImageView imageView = new ImageView(getClass()
-                .getResource("../images/trash.png").toExternalForm());
-        imageView.setFitWidth(delBtn.getPrefWidth());
-        imageView.setFitHeight(delBtn.getPrefHeight());
-        imageView.setPreserveRatio(true);
-        delBtn.setGraphic(imageView);
-        sub.getChildren().add(cb);
-        sub.getChildren().add(delBtn);
-        sub.setPrefWidth(subtaskVbox.getWidth());
-        subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
-    }
     public void deleteSubTask(Button delBtn, Card current){
         subtaskVbox.getChildren().remove(delBtn.getParent());
         HBox parent = (HBox) delBtn.getParent();
@@ -231,41 +211,6 @@ public class AddCardCtrl {
     public void addTag(){
         //adding a tag
     }
-
-
-//    private Card getCard() {
-//        //method for getting a new card from the user input
-//        added = new Card(title.getText(), description.getText());
-//        ObservableList<String> tasks;
-//        tasks = subtasks.getItems();
-//        for(String s:tasks) {
-//            added.addSubTask(s);
-//        }
-//        //list of subtasks
-//        //list of tags
-//        return added;
-//    }
-
-    private void clearFields() {
-        taskTitle.clear();
-        taskDescription.clear();
-        //subtasks.getItems().clear();//removing all added subtasks
-    }
-
-//    public void keyPressed(KeyEvent e) {
-//        switch (e.getCode()) {
-//            case ENTER:
-//                saveCard();
-//                break;
-//            case ESCAPE:
-//                cancel();
-//                break;
-//            case DELETE:
-//                deleteCard();
-//            default:
-//                break;
-//        }
-//    }
 }
 
 
