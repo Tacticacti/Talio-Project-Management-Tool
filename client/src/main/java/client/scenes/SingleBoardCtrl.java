@@ -190,8 +190,12 @@ public class SingleBoardCtrl implements Initializable {
             }
         });
         Button newCard =  (Button) list.lookup("#addNewCardButton");
+        VBox parentList = (VBox) newCard.getParent();
+        parentList.setUserData(boardList);
+        for(Card c: boardList.getCards()){
+            placeCard(parentList, c);
+        }
         newCard.setOnAction(event ->{
-            VBox parentList = (VBox) newCard.getParent();
             addCard(parentList);
         });
 
@@ -249,6 +253,8 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void addCard(VBox parent){
+        BoardList boardList = (BoardList) parent.getUserData();
+        long listid = boardList.getId();
         TextInputDialog titleinput = new TextInputDialog();
         titleinput.setTitle("Task Title");
         titleinput.setHeaderText("Create new task");
@@ -269,7 +275,6 @@ public class SingleBoardCtrl implements Initializable {
                 if(parent.getChildren().size()==1){
                     index=0;
                 }
-               // parent.getChildren().add(index, card);
                 card.setOnDragDetected(event -> {
                     board = card.startDragAndDrop(TransferMode.MOVE);
                     content = new ClipboardContent();
@@ -321,7 +326,10 @@ public class SingleBoardCtrl implements Initializable {
                 parent.getChildren().add(index, card);
                 Card saved = server.addCard(newCard);
                 newCard.setId(saved.getId());
-                // server.addCardToList(1L, 0L, newCard);
+                //server.addCardToList(1L, 0L, newCard);
+                long listIndex = getListIndex(boardId, listid);
+                saveCardToList(boardId, listIndex, newCard);
+                refresh();
                 //enterCard(card);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -330,12 +338,13 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void enterCard(Node card, VBox parent){
-//        AnchorPane list = (AnchorPane) parent.getParent();
-//        BoardList boardList = (BoardList) list.getUserData();
-//        long listid = boardList.getId();
-        long listid = 0l;
-        Card blah = nodeCardMap.get(card);
+        AnchorPane list = (AnchorPane) parent.getParent();
+        BoardList boardList = (BoardList) parent.getUserData();
+        long listid = boardList.getId();
         Card current = server.getCardById(nodeCardMap.get(card).getId());
+        System.out.println("-------------------------");
+        System.out.println("got: " + current);
+        System.out.println("-------------------------");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddCard.fxml"));
         Parent root = null;
         try {
@@ -401,19 +410,21 @@ public class SingleBoardCtrl implements Initializable {
                     current.addSubTask(cb.getText());
             }
         }
+
         server.addCard(current);
-        //long listIndex = getListIndex(boardId, listid);
+        long listIndex = getListIndex(boardId, listid);
         // saveCardToList(1l,0l,current);
         // server.updateCardFromList(1L, listIndex, current);
+        updateCardFromList(boardId, listIndex, current);
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
-        //refreshList(1l, listIndex);
+        refresh();
     }
 
 
     public long getListIndex(Long boardId, Long listid){
         Board b = server.getBoardById(boardId);
-        for(int i=0; i<b.getLists().size();i++){
+        for(int i=0; i<b.getLists().size();++i){
             if(b.getLists().get(i).getId()==listid){
                 return i;
             }
@@ -422,9 +433,9 @@ public class SingleBoardCtrl implements Initializable {
 
     }
 
-    public void updateCardFromList(Long boardId, Long listidindex, Card current){
+    public void updateCardFromList(Long boardId, Long listindex, Card current){
         try{
-            server.updateCardFromList(boardId, listidindex, current);
+            server.updateCardFromList(boardId, listindex, current);
         }catch(WebApplicationException e){
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -443,13 +454,6 @@ public class SingleBoardCtrl implements Initializable {
         }
     }
 
-    public void refreshList(long boardId, long listid) throws IOException {
-        Board b = server.getBoardById(boardId);
-        hbox_lists.getChildren().remove((int) listid);
-        hbox_lists.getChildren().add((int) listid, displayList(b.getLists().get((int) listid)));
-
-    }
-
     public void delete(ActionEvent event, Node hbox, Card current, long listid){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Dialog");
@@ -460,14 +464,10 @@ public class SingleBoardCtrl implements Initializable {
                 VBox par = (VBox) hbox.getParent();
                 par.getChildren().remove(hbox);
                 nodeCardMap.remove(hbox, current);
-                server.deleteCard(current.getId());
-                // long listIndex = getListIndex(boardId,listid);
-                // server.deleteCardFromList(1l, listIndex, current);
-//        try {
-////            refreshList(boardId,listIndex);
-////        } catch (IOException e) {
-////            throw new RuntimeException(e);
-////        }
+                //server.deleteCard(current.getId());
+                long listIndex = getListIndex(boardId, listid);
+                server.deleteCardFromList(boardId, listIndex, current);
+                refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
                 popup.close();
