@@ -33,10 +33,10 @@ public class BoardController {
         
 
         // TODO uncomment **ONLY** for debug!!
-        /*
+        
         Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
-        */
+        
 
     }
 
