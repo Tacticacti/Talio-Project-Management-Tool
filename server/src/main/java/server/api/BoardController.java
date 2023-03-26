@@ -37,6 +37,12 @@ public class BoardController {
         Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
         */
+
+    }
+
+    @GetMapping(path = "/TalioPresent")
+    public ResponseEntity<String> talioPresenceCheck() {
+        return ResponseEntity.ok("Welcome to Talio!");
     }
 
     @GetMapping(path = {"", "/"})
@@ -97,6 +103,68 @@ public class BoardController {
 
         return ResponseEntity.ok(saved);
     }
+    @PostMapping(path="/delete/{id}")
+    public void deleteCardFromId(@PathVariable ("id") long boardId
+            , @RequestBody Pair<Long, Card> req)
+    {
+        if(!repo.existsById(boardId)) {
+            throw new RuntimeException();
+        }
+
+        System.out.println("--------------------------");
+        System.out.println(boardId + " " + req.getFirst() + " " +
+                req.getSecond());
+        System.out.println("--------------------------");
+
+        Board board = repo.findById(boardId).get();
+
+        Long listId = req.getFirst();
+        Card card = req.getSecond();
+        if(board.getLists().size() <= listId || listId < 0) {
+            throw new RuntimeException();
+        }
+
+        board.getLists().get(listId.intValue()).removeCard(card);
+        repo.save(board);
+    }
+
+    @PostMapping(path="/update/{id}")
+    public ResponseEntity<Board> updateCardInId(@PathVariable("id") long boardId
+            , @RequestBody Pair<Long, Card> req){
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        System.out.println("--------------------------");
+        System.out.println(boardId + " " + req.getFirst() + " " +
+                req.getSecond());
+        System.out.println("--------------------------");
+
+        Board board = repo.findById(boardId).get();
+
+        Long listId = req.getFirst();
+        Card card = req.getSecond();
+        if(board.getLists().size() <= listId || listId < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+        int cardIndex = 0;
+        for(int i=0; i< board.getLists().get(listId.intValue()).getCards().size(); i++){
+            if(board.getLists().get(listId.intValue()).getCards().get(i).equals(card)){
+                cardIndex = i;
+                break;
+            }
+        }
+        Card toupdate = board.getLists().get(listId.intValue()).getCards().get(cardIndex);
+        toupdate.setTitle(card.getTitle());
+        toupdate.setDescription(card.getDescription());
+        for(String s: card.getSubtasks()){
+            toupdate.addSubTask(s);
+        }
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
+    }
+
+
+
 
     @PostMapping(path = "/add/list/{id}")
     public ResponseEntity<BoardList> addListToBoard(@PathVariable("id") long boardId,

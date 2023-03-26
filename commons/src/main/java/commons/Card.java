@@ -48,6 +48,9 @@ public class Card implements Serializable {
     public List<String> tags;
     private int completedSubs;
 
+    @ElementCollection
+    private List<String> completedTasks;
+
 
     //constructor
     public Card(String title, String description){
@@ -56,6 +59,7 @@ public class Card implements Serializable {
         subtasks = new ArrayList<>();
         tags = new ArrayList<>();
         completedSubs = 0;
+        completedTasks=new ArrayList<>();
     }
 
     public Card(String title){
@@ -63,10 +67,14 @@ public class Card implements Serializable {
         subtasks = new ArrayList<>();
         tags = new ArrayList<>();
         completedSubs = 0;
+        completedTasks = new ArrayList<>();
     }
 
     public Card() {
-
+        subtasks = new ArrayList<>();
+        tags = new ArrayList<>();
+        completedSubs = 0;
+        completedTasks = new ArrayList<>();
     }
     //getters and setters
 
@@ -79,6 +87,10 @@ public class Card implements Serializable {
         return list_id;
     }
     */
+
+    public void setId(long id){
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -122,12 +134,24 @@ public class Card implements Serializable {
     //remove subtask
     public void removeSubTask(String task){
         subtasks.remove(task);
+        if(completedTasks.contains(task)){
+            completedTasks.remove(task);
+        }
     }
     //complete a subtask
-    public void completeSubTask()  {
-
+    public void completeSubTask(String text)  {
         if(completedSubs!=subtasks.size())
             completedSubs++;
+        if(!completedTasks.contains(text))
+            completedTasks.add(text);
+    }
+
+    public void uncompleteSubTask(String text){
+        if(completedSubs!=0)
+            completedSubs--;
+        if(completedTasks.contains(text))
+            completedTasks.remove(text);
+
     }
     //add a tag to card
     public void addTag(String tag){
@@ -152,6 +176,18 @@ public class Card implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
+
+    public BoardList getBoardList() {
+        return boardList;
+    }
+
+    public void setBoardList(BoardList boardList) {
+        this.boardList = boardList;
+    }
+
+    public List<String> getCompletedTasks() {
+        return completedTasks;
     }
 
 }

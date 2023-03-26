@@ -5,20 +5,32 @@ import client.utils.ServerUtils;
 import commons.Card;
 
 import jakarta.ws.rs.WebApplicationException;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+
+
 
 
 public class AddCardCtrl {
@@ -26,13 +38,11 @@ public class AddCardCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
 
-    private Card added;
+    @FXML
+    private TextField taskTitle;
 
     @FXML
-    private TextField title;
-
-    @FXML
-    private TextField description;
+    private TextArea taskDescription;
 
     @FXML
     private Label board;
@@ -46,19 +56,56 @@ public class AddCardCtrl {
     @FXML
     private ListView tags;
 
+    @FXML
+    private Button cancelTaskButton;
+
+    private Card current;
+
+
+
+
     @Inject
     public AddCardCtrl(ServerUtils server, MainCtrl mainCtrl){
         this.server = server;
         this.mainCtrl = mainCtrl;
-        added = new Card();
+
     }
-    public void cancel() {
+    public AddCardCtrl(){
+        this.server =new ServerUtils();
+        this.mainCtrl = new MainCtrl();
+    }
+    private Node node;
+
+    public void setUp(Node card){
+
+    }
+    public void cancel(ActionEvent event) {
+        //node.getParent();
+
+//        for(String s: additions){
+//            current.removeSubTask(s);
+//        }
+//        for(String s: deletions){
+//            current.addSubTask(s);
+//        }
+
         //clearFields();//clearing all fields
-        mainCtrl.showBoard();//returning to the board overview
+        Stage popup = (Stage) cancelTaskButton.getScene().getWindow();
+        popup.close();
+        // mainCtrl.showBoard();//returning to the board overview
     }
 
     public void done(){
-        mainCtrl.showBoard();
+        if(!taskTitle.getText().equals(current.getTitle())){
+            current.setTitle(taskTitle.getText());
+        }
+        if(taskDescription.getText()!=null)
+            if(!taskDescription.getText().equals(current.getDescription())){
+                current.setDescription(taskDescription.getText());
+            }
+        Stage popup = (Stage) cancelTaskButton.getScene().getWindow();
+        popup.close();
+        server.addCard(current);
     }
 
 
@@ -67,9 +114,7 @@ public class AddCardCtrl {
         // it is already in the column list and we need to find it via its id
         //and then change the values of its attributes
         try {
-            added.setTitle(title.getText());
-            added.setDescription(description.getText());
-           // server.addCard(added);
+            server.addCard(new Card());
         } catch (WebApplicationException e){
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -77,11 +122,11 @@ public class AddCardCtrl {
             alert.showAndWait();
             return;
         }
-        clearFields();
         //MainCtrl.showPreviousBoardOverview();
         //save button
     }
     public void deleteCard(){
+        server.deleteCard(5L);
         //finding the card in the database by text in title and description
         //finding the column id from card
         //deleting the card from list of cards for column
@@ -89,10 +134,9 @@ public class AddCardCtrl {
         //delete button
         //return to board overview
     }
-    public void addSubTask(){
+    public void addSubTask(Card current){
 
         //showcase a textfield for user input
-        //get input and place in a checkboxlistcell in the listview, which has to be editable
         TextField sub = new TextField();
         sub.setPromptText("Enter subtask here");
         subtaskVbox.getChildren().add(0, sub);
@@ -100,80 +144,72 @@ public class AddCardCtrl {
         {
             if(event.getCode() == KeyCode.ENTER){
                 subtaskVbox.getChildren().remove(sub);
-                displaySubs(sub.getText());
+                displaySubs(sub.getText(), current);
             }
         });
         // added.addSubTask("");
         //adding a subtask
     }
-    public void displaySubs(String text){
+    public void displaySubs(String text, Card current){
         HBox sub = new HBox();
+        CheckBox cb = createCheckbox(text, current);
+        sub.getChildren().add(cb);
+        createSubtask(sub, current);
+    }
+
+    public CheckBox createCheckbox(String text, Card current){
         CheckBox cb = new CheckBox();
         cb.setText(text);
+        cb.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(cb.isSelected()){
+                    current.completeSubTask(cb.getText());
+                    cb.setOpacity(0.5);
+                }else{
+                    current.uncompleteSubTask(cb.getText());
+                    cb.setOpacity(1);
+                }
+            }
+        });
+        return cb;
+    }
+
+    public void displayCompletedSubs(String text, Card current){
+        HBox sub = new HBox();
+        CheckBox cb = createCheckbox(text, current);
+        cb.setSelected(true);
+        cb.setOpacity(0.5);
+        sub.getChildren().add(cb);
+        createSubtask(sub, current);
+    }
+    private void createSubtask(HBox sub, Card current){
         Button delBtn = new Button();
-        HBox button = new HBox();
-        button.setAlignment(Pos.TOP_CENTER);
-        delBtn.setOnAction(event -> subtaskVbox.getChildren().remove(delBtn.getParent()));
+        HBox.setHgrow(delBtn, Priority.ALWAYS);
+        sub.setAlignment(Pos.BASELINE_LEFT);
+        sub.setPadding(new Insets(0));
+        delBtn.setOnAction(event -> deleteSubTask(delBtn, current));
         delBtn.setPrefHeight(20);
         ImageView imageView = new ImageView(getClass()
-            .getResource("../images/trash.png")
-            .toExternalForm());
+                .getResource("../images/trash.png").toExternalForm());
         imageView.setFitWidth(delBtn.getPrefWidth());
         imageView.setFitHeight(delBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
         delBtn.setGraphic(imageView);
-        button.getChildren().add(delBtn);
-        sub.getChildren().add(cb);
         sub.getChildren().add(delBtn);
         sub.setPrefWidth(subtaskVbox.getWidth());
         subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
     }
-    public void deleteSubTask(){
-        //clicking the delete button on the interface for a subtask
-        //getting selected subtask and index form listview using getSelected
-        // and placing in two list of String and int
-        //removing them from the interface (Listview)
-        //removing them from card
-        added.removeSubTask("");
-        //adding a subtask
 
+    public void deleteSubTask(Button delBtn, Card current){
+        subtaskVbox.getChildren().remove(delBtn.getParent());
+        HBox parent = (HBox) delBtn.getParent();
+        CheckBox cb = (CheckBox) parent.getChildren().get(0);
+        current.removeSubTask(cb.getText());
     }
     public void addTag(){
         //adding a tag
     }
-
-
-//    private Card getCard() {
-//        //method for getting a new card from the user input
-//        added = new Card(title.getText(), description.getText());
-//        ObservableList<String> tasks;
-//        tasks = subtasks.getItems();
-//        for(String s:tasks) {
-//            added.addSubTask(s);
-//        }
-//        //list of subtasks
-//        //list of tags
-//        return added;
-//    }
-
-    private void clearFields() {
-        title.clear();
-        description.clear();
-        //subtasks.getItems().clear();//removing all added subtasks
-    }
-
-    public void keyPressed(KeyEvent e) {
-        switch (e.getCode()) {
-            case ENTER:
-                saveCard();
-                break;
-            case ESCAPE:
-                cancel();
-                break;
-            case DELETE:
-                deleteCard();
-            default:
-                break;
-        }
-    }
 }
+
+

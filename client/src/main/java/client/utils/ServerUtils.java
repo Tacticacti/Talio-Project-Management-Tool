@@ -135,4 +135,47 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(listId, APPLICATION_JSON), Void.class);
     }
+
+    public Board updateCardFromList(Long boardId, Long boardListId, Card card) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/update/" + boardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(new CustomPair<>(boardListId, card),
+                        APPLICATION_JSON), Board.class);
+    }
+    public Card addCard(Card card) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/cards/add") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(card, APPLICATION_JSON), Card.class);
+    }
+
+    public Card getCardById(Long id) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/cards/"+id.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .get(new GenericType<Card>() {});
+    }
+
+    public Card deleteCard(Long cardId) {
+        return  ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/cards/delete/" + cardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
+    }
+
+    public Board deleteCardFromList(Long boardId, Long listId, Card card){
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/delete/" + boardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(new CustomPair<>(listId, card), APPLICATION_JSON)
+                        , Board.class);
+    }
+
+
 }
