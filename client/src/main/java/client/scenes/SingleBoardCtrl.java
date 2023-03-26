@@ -232,8 +232,8 @@ public class SingleBoardCtrl implements Initializable {
 
     public void placeCard(VBox parent, Card card){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
-        CardGUICtrl cgc = new CardGUICtrl(server, mainCtrl);
-        fxmlLoader.setController(cgc);
+        CardGUICtrl cardGUICtrl = new CardGUICtrl(server, mainCtrl);
+        fxmlLoader.setController(cardGUICtrl);
         try {
             Node hbox = fxmlLoader.load();
             hbox.setId(UUID.randomUUID().toString());
@@ -261,11 +261,9 @@ public class SingleBoardCtrl implements Initializable {
         titleinput.setContentText("Enter task title:");
         titleinput.showAndWait().ifPresent(title ->{
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
-            CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
-            fxmlLoader.setController(controller);
             Card newCard = new Card(title);
             try {
-                Node card = (Node) fxmlLoader.load();
+                Node card = fxmlLoader.load();
                 Label titleLabel = (Label) card.lookup("#taskTitle");
                 titleLabel.setText(title);
                 Button detailButton = (Button) card.lookup("#details");
