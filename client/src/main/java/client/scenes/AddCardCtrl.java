@@ -30,7 +30,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
-import java.util.List;
 
 
 
@@ -155,7 +154,7 @@ public class AddCardCtrl {
         HBox sub = new HBox();
         CheckBox cb = createCheckbox(text, current);
         sub.getChildren().add(cb);
-        createSubtask(sub,current);
+        createSubtask(sub, current);
     }
 
     public CheckBox createCheckbox(String text, Card current){
@@ -182,7 +181,7 @@ public class AddCardCtrl {
         cb.setSelected(true);
         cb.setOpacity(0.5);
         sub.getChildren().add(cb);
-        createSubtask(sub,current);
+        createSubtask(sub, current);
     }
     private void createSubtask(HBox sub, Card current){
         Button delBtn = new Button();
