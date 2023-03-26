@@ -9,8 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class BoardList {
@@ -18,6 +20,7 @@ public class BoardList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "BOARD_ID")
     public Board board;
@@ -31,12 +34,12 @@ public class BoardList {
     // added to fix repo.findAll()
     public BoardList() {
         this.name = "";
-        this.cards = new ArrayList<>();
+        this.cards = new LinkedList<>();
     }
         
     public BoardList(String name) {
         this.name = name;
-        this.cards = new ArrayList<>();
+        this.cards = new LinkedList<>();
     }
 
     // getters and setters
@@ -58,7 +61,8 @@ public class BoardList {
 
     // Board functionality
     public void addCard(Card card) {
-        // card.boardList = this;
+        card.board = this.board;
+        card.boardList = this;
         this.cards.add(card);
     }
 

@@ -116,7 +116,7 @@ public class TestBoardRepository implements BoardRepository {
     @Override
     public <S extends Board> S save(S entity) {
         call("save");
-        entity.setId((long)boards.size());
+        entity.setId((long) boards.size());
         boards.add(entity);
         return entity;
     }
@@ -130,7 +130,7 @@ public class TestBoardRepository implements BoardRepository {
     @Override
     public boolean existsById(Long id) {
         call("existsById");
-        if(id == null || id < 0 || id >= (long)boards.size())
+        if(id == null || id < 0 || id >= (long) boards.size())
             return false;
         return true;
     }
@@ -196,7 +196,8 @@ public class TestBoardRepository implements BoardRepository {
     }
 
     @Override
-    public <S extends Board, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Board, R> R findBy(Example<S> example,
+		Function<FetchableFluentQuery<S>, R> queryFunction) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findBy'");
     }

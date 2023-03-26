@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CardTest {
 
@@ -48,13 +49,13 @@ class CardTest {
         c1.addSubTask("research monkeys");
         c1.addSubTask("research donkeys");
         assertEquals(0, c1.getCompletedSubs());
-        c1.completeSubTask();
+        c1.completeSubTask("research otters");
         assertEquals(1, c1.getCompletedSubs());
-        c1.completeSubTask();
+        c1.completeSubTask("research otters");
         assertEquals(2, c1.getCompletedSubs());
-        c1.completeSubTask();
+        c1.completeSubTask("research otters");
         assertEquals(3, c1.getCompletedSubs());
-        c1.completeSubTask();
+        c1.completeSubTask("research otters");
         assertEquals(3, c1.getCompletedSubs());
     }
 
@@ -117,9 +118,36 @@ class CardTest {
         c1.addSubTask("research monkeys");
         c1.addSubTask("research donkeys");
         assertEquals(0, c1.getCompletedSubs());
-        c1.completeSubTask();
+        c1.completeSubTask("research otters");
+        List<String> completed = new ArrayList<>();
+        completed.add("research otters");
+        assertTrue(c1.getCompletedTasks().contains("research otters"));
         assertEquals(1, c1.getCompletedSubs());
-        c1.completeSubTask();
+        completed.add("research monkeys");
+        c1.completeSubTask("research monkeys");
+        assertEquals(completed, c1.getCompletedTasks());
+    }
+
+
+    @Test
+    void uncompleteSubTask() {
+        Card c1 = new Card("Slides", "prep slide 3-5");
+        c1.addSubTask("research otters");
+        c1.addSubTask("research monkeys");
+        c1.addSubTask("research donkeys");
+        c1.completeSubTask("research otters");
+        assertEquals(1, c1.getCompletedSubs());
+        c1.uncompleteSubTask("research otters");
+        assertEquals(0, c1.getCompletedSubs());
+        c1.completeSubTask("research monkeys");
+        c1.completeSubTask("research otters");
+        List<String> completed = new ArrayList<>();
+        completed.add("research monkeys");
+        completed.add("research otters");
+        assertEquals(completed, c1.getCompletedTasks());
+        c1.uncompleteSubTask("research monkeys");
+        completed.remove("research monkeys");
+        assertEquals(completed, c1.getCompletedTasks());
     }
 
     @Test
@@ -157,4 +185,5 @@ class CardTest {
         Card c2 = new Card("Slides", "prep slide 3-5");
         assertEquals(c1.hashCode(), c2.hashCode());
     }
+
 }
