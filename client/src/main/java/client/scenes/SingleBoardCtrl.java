@@ -249,7 +249,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void addCard(VBox parent){
-         TextInputDialog titleinput = new TextInputDialog();
+        TextInputDialog titleinput = new TextInputDialog();
         titleinput.setTitle("Task Title");
         titleinput.setHeaderText("Create new task");
         titleinput.setContentText("Enter task title:");
