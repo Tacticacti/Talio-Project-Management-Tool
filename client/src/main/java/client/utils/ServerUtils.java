@@ -169,6 +169,7 @@ public class ServerUtils {
     }
 
     public Board deleteCardFromList(Long boardId, Long listId, Card card){
+        System.out.println(card);
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/delete/" + boardId.toString()) //
                 .request(APPLICATION_JSON) //

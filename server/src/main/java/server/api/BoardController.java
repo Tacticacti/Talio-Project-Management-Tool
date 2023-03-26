@@ -33,10 +33,10 @@ public class BoardController {
         
 
         // TODO uncomment **ONLY** for debug!!
-        /*
+
         Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
-        */
+
 
     }
 
@@ -94,6 +94,7 @@ public class BoardController {
 
         Long listId = req.getFirst();
         Card card = req.getSecond();
+        System.out.println(board.getLists().size());
         if(board.getLists().size() <= listId || listId < 0) {
             return ResponseEntity.badRequest().build();
         }
@@ -156,6 +157,7 @@ public class BoardController {
         Card toupdate = board.getLists().get(listId.intValue()).getCards().get(cardIndex);
         toupdate.setTitle(card.getTitle());
         toupdate.setDescription(card.getDescription());
+        toupdate.getSubtasks().removeAll(toupdate.getSubtasks());
         for(String s: card.getSubtasks()){
             toupdate.addSubTask(s);
         }
@@ -164,7 +166,6 @@ public class BoardController {
     }
 
 
-}
 
     @PostMapping(path = "/add/list/{id}")
     public ResponseEntity<BoardList> addListToBoard(@PathVariable("id") long boardId,
