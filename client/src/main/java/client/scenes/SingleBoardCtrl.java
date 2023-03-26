@@ -257,6 +257,7 @@ public class SingleBoardCtrl implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
             CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
             fxmlLoader.setController(controller);
+            Card newCard = new Card(title);
             try {
                 Node card = (Node) fxmlLoader.load();
                 Label titleLabel = (Label) card.lookup("#taskTitle");

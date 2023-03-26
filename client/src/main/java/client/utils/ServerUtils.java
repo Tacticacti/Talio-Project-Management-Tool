@@ -141,7 +141,7 @@ public class ServerUtils {
                 .target(server).path("api/boards/update/" + boardId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPairLongCard(boardListId, card),
+                .post(Entity.entity(new CustomPair<>(boardListId, card),
                         APPLICATION_JSON), Board.class);
     }
     public Card addCard(Card card) {
@@ -173,7 +173,7 @@ public class ServerUtils {
                 .target(server).path("api/boards/delete/" + boardId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPairLongCard(listId, card), APPLICATION_JSON)
+                .post(Entity.entity(new CustomPair<>(listId, card), APPLICATION_JSON)
                         , Board.class);
     }
 
