@@ -155,8 +155,8 @@ public class SingleBoardCtrl implements Initializable {
                 if (!title.getText().isEmpty()) {
                     System.out.println(title.getText());
                     BoardList changedBoardList = (BoardList) list.getUserData();
-                    System.out.println("requesting change name: " + BOARDID +  " " + changedBoardList.getId() +
-                            " " + title.getText());
+                    System.out.println("requesting change name: " + BOARDID +  " " +
+                            changedBoardList.getId() + " " + title.getText());
                     server.changeListName(BOARDID, changedBoardList.getId(), title.getText());
                 }
             } catch (Exception e) {
@@ -168,7 +168,8 @@ public class SingleBoardCtrl implements Initializable {
         });
     }
 
-    private void setDeleteBoardList(BoardList boardList, ObservableList<Node> board_lists, Node list) {
+    private void setDeleteBoardList(BoardList boardList, ObservableList<Node> board_lists,
+                                    Node list) {
         Button deleteBoardList =  (Button) list.lookup("#deleteBtn");
         deleteBoardList.setOnAction(event -> {
                 // deleting on client(GUI) side
@@ -377,7 +378,6 @@ public class SingleBoardCtrl implements Initializable {
             event.consume();
         });
         cardNode.setOnDragDropped(event -> {
-            //TODO:hbox_lists gets clogged up with deleted boardLists and somehow everytime the application runs, the new list is included in hbox_list but not in the GUI. Need to remove those as well when boardLists are deleted
             boolean success = false;
             if (dragboard.hasString()) {
                 String[] splitDragboard = dragboard.getString().split(";");
