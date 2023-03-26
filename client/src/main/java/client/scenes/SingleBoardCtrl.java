@@ -50,24 +50,18 @@ import java.util.ResourceBundle;
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-
-
-    private final Long boardId = 1L;
-
+    private final Long BOARDID = 1L;
     private Node newCardBtn;
-
     @FXML
     private HBox hbox_lists;
-
     @FXML
     private AnchorPane sb_anchor;
-
     @FXML
     private Button settingsBtn;
-
     private ObservableList<BoardList> lists;
-
     private Map<Node, Card> nodeCardMap;
+    private ClipboardContent content;
+    private Dragboard dragboard;
 
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -161,9 +155,9 @@ public class SingleBoardCtrl implements Initializable {
                 if (!title.getText().isEmpty()) {
                     System.out.println(title.getText());
                     BoardList changedBoardList = (BoardList) list.getUserData();
-                    System.out.println("requesting change name: " + boardId +  " " + changedBoardList.getId() +
+                    System.out.println("requesting change name: " + BOARDID +  " " + changedBoardList.getId() +
                             " " + title.getText());
-                    server.changeListName(boardId, changedBoardList.getId(), title.getText());
+                    server.changeListName(BOARDID, changedBoardList.getId(), title.getText());
                 }
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -181,7 +175,7 @@ public class SingleBoardCtrl implements Initializable {
                 board_lists.remove(deleteBoardList.getParent());
 
                 // deleting list on server side
-                server.removeBoardList(boardId, boardList.getId());
+                server.removeBoardList(BOARDID, boardList.getId());
                 try {
                     refresh();
                 }
@@ -232,7 +226,6 @@ public class SingleBoardCtrl implements Initializable {
             detail.setOnAction(event -> setCardDetail(cardNode, parent));
             title.setText(cardTitle);
             nodeCardMap.put(cardNode, card);
-            System.out.println(nodeCardMap.get(cardNode));
             setDragAndDrop(parent, cardNode);
             int index = parent.getChildren().size()-1;
             if(parent.getChildren().size()==1){
@@ -323,10 +316,10 @@ public class SingleBoardCtrl implements Initializable {
         }
 
         server.addCard(current);
-        long listIndex = getListIndex(boardId, listId);
+        long listIndex = getListIndex(BOARDID, listId);
         // saveCardToList(1l,0l,current);
         // server.updateCardFromList(1L, listIndex, current);
-        updateCardFromList(boardId, listIndex, current);
+        updateCardFromList(BOARDID, listIndex, current);
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         refresh();
@@ -351,64 +344,66 @@ public class SingleBoardCtrl implements Initializable {
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
             //server.addCardToList(1L, 0L, newCard);
-            long listIndex = getListIndex(boardId, listId);
-            saveCardToList(boardId, listIndex, newCard);
+            long listIndex = getListIndex(BOARDID, listId);
+            saveCardToList(BOARDID, listIndex, newCard);
             refresh();
             //enterCard(card);
         });
     }
-    private ClipboardContent content;
-    private Dragboard board;
-    private void setDragAndDrop(VBox parent, Node card) {
-        Card draggedCard = nodeCardMap.get(card);
-        card.setOnDragDetected(event -> {
-            board = card.startDragAndDrop(TransferMode.MOVE);
+
+    private void setDragAndDrop(VBox parent, Node cardNode) {
+        Card card = nodeCardMap.get(cardNode);
+        Long listId = ((BoardList) parent.getUserData()).getId();
+        cardNode.setOnDragDetected(event -> {
+            dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             content = new ClipboardContent();
-            content.putString(card.getId());
-            board.setContent(content);
+            content.putString(cardNode.getId() + "; " + ((BoardList) parent.getUserData()).getId());
+            dragboard.setContent(content);
 
             // Create a snapshot of the current card
-            WritableImage snapshot = card.snapshot(new SnapshotParameters(), null);
+            WritableImage snapshot = cardNode.snapshot(new SnapshotParameters(), null);
             ImageView imageView = new ImageView(snapshot);
-            imageView.setFitWidth(card.getBoundsInLocal().getWidth());
-            imageView.setFitHeight(card.getBoundsInLocal().getHeight());
+            imageView.setFitWidth(cardNode.getBoundsInLocal().getWidth());
+            imageView.setFitHeight(cardNode.getBoundsInLocal().getHeight());
 
             // Set the custom drag view to only show the current card being dragged
-            board.setDragView(imageView.getImage(), event.getX(), event.getY());
-
-            System.out.println("On Drag Detected: " + parent);
-            System.out.println(parent.getChildren());
+            dragboard.setDragView(imageView.getImage(), event.getX(), event.getY());
             event.consume();
         });
-        card.setOnDragOver(event -> {
-            if (board.hasString()) {
-//              System.out.println("Card " + board.getString() + " is being dragged!");
+        cardNode.setOnDragOver(event -> {
+            if (dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-        card.setOnDragDropped(event -> {
-            System.out.println("On Drag Dropped: " + parent);
+        cardNode.setOnDragDropped(event -> {
+            //TODO:hbox_lists gets clogged up with deleted boardLists and somehow everytime the application runs, the new list is included in hbox_list but not in the GUI. Need to remove those as well when boardLists are deleted
             boolean success = false;
-            if (board.hasString()) {
-                System.out.println(parent.getChildren());
-                System.out.println("Hello");
-                parent.getChildren().add(0, card);
-                System.out.println("world");
-                success = true;
-                System.out.println(parent.getChildren());
+            if (dragboard.hasString()) {
+                String[] splitDragboard = dragboard.getString().split(";");
+                long originalListId = Long.parseLong(splitDragboard[1].trim());
+                long originalListIndex = getListIndex(BOARDID, originalListId);
+                ObservableList<Node> hboxChildren = hbox_lists.getChildren();
+                AnchorPane originalList = (AnchorPane) (hboxChildren.get((int) originalListIndex));
+                int originalListSize = originalList.getChildren().size();
+                VBox originalParent = (VBox) originalList.getChildren().get(originalListSize-1);
+                Node draggedCardNode = originalParent.lookup("#" + splitDragboard[0].trim());
+                if (draggedCardNode != null && originalParent != parent) {
+                    parent.getChildren().add(0, draggedCardNode);
+                    Card draggedCard = nodeCardMap.get(draggedCardNode);
+                    saveCardToList(BOARDID, listId, draggedCard);
+                    success = true;
+                }
             }
             event.setDropCompleted(success);
             event.consume();
         });
-        card.setOnDragDone(event -> {
-            if (board.hasString()) {
-                parent.getChildren().remove(card);
-                server.deleteCard(draggedCard.getId());
+        cardNode.setOnDragDone(event -> {
+            if (dragboard.hasString() && event.isDropCompleted()) {
+                parent.getChildren().remove(cardNode);
+                deleteCardFromList(BOARDID, listId, card);
             }
-            System.out.println("On Drag Done: " + parent);
-            System.out.println(parent.getChildren());
-            refresh();
+//            refresh(); TODO:uncomment after server error has been fixed.
             event.consume();
         });
     }
@@ -448,6 +443,18 @@ public class SingleBoardCtrl implements Initializable {
         }
     }
 
+    public void deleteCardFromList(Long boardId, Long listIdIndex, Card current){
+        try{
+            server.deleteCardFromList(boardId, listIdIndex, current);
+        }catch(WebApplicationException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            //TODO:set custom error message
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
     public void setDelete(ActionEvent event, Node hbox, Card current, long listId){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Dialog");
@@ -459,8 +466,8 @@ public class SingleBoardCtrl implements Initializable {
                 par.getChildren().remove(hbox);
                 nodeCardMap.remove(hbox, current);
                 //server.deleteCard(current.getId());
-                long listIndex = getListIndex(boardId, listId);
-                server.deleteCardFromList(boardId, listIndex, current);
+                long listIndex = getListIndex(BOARDID, listId);
+                server.deleteCardFromList(BOARDID, listIndex, current);
                 refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
@@ -528,7 +535,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void refresh() {
-        pullLists(boardId);
+        pullLists(BOARDID);
         try {
             drawLists();
         }
