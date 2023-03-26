@@ -125,7 +125,9 @@ public class BoardController {
             throw new RuntimeException();
         }
 
-        board.getLists().get(listId.intValue()).removeCard(card);
+        // board.getLists().get(listId.intValue()).removeCard(card);
+        board.getLists().get(listId.intValue()).getCards().removeIf(x ->
+                x.getId() == card.getId());
         repo.save(board);
     }
 

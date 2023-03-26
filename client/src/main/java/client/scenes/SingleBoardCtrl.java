@@ -466,7 +466,7 @@ public class SingleBoardCtrl implements Initializable {
                 nodeCardMap.remove(hbox, current);
                 //server.deleteCard(current.getId());
                 long listIndex = getListIndex(boardId,listid);
-                server.deleteCardFromList(1l, listIndex, current);
+                server.deleteCardFromList(boardId, listIndex, current);
                 refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
