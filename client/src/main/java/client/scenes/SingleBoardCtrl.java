@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import commons.BoardList;
+import commons.Card;
 
 import client.utils.ServerUtils;
 import jakarta.ws.rs.WebApplicationException;
