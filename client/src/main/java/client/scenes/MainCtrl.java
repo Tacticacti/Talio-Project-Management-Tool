@@ -15,15 +15,30 @@
  */
 package client.scenes;
 
+import client.MyFXML;
+import client.MyModule;
+import client.utils.ServerUtils;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import commons.Board;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+
+import java.io.IOException;
+
+import static com.google.inject.Guice.createInjector;
 
 
 public class MainCtrl {
 
-    private Stage primaryStage;
+    public Stage primaryStage;
 
     private BoardOverviewCtrl boardOverviewCtrl;
     private Scene boverview;
@@ -36,6 +51,11 @@ public class MainCtrl {
 
     private ConnectHomeCtrl connectHomeCtrl;
     private Scene home;
+
+    private static final Injector INJECTOR = createInjector(new MyModule());
+    private static final MyFXML FXML = new MyFXML(INJECTOR);
+
+
 
     public void initialize1(Stage primaryStage, Pair<ConnectHomeCtrl, Parent> homePair,
                             Pair<BoardOverviewCtrl, Parent> boverviewPair,
@@ -68,12 +88,43 @@ public class MainCtrl {
         primaryStage.setScene(singleBoard);
     }
 
+    public void showBoard(Board board) throws IOException {
+
+        primaryStage.setTitle("Board");
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
+
+        Node root = loader.load();
+
+
+        //Scene new_scene = new Scene(root);
+
+
+
+        //TextField board_name = (TextField) new_scene.lookup("#board_name");
+
+        //board_name.setText(board.getId().toString());
+
+        //primaryStage.setScene(new Scene(loaded_board.getValue()));
+        // build board from board
+
+        primaryStage.setScene(root.getScene());
+        System.out.println("after entering board, " + primaryStage);
+    }
+
+
     public void showBoardOverview(){
+        System.out.println("show overview: " +boverview);
+        System.out.println("primaryStage" + primaryStage);
         primaryStage.setTitle("Board overview");
         primaryStage.setScene(boverview);
     }
     public void showHome(){
         primaryStage.setTitle("Talio: Home connection page");
         primaryStage.setScene(home);
+    }
+
+    public String getPrimaryStage() {
+        return primaryStage.toString();
     }
 }

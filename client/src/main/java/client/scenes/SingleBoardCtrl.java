@@ -1,5 +1,7 @@
 package client.scenes;
 
+import client.MyModule;
+import com.google.inject.Injector;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
@@ -29,6 +31,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import java.io.IOException;
+
+import static com.google.inject.Guice.createInjector;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
@@ -116,6 +120,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void card(){
+
         mainCtrl.showAddCard();
     }
 
@@ -158,16 +163,17 @@ public class SingleBoardCtrl implements Initializable {
 
 
     public void addCard(VBox parent){
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
         try {
-            Node card = (Node) fxmlLoader.load();
-            Button det = (Button) card.lookup("#details");
+            FXMLLoader card = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
+            Node added_card = card.load();
+
+            Button det = (Button) added_card.lookup("#details");
             det.setOnAction(event -> mainCtrl.showAddCard());
             int index =parent.getChildren().size()-2;
             if(parent.getChildren().size()<2){
                 index=0;
             }
-            parent.getChildren().add(index, card);
+            parent.getChildren().add(index, added_card);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -187,7 +193,8 @@ public class SingleBoardCtrl implements Initializable {
 
 
     public void openBoardSettings() throws IOException {
-        System.out.println("running!");
+
+        System.out.println("running!" + mainCtrl.getPrimaryStage());
 
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customizationPage.fxml"));

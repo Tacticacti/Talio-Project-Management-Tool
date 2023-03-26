@@ -18,7 +18,7 @@
 <AnchorPane prefHeight="1002.0" prefWidth="1923.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#403e3e" height="102.0" stroke="BLACK" strokeType="INSIDE" width="1923.0" />
-      <TextField layoutX="880.0" layoutY="24.0" prefHeight="62.0" prefWidth="472.0" promptText="Search" style="-fx-border-color: gray; -fx-border-width: 2;" AnchorPane.leftAnchor="750.0" AnchorPane.rightAnchor="750.0">
+      <TextField fx:id="search_box" layoutX="880.0" layoutY="24.0" onAction="#onJoinBoard" prefHeight="62.0" prefWidth="472.0" promptText="Search" style="-fx-border-color: gray; -fx-border-width: 2;" AnchorPane.leftAnchor="750.0" AnchorPane.rightAnchor="750.0">
          <font>
             <Font size="19.0" />
          </font>
@@ -79,5 +79,6 @@
          </content>
       </ScrollPane>
       <Line endX="1920.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
+      <Button layoutX="1207.0" layoutY="25.0" mnemonicParsing="false" onAction="#onJoinBoard" prefHeight="62.0" prefWidth="74.0" text="Enter" />
    </children>
 </AnchorPane>

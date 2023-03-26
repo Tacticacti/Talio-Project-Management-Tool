@@ -23,6 +23,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Board;
@@ -90,4 +91,38 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPairLongCard(boardListId, card),
                     APPLICATION_JSON), Board.class);
     }
+
+//    public void addBoard(Board board) {
+//        ClientBuilder.newClient(new ClientConfig()) //
+//                .target(server).path("api/boards/add") //
+//                .request(APPLICATION_JSON) //
+//                .accept(APPLICATION_JSON) //
+//                .post(Entity.entity(board, APPLICATION_JSON), Board.class);
+//    }
+
+    public Board addBoard(Board board) {
+        Response response = ClientBuilder.newClient(new ClientConfig())
+                .target(server)
+                .path("api/boards/add")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(board, APPLICATION_JSON));
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.readEntity(Board.class);
+        } else {
+            throw new RuntimeException("Failed to add board. HTTP error code: " + response.getStatus());
+        }
+    }
+
+
+
+//    public Card addCard(Card card) {
+//        return ClientBuilder.newClient(new ClientConfig()) //
+ //               .target(server).path("api/cards/add") //
+ //               .request(APPLICATION_JSON) //
+  //              .accept(APPLICATION_JSON) //
+   //             .post(Entity.entity(card, APPLICATION_JSON), Card.class);
+   // }
+
+
 }
