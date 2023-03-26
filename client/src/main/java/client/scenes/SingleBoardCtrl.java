@@ -1,13 +1,17 @@
 package client.scenes;
 
+import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.Board;
 import commons.BoardList;
+
 import client.utils.ServerUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -20,16 +24,22 @@ import com.google.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.WritableImage;
 import javafx.stage.Modality;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
@@ -50,11 +60,15 @@ public class SingleBoardCtrl implements Initializable {
 
     private ObservableList<BoardList> lists;
 
+    private ClipboardContent content;
+
+    private Dragboard board;
+    private AnchorPane card;
+
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-
     }
 
     public void pullLists(Long id) {
@@ -82,6 +96,7 @@ public class SingleBoardCtrl implements Initializable {
         mainCtrl.showAddCard();
     }
 
+
     public void createNewList() {
         var board_lists = hbox_lists.getChildren();
         BoardList boardList = server.addEmptyList(1L, " ");
@@ -100,6 +115,8 @@ public class SingleBoardCtrl implements Initializable {
 
         list.setUserData(boardList);
 
+        Button deleteList =  (Button) list.lookup("#deleteBtn");
+        deleteList.setOnAction(event -> board_lists.remove(deleteList.getParent()));
         Button btn =  (Button) list.lookup("#deleteBtn");
         // btn.setOnAction(event -> board_lists.remove(btn.getParent()));
         btn.setOnAction(event -> {
@@ -135,10 +152,10 @@ public class SingleBoardCtrl implements Initializable {
                 alert.showAndWait();
             }
         });
-        Button btn2 =  (Button) list.lookup("#addNewCardButton");
-        btn2.setOnAction(event ->{
-            VBox par = (VBox) btn2.getParent();
-            addCard(par);
+        Button newCard =  (Button) list.lookup("#addNewCardButton");
+        newCard.setOnAction(event ->{
+            VBox parentList = (VBox) newCard.getParent();
+            addCard(parentList);
         });
 
         // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
@@ -148,20 +165,69 @@ public class SingleBoardCtrl implements Initializable {
 
     public void addCard(VBox parent){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
+        CardGUICtrl controller = new CardGUICtrl(server, mainCtrl);
+        fxmlLoader.setController(controller);
         try {
             Node card = (Node) fxmlLoader.load();
-            Button det = (Button) card.lookup("#details");
-            det.setOnAction(event -> mainCtrl.showAddCard());
+            Button detailButton = (Button) card.lookup("#details");
+            detailButton.setOnAction(event -> mainCtrl.showAddCard());
             int index =parent.getChildren().size()-2;
             if(parent.getChildren().size()<2){
                 index=0;
             }
             parent.getChildren().add(index, card);
+            card.setOnDragDetected(event -> {
+                board = card.startDragAndDrop(TransferMode.MOVE);
+                content = new ClipboardContent();
+                content.putString(card.getId());
+                board.setContent(content);
+
+                // Create a snapshot of the current card
+                WritableImage snapshot = card.snapshot(new SnapshotParameters(), null);
+                ImageView imageView = new ImageView(snapshot);
+                imageView.setFitWidth(card.getBoundsInLocal().getWidth());
+                imageView.setFitHeight(card.getBoundsInLocal().getHeight());
+
+                // Set the custom drag view to only show the current card being dragged
+                board.setDragView(imageView.getImage(), event.getX(), event.getY());
+                System.out.println("On Drag Detected: " + parent);
+                System.out.println(parent.getChildren());
+                event.consume();
+            });
+            card.setOnDragOver(event -> {
+                if (board.hasString()) {
+//                    System.out.println("Card " + board.getString() + " is being dragged!");
+                    event.acceptTransferModes(TransferMode.MOVE);
+                }
+                event.consume();
+            });
+            card.setOnDragDone(event -> {
+                if (board.hasString()) {
+                    var cardParent = (VBox) card.getParent();
+                    cardParent.getChildren().remove(card);
+                }
+                System.out.println("On Drag Done: " + parent);
+                System.out.println(parent.getChildren());
+                event.consume();
+            });
+            card.setOnDragDropped(event -> {
+                System.out.println("On Drag Dropped: " + parent);
+                boolean success = false;
+                if (board.hasString()) {
+                    System.out.println("Hello");
+                    System.out.println(parent.getChildren());
+                    parent.getChildren().add(0, card);
+                    System.out.println("world");
+                    success = true;
+                    System.out.println(parent.getChildren());
+                }
+                event.setDropCompleted(success);
+                event.consume();
+            });
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
 
     public void deleteList() {
 
