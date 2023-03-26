@@ -69,11 +69,6 @@ public class SingleBoardCtrl implements Initializable {
 
     private Map<Node, Card> nodeCardMap;
 
-    private ClipboardContent content;
-
-    private Dragboard board;
-    private AnchorPane card;
-
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -137,20 +132,38 @@ public class SingleBoardCtrl implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
         Node list = loader.load();
         list.setUserData(boardList);
-        // set up delete list buttons and actions for those buttons
+        // set up deleting a board list
         setDeleteBoardList(boardList, board_lists, list);
 
-        // set up list title
+        // set up putting list title
+        setListTitle(boardList, list);
+
+        // set up adding new card
+        Button newCardButton =  (Button) list.lookup("#addNewCardButton");
+        VBox parentList = (VBox) newCardButton.getParent();
+        parentList.setUserData(boardList);
+        for(Card card: boardList.getCards()){
+            placeCard(parentList, card);
+        }
+        newCardButton.setOnAction(event ->{
+            addNewCard(parentList);
+        });
+        // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
+        board_lists.add(list);
+        return list;
+    }
+
+    private void setListTitle(BoardList boardList, Node list) {
         TextField title = (TextField) list.lookup("#list_title");
         title.setText(boardList.getName());
         title.setOnAction(event -> {
             try {
                 if (!title.getText().isEmpty()) {
                     System.out.println(title.getText());
-                    BoardList tmp = (BoardList) list.getUserData();
-                    System.out.println("requesting change name: " + boardId +  " " + tmp.getId() +
+                    BoardList changedBoardList = (BoardList) list.getUserData();
+                    System.out.println("requesting change name: " + boardId +  " " + changedBoardList.getId() +
                             " " + title.getText());
-                    server.changeListName(boardId, tmp.getId(), title.getText());
+                    server.changeListName(boardId, changedBoardList.getId(), title.getText());
                 }
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -159,19 +172,6 @@ public class SingleBoardCtrl implements Initializable {
                 alert.showAndWait();
             }
         });
-        Button newCard =  (Button) list.lookup("#addNewCardButton");
-        VBox parentList = (VBox) newCard.getParent();
-        parentList.setUserData(boardList);
-        for(Card c: boardList.getCards()){
-            placeCard(parentList, c);
-        }
-        newCard.setOnAction(event ->{
-            addCard(parentList);
-        });
-
-        // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
-        board_lists.add(list);
-        return list;
     }
 
     private void setDeleteBoardList(BoardList boardList, ObservableList<Node> board_lists, Node list) {
@@ -214,7 +214,7 @@ public class SingleBoardCtrl implements Initializable {
             placeCard(par, c);
         }
         btn2.setOnAction(event ->{
-            addCard(par);
+            addNewCard(par);
         });
 
         board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
@@ -222,149 +222,73 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void placeCard(VBox parent, Card card){
+        String cardTitle = card.getTitle();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
         try {
-            Node hbox = fxmlLoader.load();
-            hbox.setId(UUID.randomUUID().toString());
-            Button det = (Button) hbox.lookup("#details");
-            Label title = (Label) hbox.lookup("#taskTitle");
-            title.setText(card.getTitle());
-            det.setOnAction(event -> enterCard(hbox, parent));
-            nodeCardMap.put(hbox, card);
+            Node cardNode = fxmlLoader.load();
+            cardNode.setId(UUID.randomUUID().toString());
+            Button detail = (Button) cardNode.lookup("#details");
+            Label title = (Label) cardNode.lookup("#taskTitle");
+            detail.setOnAction(event -> setCardDetail(cardNode, parent));
+            title.setText(cardTitle);
+            nodeCardMap.put(cardNode, card);
+            System.out.println(nodeCardMap.get(cardNode));
+            setDragAndDrop(parent, cardNode);
             int index = parent.getChildren().size()-1;
             if(parent.getChildren().size()==1){
                 index=0;
             }
-            parent.getChildren().add(index, hbox);
+            parent.getChildren().add(index, cardNode);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }        
     }
 
-    public void addCard(VBox parent){
+    public void setCardDetail(Node cardNode, VBox parent){
+//        AnchorPane list = (AnchorPane) parent.getParent(); unused variable
         BoardList boardList = (BoardList) parent.getUserData();
         long listId = boardList.getId();
-        TextInputDialog titleInput = new TextInputDialog();
-        titleInput.setTitle("Task Title");
-        titleInput.setHeaderText("Create new task");
-        titleInput.setContentText("Enter task title:");
-        titleInput.showAndWait().ifPresent(title ->{
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
-            Card newCard = new Card(title);
-            try {
-                Node card = fxmlLoader.load();
-                Label titleLabel = (Label) card.lookup("#taskTitle");
-                titleLabel.setText(title);
-                Button detailButton = (Button) card.lookup("#details");
-                detailButton.setOnAction(event -> enterCard(card, parent));
-                nodeCardMap.put(card, newCard);
-                int index =parent.getChildren().size()-1;
-                if(parent.getChildren().size()==1){
-                    index=0;
-                }
-                card.setOnDragDetected(event -> {
-                    board = card.startDragAndDrop(TransferMode.MOVE);
-                    content = new ClipboardContent();
-                    content.putString(card.getId());
-                    board.setContent(content);
-
-                    // Create a snapshot of the current card
-                    WritableImage snapshot = card.snapshot(new SnapshotParameters(), null);
-                    ImageView imageView = new ImageView(snapshot);
-                    imageView.setFitWidth(card.getBoundsInLocal().getWidth());
-                    imageView.setFitHeight(card.getBoundsInLocal().getHeight());
-
-                    // Set the custom drag view to only show the current card being dragged
-                    board.setDragView(imageView.getImage(), event.getX(), event.getY());
-                    System.out.println("On Drag Detected: " + parent);
-                    System.out.println(parent.getChildren());
-                    event.consume();
-                });
-                card.setOnDragOver(event -> {
-                    if (board.hasString()) {
-    //                    System.out.println("Card " + board.getString() + " is being dragged!");
-                        event.acceptTransferModes(TransferMode.MOVE);
-                    }
-                    event.consume();
-                });
-                card.setOnDragDone(event -> {
-                    if (board.hasString()) {
-                        VBox cardParent = (VBox) card.getParent();
-                        cardParent.getChildren().remove(card);
-                    }
-                    System.out.println("On Drag Done: " + parent);
-                    System.out.println(parent.getChildren());
-                    event.consume();
-                });
-                card.setOnDragDropped(event -> {
-                    System.out.println("On Drag Dropped: " + parent);
-                    boolean success = false;
-                    if (board.hasString()) {
-                        System.out.println("Hello");
-                        System.out.println(parent.getChildren());
-                        parent.getChildren().add(0, card);
-                        System.out.println("world");
-                        success = true;
-                        System.out.println(parent.getChildren());
-                    }
-                    event.setDropCompleted(success);
-                    event.consume();
-                });
-                parent.getChildren().add(index, card);
-                Card saved = server.addCard(newCard);
-                newCard.setId(saved.getId());
-                //server.addCardToList(1L, 0L, newCard);
-                long listIndex = getListIndex(boardId, listId);
-                saveCardToList(boardId, listIndex, newCard);
-                refresh();
-                //enterCard(card);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    public void enterCard(Node card, VBox parent){
-        AnchorPane list = (AnchorPane) parent.getParent();
-        BoardList boardList = (BoardList) parent.getUserData();
-        long listId = boardList.getId();
-        Card current = server.getCardById(nodeCardMap.get(card).getId());
+        Card card = server.getCardById(nodeCardMap.get(cardNode).getId());
         System.out.println("-------------------------");
-        System.out.println("got: " + current);
+        System.out.println("got: " + card);
         System.out.println("-------------------------");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddCard.fxml"));
-        Parent root = null;
+        Parent root;
         try {
             root = fxmlLoader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        // sets up done card button
+        Button doneButton = (Button) root.lookup("#doneTaskButton");
+        doneButton.setOnAction(event -> {setDone(listId, card, event);});
 
-        Button doneBtn = (Button) root.lookup("#doneTaskButton");
-        doneBtn.setOnAction(event -> {
-            try {
-                done(event, current, listId);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        Button deleteBtn = (Button) root.lookup("#deleteTaskButton");
-        deleteBtn.setOnAction(event -> delete(event, card, current, listId));
-        Button cancelBtn = (Button) root.lookup("#cancelTaskButton");
-        cancelBtn.setOnAction(event -> cancel(event, card));
+        //sets up delete card button
+        Button deleteButton = (Button) root.lookup("#deleteTaskButton");
+        deleteButton.setOnAction(event -> setDelete(event, cardNode, card, listId));
+
+        //sets up cancel card button
+        Button cancelButton = (Button) root.lookup("#cancelTaskButton");
+        cancelButton.setOnAction(event -> setCancel(event, cardNode));
+
+        //sets up card title
         TextField title = (TextField) root.lookup("#taskTitle");
-        title.setText(current.getTitle());
-        TextArea desc =  (TextArea) root.lookup("#taskDescription");
-        desc.setText(current.getDescription());
-        Button addSub = (Button) root.lookup("#addSubtaskButton");
+        title.setText(card.getTitle());
+
+        //sets up card description
+        TextArea description =  (TextArea) root.lookup("#taskDescription");
+        description.setText(card.getDescription());
+
+        // sets up sub-task operations
+        Button addSubTask = (Button) root.lookup("#addSubtaskButton");
         AddCardCtrl addCardCtrl = fxmlLoader.getController();
-        addSub.setOnAction(event ->  addCardCtrl.addSubTask(current));
-        if(current.getSubtasks()!=null){
-            for(String s: current.getSubtasks()){
-                if(current.getCompletedTasks().contains(s)){
-                    addCardCtrl.displayCompletedSubs(s, current);
-                }else{
-                    addCardCtrl.displaySubs(s, current);
+        addSubTask.setOnAction(event ->  addCardCtrl.addSubTask(card));
+        if(card.getSubtasks()!=null){
+            for(String str: card.getSubtasks()){
+                if(card.getCompletedTasks().contains(str)){
+                    addCardCtrl.displayCompletedSubs(str, card);
+                } else{
+                    addCardCtrl.displaySubs(str, card);
                 }
             }
         }
@@ -376,7 +300,7 @@ public class SingleBoardCtrl implements Initializable {
         popUpStage.showAndWait();
     }
 
-    public void done(javafx.event.ActionEvent event, Card current, long listId) throws IOException {
+    private void setDone(long listId, Card current, ActionEvent event) {
         Button source = (Button) event.getSource();
         AnchorPane ap = (AnchorPane) source.getParent();
         TextField title = (TextField) ap.lookup("#taskTitle");
@@ -408,6 +332,87 @@ public class SingleBoardCtrl implements Initializable {
         refresh();
     }
 
+    public void addNewCard(VBox parent){
+        BoardList boardList = (BoardList) parent.getUserData();
+        long listId = boardList.getId();
+        TextInputDialog titleInput = new TextInputDialog();
+        titleInput.setTitle("Task Title");
+        titleInput.setHeaderText("Create new task");
+        titleInput.setContentText("Enter task title:");
+        titleInput.showAndWait().ifPresent(cardTitle ->{
+
+            //TODO: Fix case when cardTitle is empty
+            System.out.println("-----------------------------");
+            System.out.println(cardTitle);
+            System.out.println("-----------------------------");
+
+            Card newCard = new Card(cardTitle);
+            placeCard(parent, newCard);
+            Card saved = server.addCard(newCard);
+            newCard.setId(saved.getId());
+            //server.addCardToList(1L, 0L, newCard);
+            long listIndex = getListIndex(boardId, listId);
+            saveCardToList(boardId, listIndex, newCard);
+            refresh();
+            //enterCard(card);
+        });
+    }
+    private ClipboardContent content;
+    private Dragboard board;
+    private void setDragAndDrop(VBox parent, Node card) {
+        Card draggedCard = nodeCardMap.get(card);
+        card.setOnDragDetected(event -> {
+            board = card.startDragAndDrop(TransferMode.MOVE);
+            content = new ClipboardContent();
+            content.putString(card.getId());
+            board.setContent(content);
+
+            // Create a snapshot of the current card
+            WritableImage snapshot = card.snapshot(new SnapshotParameters(), null);
+            ImageView imageView = new ImageView(snapshot);
+            imageView.setFitWidth(card.getBoundsInLocal().getWidth());
+            imageView.setFitHeight(card.getBoundsInLocal().getHeight());
+
+            // Set the custom drag view to only show the current card being dragged
+            board.setDragView(imageView.getImage(), event.getX(), event.getY());
+
+            System.out.println("On Drag Detected: " + parent);
+            System.out.println(parent.getChildren());
+            event.consume();
+        });
+        card.setOnDragOver(event -> {
+            if (board.hasString()) {
+//              System.out.println("Card " + board.getString() + " is being dragged!");
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+        card.setOnDragDropped(event -> {
+            System.out.println("On Drag Dropped: " + parent);
+            boolean success = false;
+            if (board.hasString()) {
+                System.out.println(parent.getChildren());
+                System.out.println("Hello");
+                parent.getChildren().add(0, card);
+                System.out.println("world");
+                success = true;
+                System.out.println(parent.getChildren());
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+        card.setOnDragDone(event -> {
+            if (board.hasString()) {
+                parent.getChildren().remove(card);
+                server.deleteCard(draggedCard.getId());
+            }
+            System.out.println("On Drag Done: " + parent);
+            System.out.println(parent.getChildren());
+            refresh();
+            event.consume();
+        });
+    }
+
 
     public long getListIndex(Long boardId, Long listId){
         Board b = server.getBoardById(boardId);
@@ -426,6 +431,7 @@ public class SingleBoardCtrl implements Initializable {
         }catch(WebApplicationException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
+            //TODO:set custom error message
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
@@ -436,12 +442,13 @@ public class SingleBoardCtrl implements Initializable {
         }catch(WebApplicationException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
+            //TODO:set custom error message
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
     }
 
-    public void delete(ActionEvent event, Node hbox, Card current, long listId){
+    public void setDelete(ActionEvent event, Node hbox, Card current, long listId){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation Dialog");
         alert.setHeaderText("Delete Task");
@@ -465,7 +472,7 @@ public class SingleBoardCtrl implements Initializable {
 
 
 
-    public void cancel(ActionEvent event, Node hboxCard){
+    public void setCancel(ActionEvent event, Node hboxCard){
         Button cancel = (Button) event.getSource();
         Stage popup = (Stage) cancel.getScene().getWindow();
         popup.close();
