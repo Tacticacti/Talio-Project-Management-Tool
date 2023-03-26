@@ -104,16 +104,16 @@ public class SingleBoardCtrl implements Initializable {
         nodeCardMap = new HashMap<>();
 //        Board b = server.getBoardById(1l);
 
-        try {
-            createNewList();
-//            for(BoardList bl: b.getLists()){
-//                hbox_lists.getChildren()
-//                .add((hbox_lists.getChildren().size()-2), displayList(bl));
-//            }
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+//         try {
+//             createNewList();
+// //            for(BoardList bl: b.getLists()){
+// //                hbox_lists.getChildren()
+// //                .add((hbox_lists.getChildren().size()-2), displayList(bl));
+// //            }
+//         }
+//         catch(IOException e) {
+//             e.printStackTrace();
+//         }
         //server.addCardToList(1L, 0L, new Card("card from init"));
 
         //  TODO change 1L -> board_id if we are going multiboard
