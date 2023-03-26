@@ -269,7 +269,7 @@ public class SingleBoardCtrl implements Initializable {
                 if(parent.getChildren().size()==1){
                     index=0;
                 }
-                parent.getChildren().add(index, card);
+               // parent.getChildren().add(index, card);
                 card.setOnDragDetected(event -> {
                     board = card.startDragAndDrop(TransferMode.MOVE);
                     content = new ClipboardContent();
