@@ -147,13 +147,19 @@ public class BoardController {
         if(board.getLists().size() <= listId || listId < 0) {
             return ResponseEntity.badRequest().build();
         }
-        int cardIndex = 0;
+        int cardIndex = -1;
         for(int i=0; i< board.getLists().get(listId.intValue()).getCards().size(); i++){
-            if(board.getLists().get(listId.intValue()).getCards().get(i).equals(card)){
+            if(Objects.equals(board.getLists().get(listId.intValue()).getCards().get(i).getId(),
+                    card.getId())) {
                 cardIndex = i;
                 break;
             }
         }
+
+        if(cardIndex < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+
         Card toupdate = board.getLists().get(listId.intValue()).getCards().get(cardIndex);
         toupdate.setTitle(card.getTitle());
         toupdate.setDescription(card.getDescription());

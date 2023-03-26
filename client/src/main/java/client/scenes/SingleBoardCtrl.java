@@ -342,6 +342,9 @@ public class SingleBoardCtrl implements Initializable {
         BoardList boardList = (BoardList) parent.getUserData();
         long listid = boardList.getId();
         Card current = server.getCardById(nodeCardMap.get(card).getId());
+        System.out.println("-------------------------");
+        System.out.println("got: " + current);
+        System.out.println("-------------------------");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddCard.fxml"));
         Parent root = null;
         try {
@@ -407,6 +410,7 @@ public class SingleBoardCtrl implements Initializable {
                     current.addSubTask(cb.getText());
             }
         }
+
         server.addCard(current);
         long listIndex = getListIndex(boardId, listid);
         // saveCardToList(1l,0l,current);
