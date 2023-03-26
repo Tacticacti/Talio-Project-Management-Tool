@@ -328,7 +328,7 @@ public class SingleBoardCtrl implements Initializable {
                 newCard.setId(saved.getId());
                 //server.addCardToList(1L, 0L, newCard);
                 long listIndex = getListIndex(boardId, listid);
-                saveCardToList(boardId,listIndex,newCard);
+                saveCardToList(boardId, listIndex, newCard);
                 refresh();
                 //enterCard(card);
             } catch (IOException e) {
@@ -465,7 +465,7 @@ public class SingleBoardCtrl implements Initializable {
                 par.getChildren().remove(hbox);
                 nodeCardMap.remove(hbox, current);
                 //server.deleteCard(current.getId());
-                long listIndex = getListIndex(boardId,listid);
+                long listIndex = getListIndex(boardId, listid);
                 server.deleteCardFromList(boardId, listIndex, current);
                 refresh();
                 Button source = (Button) event.getSource();
