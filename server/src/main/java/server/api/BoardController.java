@@ -164,7 +164,7 @@ public class BoardController {
     }
 
 
-}
+
 
     @PostMapping(path = "/add/list/{id}")
     public ResponseEntity<BoardList> addListToBoard(@PathVariable("id") long boardId,
