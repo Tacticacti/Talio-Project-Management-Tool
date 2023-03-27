@@ -1,6 +1,7 @@
 package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -189,5 +190,43 @@ public class BoardControllerTest {
         c2.board = b1;
         c2.boardList = bl1;
         assertEquals(c2, ret.getBody().getLists().get(0).getCards().get(0));
+    }
+
+    @Test
+    public void deleteListWrongID() {
+        controller.add(b1);
+        var ret = controller.deleteList(99L, 99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void deleteListOK() {
+        controller.add(b1);
+        var ret = controller.deleteList(0L, 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void deleteCardWrongID() {
+        controller.add(b1);
+        Pair<Long, Card> req = Pair.of(99L, c1);
+        var ret = controller.deleteCardFromId(99L, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteCardFromId(0L, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void deleteCardOK() {
+        controller.add(b1);
+        Pair<Long, Card> req = Pair.of(0L, c1);
+        var ret = controller.addCardToId(0L, req);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteCardFromId(0L, req);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        Board res = controller.getById(0L).getBody();
+        assertFalse(res.getLists().get(0).getCards().contains(c1));
     }
 }
