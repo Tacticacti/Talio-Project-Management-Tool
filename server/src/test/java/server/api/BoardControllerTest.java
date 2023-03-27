@@ -166,6 +166,11 @@ public class BoardControllerTest {
         req = Pair.of(10L, c2);
         ret = controller.updateCardInId(0L, req);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        c2.id = 123L;
+        req = Pair.of(0L, c2);
+        ret = controller.updateCardInId(0L, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
     }
 
     @Test
