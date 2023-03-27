@@ -189,5 +189,4 @@ public class Card implements Serializable {
     public List<String> getCompletedTasks() {
         return completedTasks;
     }
-
 }

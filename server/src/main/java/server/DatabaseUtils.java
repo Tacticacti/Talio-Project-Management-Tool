@@ -6,6 +6,7 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,8 +33,8 @@ public class DatabaseUtils {
                            List<String> subtasks, List<String> tags) {
         card.setTitle(title);
         card.setDescription(description);
-        card.getSubtasks().removeAll(subtasks);
-        for(String s: subtasks){
+        card.subtasks = new ArrayList<>();
+        for(String s : subtasks){
             card.addSubTask(s);
         }
     }

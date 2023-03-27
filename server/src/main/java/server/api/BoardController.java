@@ -168,13 +168,9 @@ public class BoardController {
         return ResponseEntity.ok(saved);
     }
 
-
-
     @PostMapping(path = "/add/list/{id}")
     public ResponseEntity<BoardList> addListToBoard(@PathVariable("id") long boardId,
         @RequestBody String listName) {
-
-        // String listName = nameIn.getBody();
 
         System.out.println("---------------------------");
         System.out.println("addListToBoard: ");
