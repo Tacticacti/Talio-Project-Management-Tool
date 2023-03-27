@@ -94,4 +94,8 @@ public class BoardControllerTest {
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals(c1, ret.getBody().getLists().get(0).getCards().get(0));
     }
+
+
+
+
 }

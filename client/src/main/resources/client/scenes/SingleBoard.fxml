@@ -13,7 +13,7 @@
 <AnchorPane fx:id="sb_anchor" prefHeight="1000.0" prefWidth="1923.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.SingleBoardCtrl">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#403e3e" height="102.0" layoutX="-32.0" stroke="BLACK" strokeType="INSIDE" width="1960.0" />
-      <TextField fx:id="board_name" focusTraversable="false" layoutX="101.0" layoutY="25.0" onAction="#openBoardSettings" prefHeight="17.0" prefWidth="374.0" promptText="Board Name" style="-fx-background-radius: 5;">
+      <TextField fx:id="board_name" focusTraversable="false" layoutX="101.0" layoutY="25.0" onKeyTyped="#onTypeTitle" prefHeight="17.0" prefWidth="374.0" promptText="Board Name" style="-fx-background-radius: 5;">
          <font>
             <Font size="18.0" />
          </font>

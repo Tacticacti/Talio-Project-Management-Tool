@@ -1,7 +1,5 @@
 package client.scenes;
 
-import client.MyModule;
-import com.google.inject.Injector;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
@@ -20,19 +18,15 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.google.inject.Inject;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import java.io.IOException;
 
-import static com.google.inject.Guice.createInjector;
+import static client.scenes.MainCtrl.boverview;
+import static client.scenes.MainCtrl.primaryStage;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
@@ -50,11 +44,18 @@ public class SingleBoardCtrl implements Initializable {
 
     private ObservableList<BoardList> lists;
 
+    private Board current_board;
+
+    @FXML
+    private TextField board_name;
+
+
 
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) throws IOException {
         this.mainCtrl = mainCtrl;
         this.server = server;
+
 
     }
 
@@ -116,7 +117,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void back(){
-        mainCtrl.showBoardOverview();
+        primaryStage.setScene(boverview);
     }
 
     public void card(){
@@ -194,7 +195,7 @@ public class SingleBoardCtrl implements Initializable {
 
     public void openBoardSettings() throws IOException {
 
-        System.out.println("running!" + mainCtrl.getPrimaryStage());
+        System.out.println("running!" + server.getBoards());
 
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customizationPage.fxml"));
@@ -225,6 +226,19 @@ public class SingleBoardCtrl implements Initializable {
         sb_anchor.getChildren().add(customization);
 
 
+    }
+
+    public void onTypeTitle() {
+        current_board.setName(board_name.getText());
+        System.out.println("set, " + current_board + " to " + board_name.getText() );
+
+        server.setBoardTitleById(current_board.getId(), board_name.getText());
+        server.addBoard(current_board);
+
+    }
+
+    public void setBoard(Board board) {
+        this.current_board = board;
     }
 
 
