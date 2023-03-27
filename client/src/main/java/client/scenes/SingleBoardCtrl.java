@@ -232,7 +232,7 @@ public class SingleBoardCtrl implements Initializable {
         current_board.setName(board_name.getText());
         System.out.println("set, " + current_board + " to " + board_name.getText() );
 
-        server.setBoardTitleById(current_board.getId(), board_name.getText());
+        server.deleteBoardById(current_board.getId());
         server.addBoard(current_board);
 
     }

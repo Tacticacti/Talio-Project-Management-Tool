@@ -108,7 +108,7 @@ public class ServerUtils {
         }
     }
 
-    public void setBoardTitleById(Long id, String title) {
+    public void deleteBoardById(Long id) {
         Response response = ClientBuilder.newClient(new ClientConfig())
                 .target(server)
                 .path("api/boards/" + id.toString())
