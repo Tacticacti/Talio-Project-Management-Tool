@@ -187,23 +187,18 @@ public class BoardController {
         Long listId = req.getSecond();
         String listName = req.getFirst();
 
-
         Board board = repo.findById(boardId).get();
-        BoardList saved = null;
 
-        boolean found = false;
-        for(BoardList bl : board.getLists()) {
-            if(Objects.equals(bl.getId(), listId)) {
-                found = true;
-                bl.setName(listName);
-                saved = bl;
-                break;
-            }
-        }
+        var result = board.getLists().stream()
+                .filter(x -> Objects.equals(x.getId(), listId))
+                .findFirst();
 
-        if(!found) {
+        if(result.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
+
+        BoardList saved = result.get();
+        saved.setName(listName);
 
         repo.save(board);
         return ResponseEntity.ok(saved);
