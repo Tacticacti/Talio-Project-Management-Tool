@@ -267,9 +267,14 @@ public class SingleBoardCtrl implements Initializable {
                 shadow.setBlurType(BlurType.GAUSSIAN);
                 shadow.setColor(Color.BLACK);
                 detail.setEffect(shadow);
+                detail.setStyle("-fx-font-weight: bold; " +
+                        "-fx-cursor:hand;" +
+                        " -fx-background-color: transparent");
             });
             detail.setOnMouseExited(event -> {
                 detail.setEffect(null);
+                detail.setStyle("-fx-cursor:pointer; " +
+                        "-fx-background-color: transparent");
             });
             Label title = (Label) cardNode.lookup("#taskTitle");
             detail.setOnAction(event -> setCardDetail(cardNode, parent));
