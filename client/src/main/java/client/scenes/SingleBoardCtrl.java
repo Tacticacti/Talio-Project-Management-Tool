@@ -23,14 +23,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 
 
 import java.net.URL;
 
 import javafx.scene.Node;
 
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
@@ -41,7 +48,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Modality;
 import java.io.IOException;
@@ -205,6 +211,7 @@ public class SingleBoardCtrl implements Initializable {
 
         Button btn2 =  (Button) list.lookup("#addNewCardButton");
         VBox par = (VBox) btn2.getParent();
+        par.setSpacing(40);
         for(Card c: boardList.getCards()){
             placeCard(par, c);
         }
@@ -212,7 +219,8 @@ public class SingleBoardCtrl implements Initializable {
             addNewCard(par);
         });
 
-        board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
+        board_lists.get(board_lists.size()-2).lookup("#list_title")
+                .requestFocus();
         return list;
     }
 
@@ -221,6 +229,18 @@ public class SingleBoardCtrl implements Initializable {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
         try {
             Node cardNode = fxmlLoader.load();
+            Border border = new Border(new BorderStroke(Paint.valueOf("black")
+                    , BorderStrokeStyle.DASHED
+                    , new CornerRadii(10), BorderWidths.DEFAULT));
+            ((AnchorPane) cardNode).setBorder(border);
+            if(card.getDescription()!=null && !card.getDescription().equals("")){
+                cardNode.lookup("#descIndicator").setVisible(true);
+            }
+            if(card.getSubtasks().size()>0){
+                ((Label) cardNode.lookup("#progress"))
+                        .setText(card.getCompletedSubs()+"/"
+                                + card.getSubtasks().size());
+            }
             cardNode.setId(UUID.randomUUID().toString());
             Button detail = (Button) cardNode.lookup("#details");
             Label title = (Label) cardNode.lookup("#taskTitle");
