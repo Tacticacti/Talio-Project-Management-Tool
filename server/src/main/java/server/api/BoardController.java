@@ -40,11 +40,6 @@ public class BoardController {
 
     }
 
-    @GetMapping(path = "/TalioPresent")
-    public ResponseEntity<String> talioPresenceCheck() {
-        return ResponseEntity.ok("Welcome to Talio!");
-    }
-
     @GetMapping(path = {"", "/"})
     public List<Board> getAll() {
         return repo.findAll();
