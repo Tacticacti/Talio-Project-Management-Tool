@@ -7,6 +7,7 @@ import commons.BoardList;
 import commons.Card;
 
 import jakarta.ws.rs.WebApplicationException;
+import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,6 +30,8 @@ import java.net.URL;
 
 import javafx.scene.Node;
 
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -37,6 +40,7 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
@@ -50,6 +54,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Modality;
+import javafx.util.Duration;
+
 import java.io.IOException;
 import java.util.ResourceBundle;
 
@@ -142,6 +148,7 @@ public class SingleBoardCtrl implements Initializable {
         Button newCardButton =  (Button) list.lookup("#addNewCardButton");
         VBox parentList = (VBox) newCardButton.getParent();
         parentList.setUserData(boardList);
+        parentList.setSpacing(20);
         for(Card card: boardList.getCards()){
             placeCard(parentList, card);
         }
@@ -241,8 +248,29 @@ public class SingleBoardCtrl implements Initializable {
                         .setText(card.getCompletedSubs()+"/"
                                 + card.getSubtasks().size());
             }
+            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), cardNode);
+            scaleTransition.setToX(1.1);
+            scaleTransition.setToY(1.1);
+            cardNode.setOnMouseEntered(event -> {
+                scaleTransition.play();
+            });
+            cardNode.setOnMouseExited(event -> {
+                scaleTransition.stop();
+                cardNode.setScaleX(1);
+                cardNode.setScaleY(1);
+            });
             cardNode.setId(UUID.randomUUID().toString());
             Button detail = (Button) cardNode.lookup("#details");
+            detail.setOnMouseEntered(event -> {
+                DropShadow shadow = new DropShadow();
+                shadow.setRadius(30.0);
+                shadow.setBlurType(BlurType.GAUSSIAN);
+                shadow.setColor(Color.BLACK);
+                detail.setEffect(shadow);
+            });
+            detail.setOnMouseExited(event -> {
+                detail.setEffect(null);
+            });
             Label title = (Label) cardNode.lookup("#taskTitle");
             detail.setOnAction(event -> setCardDetail(cardNode, parent));
             title.setText(cardTitle);
