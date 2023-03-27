@@ -240,8 +240,8 @@ public class SingleBoardCtrl implements Initializable {
                     , BorderStrokeStyle.DASHED
                     , new CornerRadii(10), BorderWidths.DEFAULT));
             ((AnchorPane) cardNode).setBorder(border);
-            if(card.getDescription()!=null && !card.getDescription().equals("")){
-                cardNode.lookup("#descIndicator").setVisible(true);
+            if(card.getDescription()==null || card.getDescription().equals("")){
+                cardNode.lookup("#descIndicator").setVisible(false);
             }
             if(card.getSubtasks().size()>0){
                 ((Label) cardNode.lookup("#progress"))
