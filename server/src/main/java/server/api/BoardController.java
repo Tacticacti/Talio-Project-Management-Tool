@@ -138,6 +138,7 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
         System.out.println("--------------------------");
+        System.out.println("updating card: ");
         System.out.println(boardId + " " + req.getFirst() + " " +
                 req.getSecond());
         System.out.println("--------------------------");
@@ -149,26 +150,20 @@ public class BoardController {
         if(board.getLists().size() <= listId || listId < 0) {
             return ResponseEntity.badRequest().build();
         }
-        int cardIndex = -1;
-        for(int i=0; i< board.getLists().get(listId.intValue()).getCards().size(); i++){
-            if(Objects.equals(board.getLists().get(listId.intValue()).getCards().get(i).getId(),
-                    card.getId())) {
-                cardIndex = i;
-                break;
-            }
-        }
 
-        if(cardIndex < 0) {
+        var cards = board.getLists().get(listId.intValue()).getCards();
+        var result = cards.stream()
+                .filter(x -> x.getId() == card.getId())
+                .findFirst();
+
+        if(result.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        Card toupdate = board.getLists().get(listId.intValue()).getCards().get(cardIndex);
-        toupdate.setTitle(card.getTitle());
-        toupdate.setDescription(card.getDescription());
-        toupdate.getSubtasks().removeAll(toupdate.getSubtasks());
-        for(String s: card.getSubtasks()){
-            toupdate.addSubTask(s);
-        }
+        Card toUpdate = result.get();
+        databaseUtils.updateCard(toUpdate, card.title, card.description,
+                card.subtasks, card.tags);
+
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }

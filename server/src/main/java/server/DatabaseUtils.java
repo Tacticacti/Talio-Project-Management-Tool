@@ -6,6 +6,8 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
+import java.util.List;
+
 @Service
 public class DatabaseUtils {
     public Board mockSimpleBoard() {
@@ -24,5 +26,15 @@ public class DatabaseUtils {
 
         board.addList(l2);
         return board;
+    }
+
+    public void updateCard(Card card, String title, String description,
+                           List<String> subtasks, List<String> tags) {
+        card.setTitle(title);
+        card.setDescription(description);
+        card.getSubtasks().removeAll(subtasks);
+        for(String s: subtasks){
+            card.addSubTask(s);
+        }
     }
 }
