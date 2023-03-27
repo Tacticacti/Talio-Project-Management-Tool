@@ -65,7 +65,7 @@ public class ServerUtils {
 
     // returns true if connection is succesful 
     // flase otherwise
-    public boolean check(String addr) throws UnknownHostException, IOException {
+    public boolean check(String addr) throws IOException {
 
         boolean res = false;
 
@@ -81,6 +81,11 @@ public class ServerUtils {
 
     public void setServer(String addr) {
         server = addr;
+    }
+
+    public void disconnect() {
+        // TODO probably close sockets here
+        server = "";
     }
 
     public Board getBoardById(Long id) {
