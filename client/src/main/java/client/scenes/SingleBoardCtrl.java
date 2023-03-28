@@ -59,7 +59,6 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -273,6 +272,12 @@ public class SingleBoardCtrl implements Initializable {
                 cardNode.setScaleX(1);
                 cardNode.setScaleY(1);
             });
+            cardNode.setOnMouseClicked(event -> {
+                if(event.getClickCount()==2){
+                    setCardDetail(cardNode, parent);
+                }
+
+            });
             cardNode.setId(UUID.randomUUID().toString());
             Button detail = (Button) cardNode.lookup("#details");
             detail.setOnMouseEntered(event -> {
@@ -281,7 +286,7 @@ public class SingleBoardCtrl implements Initializable {
                 shadow.setBlurType(BlurType.GAUSSIAN);
                 shadow.setColor(Color.BLACK);
                 detail.setEffect(shadow);
-                detail.setStyle("-fx-font-weight: bold; " +
+                detail.setStyle(
                         "-fx-cursor:hand;" +
                         " -fx-background-color: transparent");
             });
@@ -470,7 +475,6 @@ public class SingleBoardCtrl implements Initializable {
                     current.addSubTask(cb.getText());
                 if(!current.getSubtasks().get(i).equals(cb.getText())
                         && current.getSubtasks().contains(cb.getText())){
-                    List<String> complTask = current.getCompletedTasks();
                     current.removeSubTask(cb.getText());
                     current.addSubtaskAtIndex(cb.getText(), i);
                     if(cb.isSelected()){
