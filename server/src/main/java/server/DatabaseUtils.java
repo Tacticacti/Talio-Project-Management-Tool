@@ -6,6 +6,11 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
 public class DatabaseUtils {
     public Board mockSimpleBoard() {
@@ -24,5 +29,21 @@ public class DatabaseUtils {
 
         board.addList(l2);
         return board;
+    }
+
+    public void updateCard(Card card, String title, String description,
+                           List<String> subtasks, List<String> tags) {
+        card.setTitle(title);
+        card.setDescription(description);
+        card.subtasks = new ArrayList<>();
+        for(String s : subtasks){
+            card.addSubTask(s);
+        }
+    }
+
+    public Optional<BoardList> getListById(Board board, Long listId) {
+        return board.getLists().stream()
+                .filter(x -> Objects.equals(x.getId(), listId))
+                .findFirst();
     }
 }
