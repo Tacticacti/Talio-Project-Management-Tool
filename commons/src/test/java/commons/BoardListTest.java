@@ -31,6 +31,17 @@ public class BoardListTest {
         Assertions.assertEquals(0, newList.getCards().size(),
 			"Constructor should initialize an empty cards variable");
     }
+    @Test
+    public void testEmptyConstructor(){
+        BoardList newList = new BoardList();
+        newList.setName("New List");
+        Assertions.assertEquals("New List", newList.getName(),
+                "Constructor should set the list name");
+        Assertions.assertNotNull(newList.getCards(),
+                "Constructor should initialize the cards variable");
+        Assertions.assertEquals(0, newList.getCards().size(),
+                "Constructor should initialize an empty cards variable");
+    }
 
     // test the getId() and setId() methods
     @Test

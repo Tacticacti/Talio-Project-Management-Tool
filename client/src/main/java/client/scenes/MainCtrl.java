@@ -17,6 +17,7 @@ package client.scenes;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -41,39 +42,75 @@ public class MainCtrl {
                             Pair<BoardOverviewCtrl, Parent> boverviewPair,
                             Pair<SingleBoardCtrl, Parent> singleBoardPair,
                            Pair<AddCardCtrl, Parent> addCardPair) {
-        this.primaryStage = primaryStage;
-        this.boardOverviewCtrl = boverviewPair.getKey();
-        this.boverview = new Scene(boverviewPair.getValue());
+        try {
+            this.primaryStage = primaryStage;
+            this.boardOverviewCtrl = boverviewPair.getKey();
+            this.boverview = new Scene(boverviewPair.getValue());
 
-        this.addCardCtrl = addCardPair.getKey();
-        this.addCard = new Scene(addCardPair.getValue());
+            this.addCardCtrl = addCardPair.getKey();
+            this.addCard = new Scene(addCardPair.getValue());
 
-        this.connectHomeCtrl = homePair.getKey();
-        this.home = new Scene(homePair.getValue());
+            this.connectHomeCtrl = homePair.getKey();
+            this.home = new Scene(homePair.getValue());
 
-        this.singleBoardCtrl = singleBoardPair.getKey();
-        this.singleBoard = new Scene(singleBoardPair.getValue());
+            this.singleBoardCtrl = singleBoardPair.getKey();
+            this.singleBoard = new Scene(singleBoardPair.getValue());
 
-        showHome();
-        primaryStage.show();
+            showHome();
+            primaryStage.show();
+        }catch (Exception e) {
+            showErrorDialog("Error", "An error occurred while" +
+                    " trying to initialize the application." +
+                    " Please try again later.");
+        }
     }
 
     public void showAddCard() {
-        primaryStage.setTitle("Add Card");
-        primaryStage.setScene(addCard);
-       // addCard.setOnKeyPressed(e -> addCardCtrl.keyPressed(e));
+        try {
+            primaryStage.setTitle("Add Card");
+            primaryStage.setScene(addCard);
+            // addCard.setOnKeyPressed(e -> addCardCtrl.keyPressed(e));
+        } catch (Exception e) {
+            showErrorDialog("Error", "An error occurred while trying to add a card." +
+                    " Please try again later.");
+        }
     }
     public void showBoard(){
-        primaryStage.setTitle("Board");
-        primaryStage.setScene(singleBoard);
+        try {
+            primaryStage.setTitle("Board");
+            primaryStage.setScene(singleBoard);
+        }catch (Exception e) {
+            showErrorDialog("Error", "An error occurred while" +
+                    " trying to display the board." +
+                    " Please try again later.");
+        }
     }
 
     public void showBoardOverview(){
-        primaryStage.setTitle("Board overview");
-        primaryStage.setScene(boverview);
+        try{
+            primaryStage.setTitle("Board overview");
+            primaryStage.setScene(boverview);
+        }catch (Exception e) {
+            showErrorDialog("Error", "An error occurred while trying to display the boards." +
+                    " Please try again later.");
+        }
     }
     public void showHome(){
-        primaryStage.setTitle("Talio: Home connection page");
-        primaryStage.setScene(home);
+        try {
+            primaryStage.setTitle("Talio: Home connection page");
+            primaryStage.setScene(home);
+        }catch (Exception e) {
+            showErrorDialog("Error", "An error occurred while trying to display the home page." +
+                     " Please try again later.");
+        }
     }
+
+    private void showErrorDialog(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 }
