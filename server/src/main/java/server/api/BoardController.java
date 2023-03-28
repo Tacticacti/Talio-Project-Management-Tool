@@ -159,20 +159,12 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
 
-        Card toupdate = board.getLists().get(listId.intValue()).getCards().get(cardIndex);
-        toupdate.setTitle(card.getTitle());
-        toupdate.setDescription(card.getDescription());
-        toupdate.setSubtasks(card.getSubtasks());
-        toupdate.setCompletedTasks(card.getCompletedTasks());
-        toupdate.setCompletedSubs(card.getCompletedSubs());
 
-        // Card toUpdate = result.get();
-        // databaseUtils.updateCard(toUpdate, card.title, card.description,
-        //         card.subtasks, card.tags);
 
-        // toUpdate.board = board;
-        // toUpdate.boardList = list.get();
-
+        Card toUpdate = result.get();
+        databaseUtils.updateCard(toUpdate, card);
+        toUpdate.board = board;
+        toUpdate.boardList = list.get();
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }

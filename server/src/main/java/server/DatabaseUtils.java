@@ -31,14 +31,12 @@ public class DatabaseUtils {
         return board;
     }
 
-    public void updateCard(Card card, String title, String description,
-                           List<String> subtasks, List<String> tags) {
-        card.setTitle(title);
-        card.setDescription(description);
-        card.subtasks = new ArrayList<>();
-        for(String s : subtasks){
-            card.addSubTask(s);
-        }
+    public void updateCard(Card card, Card updated) {
+        card.setTitle(updated.title);
+        card.setDescription(updated.description);
+        card.setSubtasks(updated.getSubtasks());
+        card.setCompletedTasks(updated.getCompletedTasks());
+        card.setCompletedSubs(card.getCompletedSubs());
     }
 
     public Optional<BoardList> getListById(Board board, Long listId) {
