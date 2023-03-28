@@ -163,10 +163,10 @@ public class BoardController {
 
         Card toUpdate = result.get();
 
-         databaseUtils.updateCard(toUpdate, card);
+        databaseUtils.updateCard(toUpdate, card);
 
-         toUpdate.board = board;
-         toUpdate.boardList = list.get();
+        toUpdate.board = board;
+        toUpdate.boardList = list.get();
 
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);

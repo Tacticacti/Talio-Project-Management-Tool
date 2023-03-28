@@ -6,8 +6,7 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Objects;
 import java.util.Optional;
 
