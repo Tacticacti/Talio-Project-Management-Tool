@@ -1,16 +1,25 @@
 package commons;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CardTest {
 
-
+    @Test
+    void emptyConstructorTest(){
+        Card c1 = new Card();
+        c1.setTitle("Slides");
+        assertEquals("Slides", c1.getTitle());
+        assertTrue(c1.getSubtasks().isEmpty());
+        assertTrue(c1.getTags().isEmpty());
+        assertEquals(0, c1.getCompletedSubs());
+        assertTrue(c1.getCompletedTasks().isEmpty());
+    }
     @Test
     void getTitle() {
         Card c1 = new Card("Slides", "prep slide3-5");
@@ -73,6 +82,14 @@ class CardTest {
         Card c1 = new Card("Slides", "prep slide3-5");
         c1.setDescription("prep slide 5-6");
         assertEquals("prep slide 5-6", c1.getDescription());
+    }
+
+    @Test
+    void setCardId()
+    {
+        Card c1 = new Card("Slides", "prep slide3-5");
+        c1.setId(12345678);
+        assertEquals(12345678,c1.getId());
     }
 
     /*
@@ -184,6 +201,31 @@ class CardTest {
         Card c1 = new Card("Slides", "prep slide 3-5");
         Card c2 = new Card("Slides", "prep slide 3-5");
         assertEquals(c1.hashCode(), c2.hashCode());
+    }
+
+    @Test
+    void testToString(){
+        Card card = new Card("Card title", "Card description");
+        card.getSubtasks().add("Subtask 1");
+        card.getSubtasks().add("Subtask 2");
+        card.getTags().add("Tag 1");
+        card.getTags().add("Tag 2");
+        card.getTags().add("Tag 3");
+
+        String result = card.toString();
+        String expected = new ToStringBuilder(card, MULTI_LINE_STYLE)
+                .append("board=<null>")
+                .append("boardList", card.getBoardList())
+                .append("completedSubs", card.getCompletedSubs())
+                .append("completedTasks", card.getCompletedTasks())
+                .append("description", card.getDescription())
+                .append("id", card.getId())
+                .append("subtasks", card.getSubtasks())
+                .append("tags", card.getTags())
+                .append("title", card.getTitle())
+                .toString();
+
+        assertEquals(expected, result);
     }
 
 }
