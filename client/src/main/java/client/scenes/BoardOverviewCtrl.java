@@ -82,5 +82,8 @@ public class BoardOverviewCtrl {
         mainCtrl.showBoard();
     }
 
-
+    public void disconnect() {
+        mainCtrl.showHome();
+        server.disconnect();
+    }
 }

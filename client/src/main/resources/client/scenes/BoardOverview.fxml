@@ -79,5 +79,6 @@
          </content>
       </ScrollPane>
       <Line endX="1920.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
+      <Button layoutX="163.0" layoutY="30.0" mnemonicParsing="false" onAction="#disconnect" prefHeight="43.0" prefWidth="147.0" text="Disconnect" />
    </children>
 </AnchorPane>
