@@ -249,6 +249,7 @@ public class SingleBoardCtrl implements Initializable {
         }        
     }
 
+    /*
     public void addCard(VBox parent){
         BoardList boardList = (BoardList) parent.getUserData();
         long listid = boardList.getId();
@@ -325,7 +326,7 @@ public class SingleBoardCtrl implements Initializable {
                 newCard.setId(saved.getId());
                 //server.addCardToList(1L, 0L, newCard);
                 // long listIndex = getListIndex(boardId, listid);
-                saveCardToList(boardId, listid, newCard);
+                saveCardToList(BOARDID, listid, newCard);
                 refresh();
                 //enterCard(card);
             } catch (IOException e) {
@@ -333,6 +334,7 @@ public class SingleBoardCtrl implements Initializable {
             }
         });
     }
+     */
 
     public void setCardDetail(Node cardNode, VBox parent){
 //        AnchorPane list = (AnchorPane) parent.getParent(); unused variable
@@ -416,7 +418,7 @@ public class SingleBoardCtrl implements Initializable {
         // long listIndex = getListIndex(boardId, listid);
         // saveCardToList(1l,0l,current);
         // server.updateCardFromList(1L, listIndex, current);
-        updateCardFromList(boardId, listid, current);
+        updateCardFromList(BOARDID, listId, current);
         
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
@@ -562,7 +564,7 @@ public class SingleBoardCtrl implements Initializable {
                 VBox par = (VBox) hbox.getParent();
                 par.getChildren().remove(hbox);
                 nodeCardMap.remove(hbox, current);
-                server.deleteCardFromList(boardId, listid, current);
+                server.deleteCardFromList(BOARDID, listId, current);
                 refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
