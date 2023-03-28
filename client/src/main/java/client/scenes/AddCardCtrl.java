@@ -163,6 +163,19 @@ public class AddCardCtrl {
     public CheckBox createCheckbox(String text, Card current){
         CheckBox cb = new CheckBox();
         cb.setText(text);
+        TextField textField = new TextField();
+        cb.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                textField.setText(cb.getText());
+                cb.setGraphic(textField);
+                textField.requestFocus();
+            }
+        });
+
+        textField.setOnAction(event -> {
+            cb.setText(textField.getText());
+            cb.setGraphic(null);
+        });
         cb.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
