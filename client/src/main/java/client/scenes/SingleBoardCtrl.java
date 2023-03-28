@@ -37,6 +37,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
+
+import javafx.scene.control.TextField;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -46,6 +50,9 @@ import javafx.scene.image.WritableImage;
 import javafx.stage.Modality;
 import java.io.IOException;
 import java.util.ResourceBundle;
+
+import static client.scenes.MainCtrl.boverview;
+import static client.scenes.MainCtrl.primaryStage;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
@@ -59,6 +66,11 @@ public class SingleBoardCtrl implements Initializable {
     @FXML
     private Button settingsBtn;
     private ObservableList<BoardList> lists;
+
+    private Board current_board;
+
+    @FXML
+    private TextField board_name;
     private Map<Node, Card> nodeCardMap;
     private ClipboardContent content;
     private Dragboard dragboard;
@@ -67,6 +79,7 @@ public class SingleBoardCtrl implements Initializable {
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+
     }
 
     @Override
@@ -107,7 +120,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void back(){
-        mainCtrl.showBoardOverview();
+        primaryStage.setScene(boverview);
     }
 
     public void createNewList() {
@@ -211,11 +224,9 @@ public class SingleBoardCtrl implements Initializable {
         btn2.setOnAction(event ->{
             addNewCard(par);
         });
-
-        board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
         return list;
-    }
 
+    }
     public void placeCard(VBox parent, Card card){
         String cardTitle = card.getTitle();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
@@ -487,7 +498,8 @@ public class SingleBoardCtrl implements Initializable {
 
 
     public void openBoardSettings() throws IOException {
-        System.out.println("running!");
+
+        System.out.println("running!" + server.getBoards());
 
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customizationPage.fxml"));
@@ -520,6 +532,15 @@ public class SingleBoardCtrl implements Initializable {
 
     }
 
+    public void onTypeTitle() {
+        current_board.setName(board_name.getText());
+        System.out.println("set, " + current_board + " to " + board_name.getText() );
+        server.addBoard(current_board);
+    }
+
+    public void setBoard(Board board) {
+        this.current_board = board;
+    }
     public void pullLists(Long id) {
         Board tmpBoard = server.getBoardById(id);
         lists = FXCollections.observableList(tmpBoard.getLists());

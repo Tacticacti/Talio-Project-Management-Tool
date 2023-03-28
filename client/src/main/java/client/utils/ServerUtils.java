@@ -22,6 +22,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import jakarta.ws.rs.core.Response;
+
 import commons.BoardList;
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -164,6 +166,30 @@ public class ServerUtils {
                 .get(new GenericType<Card>() {});
     }
 
+
+    public Board addBoard(Board board) {
+        Response response = ClientBuilder.newClient(new ClientConfig())
+                .target(server)
+                .path("api/boards/add")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(board, APPLICATION_JSON));
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            return response.readEntity(Board.class);
+        } else {
+            throw new RuntimeException("Failed to add board. HTTP error code: " +
+                    response.getStatus());
+        }
+    }
+
+    public void deleteBoardById(Long id) {
+        Response response = ClientBuilder.newClient(new ClientConfig())
+                .target(server)
+                .path("api/boards/" + id.toString())
+                .request()
+                .delete();
+    }
+
     public Card deleteCard(Long cardId) {
         return  ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/cards/delete/" + cardId.toString()) //
@@ -181,6 +207,4 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair<>(listId, card), APPLICATION_JSON)
                         , Board.class);
     }
-
-
 }
