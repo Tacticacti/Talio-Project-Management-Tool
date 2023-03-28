@@ -510,7 +510,7 @@ public class SingleBoardCtrl implements Initializable {
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
             //server.addCardToList(1L, 0L, newCard);
-            long listIndex = getListIndex(BOARDID, listId);
+           // long listIndex = getListIndex(BOARDID, listId);
             saveCardToList(BOARDID, listId, newCard);
             refresh();
             //enterCard(card);
