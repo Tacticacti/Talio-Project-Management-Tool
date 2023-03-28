@@ -28,7 +28,8 @@
                      </font>
                      <HBox.margin>
                         <Insets top="15.0" />
-                     </HBox.margin></Button>
+                     </HBox.margin>
+                  </Button>
                </children>
                <padding>
                   <Insets left="20.0" right="20.0" top="20.0" />
@@ -50,5 +51,10 @@
          </font>
       </Button>
       <Line endX="1923.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
+      <Button fx:id="refreshBtn" focusTraversable="false" layoutX="572.0" layoutY="24.0" mnemonicParsing="false" onAction="#refresh" prefHeight="40.0" prefWidth="159.0" style="-fx-padding: 0;" text="refresh">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

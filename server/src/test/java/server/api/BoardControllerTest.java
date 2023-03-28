@@ -13,9 +13,11 @@ import org.springframework.data.util.Pair;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+import server.DatabaseUtils;
 
 public class BoardControllerTest {
 
+    private DatabaseUtils databaseUtils;
     private TestBoardRepository boardRepo;
     private BoardController controller;
     private Board b1, b2;
@@ -24,8 +26,9 @@ public class BoardControllerTest {
 
     @BeforeEach
     public void setup() {
+        databaseUtils = new DatabaseUtils();
         boardRepo = new TestBoardRepository();
-        controller = new BoardController(boardRepo);
+        controller = new BoardController(boardRepo, new DatabaseUtils());
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");
@@ -95,7 +98,50 @@ public class BoardControllerTest {
         assertEquals(c1, ret.getBody().getLists().get(0).getCards().get(0));
     }
 
+    @Test
+    public void addListWrongId() {
+        controller.add(b1);
+        var ret = controller.addListToBoard(1000, "custom name");
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
 
+    @Test
+    public void addListOK() {
+        controller.add(b1);
+        String name = "custom list";
+        var ret = controller.addListToBoard(0, name);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(name, ret.getBody().getName());
+    }
 
+    @Test
+    public void changeListNameWrongBoardId() {
+        controller.add(b1);
+        String name = "custom list";
+        Pair<String, Long> req = Pair.of(name, 0L);
+        var ret = controller.changeListsName(1000, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
 
+    @Test
+    public void changeListNameWrongListId() {
+        controller.add(b1);
+        String name = "custom list";
+        Pair<String, Long> req = Pair.of(name, 1000L);
+        var ret = controller.changeListsName(0, req);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void changeListNameOk() {
+        BoardList bl2 = new BoardList();
+        bl2.setId(10);
+        b1.addList(bl2);
+        controller.add(b1);
+        String name = "custom list";
+        Pair<String, Long> req = Pair.of(name, 10L);
+        var ret = controller.changeListsName(0, req);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(name, ret.getBody().getName());
+    }
 }

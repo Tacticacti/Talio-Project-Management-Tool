@@ -251,5 +251,8 @@ public class BoardOverviewCtrl {
 
     }
 
-
+    public void disconnect() {
+        mainCtrl.showHome();
+        server.disconnect();
+    }
 }
