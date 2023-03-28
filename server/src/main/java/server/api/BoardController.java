@@ -164,10 +164,9 @@ public class BoardController {
         Card toupdate = board.getLists().get(listId.intValue()).getCards().get(cardIndex);
         toupdate.setTitle(card.getTitle());
         toupdate.setDescription(card.getDescription());
-        toupdate.getSubtasks().removeAll(toupdate.getSubtasks());
-        for(String s: card.getSubtasks()){
-            toupdate.addSubTask(s);
-        }
+        toupdate.setSubtasks(card.getSubtasks());
+        toupdate.setCompletedTasks(card.getCompletedTasks());
+        toupdate.setCompletedSubs(card.getCompletedSubs());
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }

@@ -21,7 +21,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -198,6 +201,7 @@ public class AddCardCtrl {
         delBtn.setGraphic(imageView);
         sub.getChildren().add(delBtn);
         sub.setPrefWidth(subtaskVbox.getWidth());
+        setDragAndDrop(sub);
         subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
     }
 
@@ -206,6 +210,48 @@ public class AddCardCtrl {
         HBox parent = (HBox) delBtn.getParent();
         CheckBox cb = (CheckBox) parent.getChildren().get(0);
         current.removeSubTask(cb.getText());
+    }
+
+    private void setDragAndDrop(HBox subtaskBox){
+        subtaskBox.setOnDragDetected(event -> {
+            // Start drag and drop operation
+            Dragboard db = subtaskBox.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("VBoxItem");
+            db.setContent(content);
+            event.consume();
+        });
+
+        subtaskBox.setOnDragOver(event -> {
+            // Accept the drag if it's a MOVE operation
+            if (event.getGestureSource() != subtaskBox && event.getDragboard().hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+                event.consume();
+            }
+        });
+
+        subtaskBox.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                // Get the index of the item being dragged
+                int draggedIndex = subtaskVbox.getChildren()
+                        .indexOf((HBox) event.getGestureSource());
+
+                // Get the index where the item is being dropped
+                int dropIndex = subtaskVbox.getChildren().indexOf(subtaskBox);
+
+                // Remove the item being dragged from its old position
+                subtaskVbox.getChildren().remove(draggedIndex);
+
+                // Add the item being dragged at the new position
+                subtaskVbox.getChildren().add(dropIndex, (HBox) event.getGestureSource());
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
     }
     public void addTag(){
         //adding a tag

@@ -44,9 +44,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
@@ -57,7 +54,11 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
@@ -355,7 +356,8 @@ public class SingleBoardCtrl implements Initializable {
         TextArea desc =  (TextArea) ap.lookup("#taskDescription");
         current.setDescription(desc.getText());
         VBox subs = (VBox) ap.lookup("#subtaskVbox");
-        for(Node hb: subs.getChildren()){
+        for(int i=0; i<subs.getChildren().size();i++){
+            Node hb = subs.getChildren().get(i);
             if(hb instanceof TextField){
                 TextField subtask = (TextField) hb;
                 if(!current.getSubtasks().contains(subtask.getText())
@@ -363,9 +365,18 @@ public class SingleBoardCtrl implements Initializable {
                     current.addSubTask(subtask.getText());
             }else{
                 CheckBox cb = (CheckBox) ((HBox) hb).getChildren().get(0);
-
+                System.out.println("Text of cur subtask processed: " + cb.getText());
                 if(!current.getSubtasks().contains(cb.getText()))
                     current.addSubTask(cb.getText());
+                if(!current.getSubtasks().get(i).equals(cb.getText())
+                        && current.getSubtasks().contains(cb.getText())){
+                    List<String> complTask = current.getCompletedTasks();
+                    current.removeSubTask(cb.getText());
+                    current.addSubtaskAtIndex(cb.getText(), i);
+                    if(cb.isSelected()){
+                        current.completeSubTask(cb.getText());
+                    }
+                }
             }
         }
 
