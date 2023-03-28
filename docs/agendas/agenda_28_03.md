@@ -12,7 +12,8 @@ Atendees:       Aleksandra Jach (TA), Bobi Marinov, Eduard Faraon, Eduardo Herna
 How is everyone doing?
 
 # 16:47 - 16:49 Announcements
-Product Pitch (draft)
+Product Pitch (draft) due friday
+Teamwork Self Reflection (Draft) due friday
 
 # 16:49 - 16:50 Approval of the agenda
 Does anyone have any additions to the agenda?
