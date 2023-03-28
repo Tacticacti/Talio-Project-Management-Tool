@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CardTest {
 
@@ -89,7 +90,7 @@ class CardTest {
     {
         Card c1 = new Card("Slides", "prep slide3-5");
         c1.setId(12345678);
-        assertEquals(12345678,c1.getId());
+        assertEquals(12345678, c1.getId());
     }
 
     /*
