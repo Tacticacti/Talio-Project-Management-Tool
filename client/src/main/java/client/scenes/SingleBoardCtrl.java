@@ -379,7 +379,6 @@ public class SingleBoardCtrl implements Initializable {
                 }
             }
         }
-
         server.addCard(current);
         long listIndex = getListIndex(BOARDID, listId);
         // saveCardToList(1l,0l,current);
