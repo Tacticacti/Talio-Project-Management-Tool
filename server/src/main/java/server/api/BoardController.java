@@ -164,6 +164,9 @@ public class BoardController {
         databaseUtils.updateCard(toUpdate, card.title, card.description,
                 card.subtasks, card.tags);
 
+        toUpdate.board = board;
+        toUpdate.boardList = list.get();
+
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }
