@@ -26,7 +26,7 @@
             </Text>
          </top>
          <bottom>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="TacticalCacti" BorderPane.alignment="CENTER">
+            <Text fx:id="id_field" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="TacticalCacti" BorderPane.alignment="CENTER">
                <font>
                   <Font name="System Italic" size="13.0" />
                </font>

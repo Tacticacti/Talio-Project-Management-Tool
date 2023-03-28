@@ -198,12 +198,10 @@ public class Card implements Serializable {
         completedSubs = number;
     }
     public void setSubtasks(List<String> subtasks){
-        this.subtasks.removeAll(this.subtasks);
-        this.subtasks.addAll(subtasks);
+        this.subtasks = subtasks;
     }
 
     public void setCompletedTasks(List<String> complete){
-        this.completedTasks.removeAll(this.completedTasks);
-        this.completedTasks.addAll(complete);
+        this.completedTasks = complete;
     }
 }

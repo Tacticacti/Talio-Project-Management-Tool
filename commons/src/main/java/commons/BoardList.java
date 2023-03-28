@@ -9,7 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,12 +34,12 @@ public class BoardList {
     // added to fix repo.findAll()
     public BoardList() {
         this.name = "";
-        this.cards = new LinkedList<>();
+        this.cards = new ArrayList<>();
     }
         
     public BoardList(String name) {
         this.name = name;
-        this.cards = new LinkedList<>();
+        this.cards = new ArrayList<>();
     }
 
     // getters and setters

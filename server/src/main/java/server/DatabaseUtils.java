@@ -6,6 +6,10 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
+
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
 public class DatabaseUtils {
     public Board mockSimpleBoard() {
@@ -24,5 +28,19 @@ public class DatabaseUtils {
 
         board.addList(l2);
         return board;
+    }
+
+    public void updateCard(Card card, Card newCard) {
+        card.setTitle(newCard.getTitle());
+        card.setDescription(newCard.getDescription());
+        card.setSubtasks(newCard.getSubtasks());
+        card.setCompletedTasks(newCard.getCompletedTasks());
+        card.setCompletedSubs(newCard.getCompletedSubs());
+    }
+
+    public Optional<BoardList> getListById(Board board, Long listId) {
+        return board.getLists().stream()
+                .filter(x -> Objects.equals(x.getId(), listId))
+                .findFirst();
     }
 }
