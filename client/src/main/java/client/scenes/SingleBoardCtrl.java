@@ -237,6 +237,7 @@ public class SingleBoardCtrl implements Initializable {
         btn2.setOnAction(event ->{
             addCard(par);
         });
+        return list;
 
     }
     public void placeCard(VBox parent, Card card){
