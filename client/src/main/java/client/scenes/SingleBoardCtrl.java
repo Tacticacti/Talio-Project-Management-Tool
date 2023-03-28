@@ -238,7 +238,7 @@ public class SingleBoardCtrl implements Initializable {
             addCard(par);
         });
 
-
+    }
     public void placeCard(VBox parent, Card card){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cardGUI.fxml"));
         CardGUICtrl cgc = new CardGUICtrl(server, mainCtrl);
