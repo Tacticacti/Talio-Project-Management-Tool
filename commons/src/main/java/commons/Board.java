@@ -73,4 +73,6 @@ public class Board {
     public void addToList(int listId, Card card) {
         lists.get(listId).addCard(card);
     }
+
+
 }

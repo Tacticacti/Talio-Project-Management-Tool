@@ -6,7 +6,7 @@ variables:
 
 build:
   script:
-    - ./gradlew build
+    - ./gradlew build --stacktrace
     - ./gradlew AggregateJacocoReport
     # preserve coverage information in an easy-to-reach folder
     - mv build/reports/jacoco/aggregate/html ./coverage
