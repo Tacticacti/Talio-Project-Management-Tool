@@ -35,6 +35,7 @@ public class BoardControllerTest {
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");
+        bl1.setId(0L);
         b1.addList(bl1);
 
         c1 = new Card("c1");

@@ -8,6 +8,8 @@ import commons.Card;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class DatabaseUtils {
@@ -37,5 +39,11 @@ public class DatabaseUtils {
         for(String s : subtasks){
             card.addSubTask(s);
         }
+    }
+
+    public Optional<BoardList> getListById(Board board, Long listId) {
+        return board.getLists().stream()
+                .filter(x -> Objects.equals(x.getId(), listId))
+                .findFirst();
     }
 }

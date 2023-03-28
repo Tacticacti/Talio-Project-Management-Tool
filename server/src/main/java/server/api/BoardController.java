@@ -87,12 +87,15 @@ public class BoardController {
 
         Long listId = req.getFirst();
         Card card = req.getSecond();
-        System.out.println(board.getLists().size());
-        if(board.getLists().size() <= listId || listId < 0) {
+
+        var list = databaseUtils.getListById(board, listId);
+
+        if(list.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        board.addToList(listId.intValue(), card);
+        list.get().addCard(card);
+
         Board saved = repo.save(board);
 
         return ResponseEntity.ok(saved);
@@ -112,12 +115,15 @@ public class BoardController {
 
         Long listId = req.getFirst();
         Card card = req.getSecond();
-        if(board.getLists().size() <= listId || listId < 0) {
+
+        var list = databaseUtils.getListById(board, listId);
+
+        if(list.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        board.getLists().get(listId.intValue()).getCards().removeIf(x ->
-                x.getId() == card.getId());
+        list.get().getCards().removeIf(x -> x.getId() == card.getId());
+
         repo.save(board);
         return ResponseEntity.ok(board);
     }
@@ -125,6 +131,7 @@ public class BoardController {
     @PostMapping(path="/update/{id}")
     public ResponseEntity<Board> updateCardInId(@PathVariable("id") long boardId
             , @RequestBody Pair<Long, Card> req){
+
         if(!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
@@ -137,11 +144,14 @@ public class BoardController {
 
         Long listId = req.getFirst();
         Card card = req.getSecond();
-        if(board.getLists().size() <= listId || listId < 0) {
+
+        var list = databaseUtils.getListById(board, listId);
+
+        if(list.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        var cards = board.getLists().get(listId.intValue()).getCards();
+        var cards = list.get().getCards();
         var result = cards.stream()
                 .filter(x -> x.getId() == card.getId())
                 .findFirst();
