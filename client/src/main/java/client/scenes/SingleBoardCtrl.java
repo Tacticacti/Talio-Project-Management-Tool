@@ -443,11 +443,8 @@ public class SingleBoardCtrl implements Initializable {
             placeCard(parent, newCard);
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
-            //server.addCardToList(1L, 0L, newCard);
-           // long listIndex = getListIndex(BOARDID, listId);
             saveCardToList(BOARDID, listId, newCard);
             refresh();
-            //enterCard(card);
         });
     }
 
@@ -503,7 +500,7 @@ public class SingleBoardCtrl implements Initializable {
             if (dragboard.hasString() && event.isDropCompleted()) {
                 parent.getChildren().remove(cardNode);
             }
-//            refresh(); TODO:uncomment after server error has been fixed.
+            refresh();
             event.consume();
         });
     }
