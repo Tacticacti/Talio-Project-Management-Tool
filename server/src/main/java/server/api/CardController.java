@@ -43,7 +43,6 @@ public class CardController {
     }
     @PostMapping(path="/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long cardId){
-        System.out.println("-----reach");
         if(!repo.existsById(cardId)){
             return ResponseEntity.badRequest().build();
         }
