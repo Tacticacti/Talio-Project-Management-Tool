@@ -20,8 +20,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+import client.scenes.SingleBoardCtrl;
 import com.google.inject.Injector;
 
+import commons.Board;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.util.Builder;
@@ -39,7 +41,8 @@ public class MyFXML {
 
     public <T> Pair<T, Parent> load(Class<T> c, String... parts) {
         try {
-            var loader = new FXMLLoader(getLocation(parts), null, null, new MyFactory(), StandardCharsets.UTF_8);
+            var loader = new FXMLLoader(getLocation(parts), null, null, 
+				new MyFactory(), StandardCharsets.UTF_8);
             Parent parent = loader.load();
             T ctrl = loader.getController();
             return new Pair<>(ctrl, parent);
@@ -47,6 +50,21 @@ public class MyFXML {
             throw new RuntimeException(e);
         }
     }
+
+    public <T> Pair<T, Parent> load(Class<T> c, Board board, String... parts) {
+        try {
+            var loader = new FXMLLoader(getLocation(parts), null, null,
+                    new MyFactory(), StandardCharsets.UTF_8);
+            Parent parent = loader.load();
+            SingleBoardCtrl ctrl = loader.getController();
+            ctrl.setBoard(board);
+            return new Pair<>((T) ctrl, parent);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     private URL getLocation(String... parts) {
         var path = Path.of("", parts).toString();

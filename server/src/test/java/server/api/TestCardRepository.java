@@ -11,12 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 
-import commons.Board;
-import server.database.BoardRepository;
+import commons.Card;
+import server.database.CardRepository;
 
-public class TestBoardRepository implements BoardRepository {
+public class TestCardRepository implements CardRepository {
 
-    public final List<Board> boards = new ArrayList<>();
+    public final List<Card> cards = new ArrayList<>();
     public final List<String> calledMethods = new ArrayList<>();
 
     private void call(String name) {
@@ -24,25 +24,25 @@ public class TestBoardRepository implements BoardRepository {
     }
 
     @Override
-    public List<Board> findAll() {
+    public List<Card> findAll() {
         call("findAll");
-        return boards;
+        return cards;
     }
 
     @Override
-    public List<Board> findAll(Sort sort) {
+    public List<Card> findAll(Sort sort) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
     @Override
-    public List<Board> findAllById(Iterable<Long> ids) {
+    public List<Card> findAllById(Iterable<Long> ids) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAllById'");
     }
 
     @Override
-    public <S extends Board> List<S> saveAll(Iterable<S> entities) {
+    public <S extends Card> List<S> saveAll(Iterable<S> entities) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
     }
@@ -54,19 +54,19 @@ public class TestBoardRepository implements BoardRepository {
     }
 
     @Override
-    public <S extends Board> S saveAndFlush(S entity) {
+    public <S extends Card> S saveAndFlush(S entity) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'saveAndFlush'");
     }
 
     @Override
-    public <S extends Board> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends Card> List<S> saveAllAndFlush(Iterable<S> entities) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'saveAllAndFlush'");
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<Board> entities) {
+    public void deleteAllInBatch(Iterable<Card> entities) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteAllInBatch'");
     }
@@ -84,55 +84,55 @@ public class TestBoardRepository implements BoardRepository {
     }
 
     @Override
-    public Board getOne(Long id) {
+    public Card getOne(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getOne'");
     }
 
     @Override
-    public Board getById(Long id) {
-        call("getById " + id);
-        return boards.stream().filter(b -> b.getId() == id).findFirst().get();
+    public Card getById(Long id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getById'");
     }
 
     @Override
-    public <S extends Board> List<S> findAll(Example<S> example) {
+    public <S extends Card> List<S> findAll(Example<S> example) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
     @Override
-    public <S extends Board> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends Card> List<S> findAll(Example<S> example, Sort sort) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
     @Override
-    public Page<Board> findAll(Pageable pageable) {
+    public Page<Card> findAll(Pageable pageable) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
     @Override
-    public <S extends Board> S save(S entity) {
+    public <S extends Card> S save(S entity) {
         call("save");
-        entity.setId((long) boards.size());
-        boards.add(entity);
+        cards.add(entity);
         return entity;
     }
 
     @Override
-    public Optional<Board> findById(Long id) {
+    public Optional<Card> findById(Long id) {
         call("findById");
-        return Optional.of(boards.get(id.intValue()));
+        return cards.stream()
+                .filter(x -> x.id == id)
+                .findFirst();
     }
 
     @Override
     public boolean existsById(Long id) {
         call("existsById");
-        if(id == null || id < 0 || id >= (long) boards.size())
-            return false;
-        return true;
+        return cards.stream()
+                .anyMatch(x -> x.id == id);
     }
 
     @Override
@@ -143,12 +143,12 @@ public class TestBoardRepository implements BoardRepository {
 
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        call("deleteById");
+        cards.removeIf(x -> x.id == id);
     }
 
     @Override
-    public void delete(Board entity) {
+    public void delete(Card entity) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
@@ -160,7 +160,7 @@ public class TestBoardRepository implements BoardRepository {
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Board> entities) {
+    public void deleteAll(Iterable<? extends Card> entities) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteAll'");
     }
@@ -172,41 +172,33 @@ public class TestBoardRepository implements BoardRepository {
     }
 
     @Override
-    public <S extends Board> Optional<S> findOne(Example<S> example) {
+    public <S extends Card> Optional<S> findOne(Example<S> example) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findOne'");
     }
 
     @Override
-    public <S extends Board> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends Card> Page<S> findAll(Example<S> example, Pageable pageable) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
     @Override
-    public <S extends Board> long count(Example<S> example) {
+    public <S extends Card> long count(Example<S> example) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'count'");
     }
 
     @Override
-    public <S extends Board> boolean exists(Example<S> example) {
+    public <S extends Card> boolean exists(Example<S> example) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'exists'");
     }
 
     @Override
-    public <S extends Board, R> R findBy(Example<S> example,
-		Function<FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Card, R> R findBy(Example<S> example,
+                                        Function<FetchableFluentQuery<S>, R> queryFunction) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findBy'");
     }
-
-    public String getCalled() {
-        String res="";
-        for(String x : calledMethods)
-            res += x;
-        return res;
-    }
-    
 }
