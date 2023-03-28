@@ -20,7 +20,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import commons.BoardList;
@@ -65,7 +64,7 @@ public class ServerUtils {
 
     // returns true if connection is succesful 
     // flase otherwise
-    public boolean check(String addr) throws UnknownHostException, IOException {
+    public boolean check(String addr) throws IOException {
 
         boolean res = false;
 
@@ -81,6 +80,11 @@ public class ServerUtils {
 
     public void setServer(String addr) {
         server = addr;
+    }
+
+    public void disconnect() {
+        // TODO probably close sockets here
+        server = "";
     }
 
     public Board getBoardById(Long id) {
