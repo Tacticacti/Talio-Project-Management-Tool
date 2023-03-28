@@ -6,6 +6,8 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,12 +31,14 @@ public class DatabaseUtils {
         return board;
     }
 
-    public void updateCard(Card card, Card updated) {
-        card.setTitle(updated.title);
-        card.setDescription(updated.description);
-        card.setSubtasks(updated.getSubtasks());
-        card.setCompletedTasks(updated.getCompletedTasks());
-        card.setCompletedSubs(card.getCompletedSubs());
+    public void updateCard(Card card, String title, String description,
+                           List<String> subtasks, List<String> tags) {
+        card.setTitle(title);
+        card.setDescription(description);
+        card.subtasks = new ArrayList<>();
+        for(String s : subtasks){
+            card.addSubTask(s);
+        }
     }
 
     public Optional<BoardList> getListById(Board board, Long listId) {
