@@ -100,8 +100,8 @@ public class BoardListController {
     }
 
     @PostMapping(path="/deleteCard/{id}")
-    public ResponseEntity<BoardList> deleteCardFromId(@PathVariable ("id") long listId
-            , @RequestBody Card card)
+    public ResponseEntity<BoardList> deleteCardFromId(@PathVariable ("id") long listId,
+            @RequestBody Card card)
     {
 
         System.out.println("delete from: " + listId + " " + card);

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.DatabaseUtils;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -44,6 +45,8 @@ public class BoardListControllerTest {
         c2 = new Card("c2");
         c2.description = "new description";
         c2.subtasks = List.of("st1", "st2");
+        c1.id = 0L;
+        c2.id = 1L;
 
         boardController.add(b1);
     }
@@ -94,7 +97,7 @@ public class BoardListControllerTest {
     }
 
     @Test
-    public void deleteCard() {
+    public void deleteList() {
         controller.addList(bl1);
         var ret = controller.deleteList(99L);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
@@ -102,5 +105,33 @@ public class BoardListControllerTest {
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         var ret2 = controller.getById(0L);
         assertEquals(BAD_REQUEST, ret2.getStatusCode());
+    }
+
+    @Test
+    public void deleteCard() {
+        controller.addList(bl1);
+        var ret2 = controller.addCardToId(0L, c1);
+        assertNotEquals(BAD_REQUEST, ret2.getStatusCode());
+
+        var ret = controller.deleteCardFromId(99L, c1);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.deleteCardFromId(0L, c2);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.deleteCardFromId(0L, c1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody().getCards().contains(c1));
+    }
+
+    @Test
+    public void updateCard() {
+        controller.addList(bl1);
+        controller.addCardToId(0L, c1);
+
+        var ret = controller.updateCardInId(99L, c1);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.updateCardInId(0L, c2);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.updateCardInId(0L, c1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
     }
 }

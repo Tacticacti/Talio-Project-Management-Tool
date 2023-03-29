@@ -2,6 +2,7 @@ package server.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -117,6 +118,12 @@ public class TestBoardListRepository implements BoardListRepository {
     @Override
     public <S extends BoardList> S save(S entity) {
         call("save");
+        for(BoardList bl : lists) {
+            if(Objects.equals(bl.getId(), entity.getId())) {
+                bl = entity;
+                return entity;
+            }
+        }
         entity.setId((long) lists.size());
         lists.add(entity);
         return entity;
