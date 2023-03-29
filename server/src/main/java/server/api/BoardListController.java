@@ -2,6 +2,7 @@ package server.api;
 
 import commons.BoardList;
 import commons.Card;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -147,6 +148,28 @@ public class BoardListController {
 
         toUpdate.board = list.get().board;
         toUpdate.boardList = list.get();
+
+        BoardList saved = repo.save(list.get());
+        return ResponseEntity.ok(saved);
+    }
+
+    @PostMapping(path = "/insertAt/{id}")
+    public ResponseEntity<BoardList> insertAt(@PathVariable("id") long listId,
+                                              @RequestBody Pair<Long, Card> req) {
+
+        var list = repo.findById(listId);
+
+        if(list.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Long index = req.getFirst();
+        Card card = req.getSecond();
+
+        System.out.println("inserting card: ");
+        System.out.println(listId + " " + card + " at: " + index);
+
+        list.get().getCards().add(index.intValue(), card);
 
         BoardList saved = repo.save(list.get());
         return ResponseEntity.ok(saved);

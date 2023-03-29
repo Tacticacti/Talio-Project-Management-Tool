@@ -5,6 +5,7 @@ import commons.BoardList;
 import commons.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 import server.DatabaseUtils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -133,5 +134,17 @@ public class BoardListControllerTest {
         assertEquals(BAD_REQUEST, ret.getStatusCode());
         ret = controller.updateCardInId(0L, c1);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void insertAt() {
+        controller.addList(bl1);
+        controller.addCardToId(0L, c1);
+
+        var ret = controller.insertAt(99L, Pair.of(0L, c2));
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.insertAt(0L, Pair.of(0L, c2));
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(List.of(c2, c1), ret.getBody().getCards());
     }
 }
