@@ -20,7 +20,7 @@
          <opaqueInsets>
             <Insets />
          </opaqueInsets></TextField>
-      <Line endX="152.0" endY="21.0" layoutX="178.0" layoutY="48.0" startX="-178.0" startY="21.0" />
+      <Line endX="152.0" endY="21.0" layoutX="178.0" layoutY="48.0" startX="-178.0" startY="21.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
       <Button fx:id="deleteBtn" focusTraversable="false" layoutX="273.0" layoutY="14.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="37.0">
          <graphic>
             <ImageView fitHeight="32.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">

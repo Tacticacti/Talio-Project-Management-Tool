@@ -135,7 +135,7 @@ public class Card implements Serializable {
     public void removeSubTask(String task){
         subtasks.remove(task);
         if(completedTasks.contains(task)){
-            completedTasks.remove(task);
+            uncompleteSubTask(task);
         }
     }
     //complete a subtask
@@ -188,5 +188,20 @@ public class Card implements Serializable {
 
     public List<String> getCompletedTasks() {
         return completedTasks;
+    }
+
+    public void addSubtaskAtIndex(String s, int index){
+        subtasks.add(index, s);
+    }
+
+    public void setCompletedSubs(int number){
+        completedSubs = number;
+    }
+    public void setSubtasks(List<String> subtasks){
+        this.subtasks = subtasks;
+    }
+
+    public void setCompletedTasks(List<String> complete){
+        this.completedTasks = complete;
     }
 }

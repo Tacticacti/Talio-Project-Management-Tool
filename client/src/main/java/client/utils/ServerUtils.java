@@ -95,8 +95,7 @@ public class ServerUtils {
                 .target(server).path("api/boards/" + id.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<Board>() {
-                });
+                .get(Board.class);
     }
 
     public List<Board> getBoards() {
@@ -216,4 +215,7 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(BoardList.class);
     }
+
+
+
 }
