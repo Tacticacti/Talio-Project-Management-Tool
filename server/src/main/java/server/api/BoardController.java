@@ -4,12 +4,10 @@ import java.util.List;
 import java.util.Objects;
 
 import commons.Board;
-import commons.Card;
 import commons.BoardList;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
 
-import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -173,7 +171,7 @@ public class BoardController {
     }
 
     @PostMapping(path = "/add/list/{id}")
-    public ResponseEntity<BoardList> addListToBoard(@PathVariable("id") long boardId,
+    public ResponseEntity<Long> addListToBoard(@PathVariable("id") long boardId,
         @RequestBody String listName) {
 
         System.out.println("addListToBoard: ");
@@ -186,41 +184,14 @@ public class BoardController {
         Board board = repo.findById(boardId).get();
         board.addList(new BoardList(listName));
         Board saved = repo.save(board);
-        Long listId = saved.getLists().size()-1L;
-        return ResponseEntity.ok(saved.getLists().get(listId.intValue()));
-    }
-
-    @PostMapping(path = "/list/changeName/{id}")
-    public ResponseEntity<BoardList> changeListsName(@PathVariable("id") long boardId,
-        @RequestBody Pair<String, Long> req) {
-
-        if (!repo.existsById(boardId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Long listId = req.getSecond();
-        String listName = req.getFirst();
-
-        Board board = repo.findById(boardId).get();
-
-        var result = board.getLists().stream()
-                .filter(x -> Objects.equals(x.getId(), listId))
-                .findFirst();
-
-        if(result.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        BoardList saved = result.get();
-        saved.setName(listName);
-
-        repo.save(board);
-        return ResponseEntity.ok(saved);
+        int index = saved.getLists().size()-1;
+        Long listId = saved.getLists().get(index).getId();
+        return ResponseEntity.ok(listId);
     }
 
     @PostMapping(path = "/list/delete/{id}")
     public ResponseEntity<Board> deleteList(@PathVariable("id") long boardId,
-        @RequestBody long listId) {
+                                            @RequestBody long listId) {
 
         if (!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
