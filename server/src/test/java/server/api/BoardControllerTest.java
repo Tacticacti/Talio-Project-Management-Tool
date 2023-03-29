@@ -82,35 +82,6 @@ public class BoardControllerTest {
         assertEquals(BAD_REQUEST, ret.getStatusCode());
     }
 
-    /*
-    @Test
-    public void addCardWrongId() {
-        var ret = controller.addCardToId(99, null);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-    }
-
-    @Test
-    public void addCardWrongRequest() {
-        controller.add(b1);
-        Pair<Long, Card> req = Pair.of(-1L, c1);
-        var ret = controller.addCardToId(0, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-
-        req = Pair.of(999L, c1);
-        ret = controller.addCardToId(0, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-    }
-
-    @Test
-    public void addCardOk() {
-        controller.add(b1);
-        Pair<Long, Card> req = Pair.of(0L, c1);
-        var ret = controller.addCardToId(0, req);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertEquals(c1, ret.getBody().getLists().get(0).getCards().get(0));
-    }
-    */
-
     @Test
     public void addListWrongId() {
         controller.add(b1);
@@ -127,81 +98,6 @@ public class BoardControllerTest {
         // assertEquals(name, ret.getBody().getName());
     }
 
-    /*
-    @Test
-    public void changeListNameWrongBoardId() {
-        controller.add(b1);
-        String name = "custom list";
-        Pair<String, Long> req = Pair.of(name, 0L);
-        var ret = controller.changeListsName(1000, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-    }
-
-    @Test
-    public void changeListNameWrongListId() {
-        controller.add(b1);
-        String name = "custom list";
-        Pair<String, Long> req = Pair.of(name, 1000L);
-        var ret = controller.changeListsName(0, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-    }
-
-    @Test
-    public void changeListNameOk() {
-        BoardList bl2 = new BoardList();
-        bl2.setId(10);
-        b1.addList(bl2);
-        controller.add(b1);
-        String name = "custom list";
-        Pair<String, Long> req = Pair.of(name, 10L);
-        var ret = controller.changeListsName(0, req);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertEquals(name, ret.getBody().getName());
-    }
-
-    @Test
-    public void updateCardWrongId() {
-        controller.add(b1);
-        Pair<Long, Card> req = Pair.of(0L, c1);
-        var ret = controller.addCardToId(0L, req);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-
-        req = Pair.of(0L, c2);
-        ret = controller.updateCardInId(10L, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-
-        req = Pair.of(-1L, c2);
-        ret = controller.updateCardInId(0L, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-
-        req = Pair.of(10L, c2);
-        ret = controller.updateCardInId(0L, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-
-        c2.id = 123L;
-        req = Pair.of(0L, c2);
-        ret = controller.updateCardInId(0L, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-    }
-
-    @Test
-    public void updateCardOK() {
-        controller.add(b1);
-        c1.id = 10;
-        Pair<Long, Card> req = Pair.of(0L, c1);
-        var ret = controller.addCardToId(0L, req);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-
-        c2.id = 10;
-        req = Pair.of(0L, c2);
-        ret = controller.updateCardInId(0L, req);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-
-        c2.board = b1;
-        c2.boardList = bl1;
-        assertEquals(c2, ret.getBody().getLists().get(0).getCards().get(0));
-    }
-
     @Test
     public void deleteListWrongID() {
         controller.add(b1);
@@ -215,44 +111,4 @@ public class BoardControllerTest {
         var ret = controller.deleteList(0L, 0L);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
     }
-
-    @Test
-    public void deleteCardWrongID() {
-        controller.add(b1);
-        c1.id = 10L;
-        Pair<Long, Card> req = Pair.of(99L, c1);
-        var ret = controller.deleteCardFromId(99L, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-
-        ret = controller.deleteCardFromId(0L, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-
-        req = Pair.of(-1L, c1);
-        ret = controller.deleteCardFromId(0L, req);
-        assertEquals(BAD_REQUEST, ret.getStatusCode());
-
-        req = Pair.of(0L, c1);
-        controller.addCardToId(0L, req);
-
-        Card c3 = new Card();
-        c3.id = 99L;
-        req = Pair.of(0L, c3);
-        ret = controller.deleteCardFromId(0L, req);
-        assertTrue(ret.getBody().getLists().get(0).getCards().contains(c1));
-    }
-
-    @Test
-    public void deleteCardOK() {
-        controller.add(b1);
-        c1.id = 10L;
-        Pair<Long, Card> req = Pair.of(0L, c1);
-        var ret = controller.addCardToId(0L, req);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-
-        ret = controller.deleteCardFromId(0L, req);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        Board res = controller.getById(0L).getBody();
-        assertFalse(res.getLists().get(0).getCards().contains(c1));
-    }
-     */
 }

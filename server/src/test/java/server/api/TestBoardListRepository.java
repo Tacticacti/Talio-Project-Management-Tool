@@ -130,8 +130,10 @@ public class TestBoardListRepository implements BoardListRepository {
 
     @Override
     public boolean existsById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existsById'");
+        call("existsById");
+        if(id == null || id < 0 || id >= (long) lists.size())
+            return false;
+        return true;
     }
 
     @Override
@@ -142,8 +144,8 @@ public class TestBoardListRepository implements BoardListRepository {
 
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        call("deleteById " + id);
+        lists.removeIf(x -> x.getId() == id);
     }
 
     @Override

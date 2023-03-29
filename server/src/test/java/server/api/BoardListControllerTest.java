@@ -74,4 +74,33 @@ public class BoardListControllerTest {
         assertTrue(boardController.getById(0L).getBody().getLists().get(0).getCards().contains(c1));
     }
 
+    @Test
+    public void getById() {
+        controller.addList(bl1);
+        var ret = controller.getById(99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.getById(0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void changeName() {
+        controller.addList(bl1);
+        var ret = controller.changeListsName(99L, "new name");
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.changeListsName(0L, "new name");
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals("new name", ret.getBody().getName());
+    }
+
+    @Test
+    public void deleteCard() {
+        controller.addList(bl1);
+        var ret = controller.deleteList(99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.deleteList(0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        var ret2 = controller.getById(0L);
+        assertEquals(BAD_REQUEST, ret2.getStatusCode());
+    }
 }
