@@ -137,6 +137,13 @@ public class AddCardCtrl {
         //delete button
         //return to board overview
     }
+
+    public boolean checkIfValid(Card card, String text) {
+        if(text == "")
+            return false;
+        return !card.getSubtasks().contains(text);
+    }
+
     public void addSubTask(Card current){
 
         //showcase a textfield for user input
@@ -145,9 +152,14 @@ public class AddCardCtrl {
         subtaskVbox.getChildren().add(0, sub);
         sub.setOnKeyPressed(event ->
         {
-            if(event.getCode() == KeyCode.ENTER){
-                subtaskVbox.getChildren().remove(sub);
-                displaySubs(sub.getText(), current);
+            if(event.getCode() == KeyCode.ENTER) {
+                if(checkIfValid(current, sub.getText().trim())) {
+                    subtaskVbox.getChildren().remove(sub);
+                    displaySubs(sub.getText().trim(), current);
+                }
+                else {
+                    displayAlert("Invalid subtask name!");
+                }
             }
         });
         // added.addSubTask("");
@@ -268,6 +280,13 @@ public class AddCardCtrl {
     }
     public void addTag(){
         //adding a tag
+    }
+
+    public void displayAlert(String text) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText(text);
+        alert.showAndWait();
     }
 }
 
