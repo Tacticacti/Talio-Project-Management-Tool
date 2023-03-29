@@ -322,7 +322,9 @@ public class SingleBoardCtrl implements Initializable {
         Button source = (Button) event.getSource();
         AnchorPane ap = (AnchorPane) source.getParent();
         TextField title = (TextField) ap.lookup("#taskTitle");
-        current.setTitle(title.getText());
+        if(!title.getText().trim().isEmpty()){
+            current.setTitle(title.getText());
+        }
         TextArea desc =  (TextArea) ap.lookup("#taskDescription");
         current.setDescription(desc.getText());
         VBox subs = (VBox) ap.lookup("#subtaskVbox");

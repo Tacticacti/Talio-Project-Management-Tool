@@ -31,7 +31,10 @@ public class DatabaseUtils {
     }
 
     public void updateCard(Card card, Card newCard) {
-        card.setTitle(newCard.getTitle());
+        System.out.println(newCard.getTitle());
+        if(!newCard.getTitle().trim().isEmpty())
+            card.setTitle(newCard.getTitle());
+
         card.setDescription(newCard.getDescription());
         card.setSubtasks(newCard.getSubtasks());
         card.setCompletedTasks(newCard.getCompletedTasks());
