@@ -443,11 +443,8 @@ public class SingleBoardCtrl implements Initializable {
             placeCard(parent, newCard);
             Card saved = server.addCard(newCard);
             newCard.setId(saved.getId());
-            //server.addCardToList(1L, 0L, newCard);
-           // long listIndex = getListIndex(BOARDID, listId);
             saveCardToList(BOARDID, listId, newCard);
             refresh();
-            //enterCard(card);
         });
     }
 
@@ -490,6 +487,8 @@ public class SingleBoardCtrl implements Initializable {
                 if (draggedCardNode != null && originalParent != parent) {
                     parent.getChildren().add(0, draggedCardNode);
                     Card draggedCard = nodeCardMap.get(draggedCardNode);
+                    System.out.println("sending: " + BOARDID + " " + listId + " " + draggedCard);
+                    deleteCardFromList(BOARDID, originalListId, draggedCard);
                     saveCardToList(BOARDID, listId, draggedCard);
                     success = true;
                 }
@@ -500,9 +499,8 @@ public class SingleBoardCtrl implements Initializable {
         cardNode.setOnDragDone(event -> {
             if (dragboard.hasString() && event.isDropCompleted()) {
                 parent.getChildren().remove(cardNode);
-                deleteCardFromList(BOARDID, listId, card);
             }
-//            refresh(); TODO:uncomment after server error has been fixed.
+            refresh();
             event.consume();
         });
     }
@@ -530,9 +528,9 @@ public class SingleBoardCtrl implements Initializable {
             alert.showAndWait();
         }
     }
-    public void saveCardToList(Long boardId, Long listIdIndex, Card current){
+    public void saveCardToList(Long boardId, Long listId, Card current){
         try{
-            server.addCardToList(boardId, listIdIndex, current);
+            server.addCardToList(boardId, listId, current);
         }catch(WebApplicationException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
