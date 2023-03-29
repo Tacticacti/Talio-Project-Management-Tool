@@ -143,9 +143,7 @@ public class BoardListController {
         }
 
         Card toUpdate = result.get();
-        databaseUtils.updateCard(toUpdate, card.title, card.description,
-                card.subtasks, card.tags);
-
+        databaseUtils.updateCard(toUpdate, card);
         toUpdate.board = list.get().board;
         toUpdate.boardList = list.get();
 

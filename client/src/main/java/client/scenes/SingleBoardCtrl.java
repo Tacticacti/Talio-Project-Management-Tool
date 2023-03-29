@@ -45,9 +45,6 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-
-import javafx.scene.control.TextField;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
@@ -122,7 +119,7 @@ public class SingleBoardCtrl implements Initializable {
         //BoardList boardList = server.addEmptyList(BoardID, " ");
 
         // BoardList boardList = server.addEmptyList(1L, " ");
-        Long listId = server.addEmptyList(1L, " ");
+        Long listId = server.addEmptyList(BoardID, " ");
         BoardList boardList = server.getList(listId);
         Node list;
         try {
