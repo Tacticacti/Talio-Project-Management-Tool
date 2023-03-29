@@ -94,8 +94,7 @@ public class ServerUtils {
                 .target(server).path("api/boards/" + id.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<Board>() {
-                });
+                .get(Board.class);
     }
 
     public List<Board> getBoards() {
@@ -199,7 +198,6 @@ public class ServerUtils {
     }
 
     public Board deleteCardFromList(Long boardId, Long listId, Card card){
-        System.out.println(card);
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/delete/" + boardId.toString()) //
                 .request(APPLICATION_JSON) //
@@ -207,4 +205,7 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair<>(listId, card), APPLICATION_JSON)
                         , Board.class);
     }
+
+
+
 }

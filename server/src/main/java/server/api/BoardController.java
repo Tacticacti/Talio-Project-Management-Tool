@@ -6,6 +6,7 @@ import java.util.Objects;
 import commons.Board;
 import commons.Card;
 import commons.BoardList;
+import org.springframework.beans.factory.annotation.Autowired;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
 

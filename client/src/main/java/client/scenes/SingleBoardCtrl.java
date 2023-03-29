@@ -70,7 +70,7 @@ import static client.scenes.MainCtrl.primaryStage;
 public class SingleBoardCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final Long BOARDID = 1L;
+    private Long BOARDID = 1L;
     private Node newCardBtn;
     @FXML
     private HBox hbox_lists;
@@ -87,6 +87,8 @@ public class SingleBoardCtrl implements Initializable {
     private Map<Node, Card> nodeCardMap;
     private ClipboardContent content;
     private Dragboard dragboard;
+
+
 
     @Inject
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -106,29 +108,7 @@ public class SingleBoardCtrl implements Initializable {
         imageView.setPreserveRatio(true);
         settingsBtn.setGraphic(imageView);
         nodeCardMap = new HashMap<>();
-//        Board b = server.getBoardById(1l);
-
-//         try {
-//             createNewList();
-// //            for(BoardList bl: b.getLists()){
-// //                hbox_lists.getChildren()
-// //                .add((hbox_lists.getChildren().size()-2), displayList(bl));
-// //            }
-//         }
-//         catch(IOException e) {
-//             e.printStackTrace();
-//         }
-        //server.addCardToList(1L, 0L, new Card("card from init"));
-
-        //  TODO change 1L -> board_id if we are going multiboard
-        // pullLists(1L);
-
-        // for(BoardList bl : lists) {
-        //     System.out.println("processing: " + bl.getName());
-        //     var node = wrapBoardList(bl);
-        //     mainAnchor.getChildren().addAll(node);
-        //     System.out.println(node.getChildren());
-        // }
+        current_board = new Board();
 
     }
 
@@ -138,7 +118,7 @@ public class SingleBoardCtrl implements Initializable {
 
     public void createNewList() {
         ObservableList<Node> board_lists = hbox_lists.getChildren();
-        BoardList boardList = server.addEmptyList(1L, " ");
+        BoardList boardList = server.addEmptyList(BOARDID, " ");
         Node list;
         try {
             list = wrapList(boardList, board_lists);
@@ -204,6 +184,7 @@ public class SingleBoardCtrl implements Initializable {
 
                 // deleting list on server side
                 server.removeBoardList(BOARDID, boardList.getId());
+                current_board.removeList(boardList);
                 try {
                     refresh();
                 }
@@ -215,35 +196,6 @@ public class SingleBoardCtrl implements Initializable {
                 }
             }
         );
-    }
-
-
-    public Node displayList(BoardList boardList) throws IOException {
-        ObservableList<Node> board_lists = hbox_lists.getChildren();
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
-        Node list = loader.load();
-        TextField title = (TextField) list.lookup("#list_title");
-        title.setText(boardList.getName());
-
-
-        Button btn =  (Button) list.lookup("#deleteBtn");
-        btn.setOnAction(event -> board_lists.remove(btn.getParent()));
-
-        Button btn2 =  (Button) list.lookup("#addNewCardButton");
-        VBox par = (VBox) btn2.getParent();
-        par.setSpacing(40);
-        for(Card c: boardList.getCards()){
-            placeCard(par, c);
-        }
-        btn2.setOnAction(event ->{
-            addNewCard(par);
-        });
-
-        board_lists.get(board_lists.size()-2).lookup("#list_title")
-                .requestFocus();
-        return list;
-
     }
     public void placeCard(VBox parent, Card card){
         String cardTitle = card.getTitle();
@@ -474,6 +426,7 @@ public class SingleBoardCtrl implements Initializable {
                 if (draggedCardNode != null && originalParent != parent) {
                     parent.getChildren().add(0, draggedCardNode);
                     Card draggedCard = nodeCardMap.get(draggedCardNode);
+                    deleteCardFromList(BOARDID,originalListId,draggedCard);
                     saveCardToList(BOARDID, listId, draggedCard);
                     success = true;
                 }
@@ -484,11 +437,12 @@ public class SingleBoardCtrl implements Initializable {
         cardNode.setOnDragDone(event -> {
             if (dragboard.hasString() && event.isDropCompleted()) {
                 parent.getChildren().remove(cardNode);
-                deleteCardFromList(BOARDID, listId, card);
             }
-//            refresh(); TODO:uncomment after server error has been fixed.
+            refresh();
             event.consume();
         });
+
+
     }
 
 
@@ -610,10 +564,11 @@ public class SingleBoardCtrl implements Initializable {
 
     public void setBoard(Board board) {
         this.current_board = board;
+        this.BOARDID = board.getId();
     }
     public void pullLists(Long id) {
-        Board tmpBoard = server.getBoardById(id);
-        lists = FXCollections.observableList(tmpBoard.getLists());
+        current_board = server.getBoardById(id);
+        lists = FXCollections.observableList(current_board.getLists());
     }
 
     public void drawLists() throws IOException {
