@@ -125,7 +125,9 @@ public class SingleBoardCtrl implements Initializable {
 
     public void createNewList() {
         ObservableList<Node> board_lists = hbox_lists.getChildren();
-        BoardList boardList = server.addEmptyList(1L, " ");
+        // BoardList boardList = server.addEmptyList(1L, " ");
+        Long listId = server.addEmptyList(1L, " ");
+        BoardList boardList = server.getList(listId);
         Node list;
         try {
             list = wrapList(boardList, board_lists);
@@ -170,7 +172,7 @@ public class SingleBoardCtrl implements Initializable {
                     BoardList changedBoardList = (BoardList) list.getUserData();
                     System.out.println("requesting change name: " + BOARDID +  " " +
                             changedBoardList.getId() + " " + title.getText());
-                    server.changeListName(BOARDID, changedBoardList.getId(), title.getText());
+                    server.changeListName(changedBoardList.getId(), title.getText());
                 }
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -517,9 +519,9 @@ public class SingleBoardCtrl implements Initializable {
 
     }
 
-    public void updateCardFromList(Long boardId, Long listindex, Card current){
+    public void updateCardFromList(Long boardId, Long listId, Card current){
         try{
-            server.updateCardFromList(boardId, listindex, current);
+            server.updateCardFromList(listId, current);
         }catch(WebApplicationException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -530,7 +532,7 @@ public class SingleBoardCtrl implements Initializable {
     }
     public void saveCardToList(Long boardId, Long listId, Card current){
         try{
-            server.addCardToList(boardId, listId, current);
+            server.addCardToList(listId, current);
         }catch(WebApplicationException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -542,7 +544,7 @@ public class SingleBoardCtrl implements Initializable {
 
     public void deleteCardFromList(Long boardId, Long listIdIndex, Card current){
         try{
-            server.deleteCardFromList(boardId, listIdIndex, current);
+            server.deleteCardFromList(listIdIndex, current);
         }catch(WebApplicationException e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
@@ -562,7 +564,7 @@ public class SingleBoardCtrl implements Initializable {
                 VBox par = (VBox) hbox.getParent();
                 par.getChildren().remove(hbox);
                 nodeCardMap.remove(hbox, current);
-                server.deleteCardFromList(BOARDID, listId, current);
+                server.deleteCardFromList(listId, current);
                 refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();

@@ -81,6 +81,7 @@ public class ServerUtils {
     }
 
     public void setServer(String addr) {
+        // TODO open socket connection here
         server = addr;
     }
 
@@ -107,31 +108,32 @@ public class ServerUtils {
                 });
     }
 
-    public Board addCardToList(Long boardId, Long boardListId, Card card) {
+    public BoardList addCardToList(Long boardListId, Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/add/" + boardId.toString()) //
+                .target(server).path("api/lists/add/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair<>(boardListId, card),
-                        APPLICATION_JSON), Board.class);
+                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
     }
 
-    public BoardList addEmptyList(Long boardId, String name) {
+    public Long addEmptyList(Long boardId, String name) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/boards/add/list/" + boardId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(name, APPLICATION_JSON),
-                        BoardList.class);
+                .post(Entity.entity(name, APPLICATION_JSON), Long.class);
     }
 
-    public BoardList changeListName(Long boardId, Long listId, String name) {
+    public BoardList changeListName(Long listId, String name) throws Exception {
+        if(name.equals("")) {
+            throw new Exception("cannot change name to empty name");
+        }
+
         return ClientBuilder.newClient(new ClientConfig())
-                .target(server).path("api/boards/list/changeName/" + boardId.toString())
+                .target(server).path("api/lists/changeName/" + listId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(new CustomPair<>(name, listId),
-                        APPLICATION_JSON), BoardList.class);
+                .post(Entity.entity(name, APPLICATION_JSON), BoardList.class);
     }
 
     public Void removeBoardList(Long boardId, Long listId) {
@@ -142,14 +144,14 @@ public class ServerUtils {
                 .post(Entity.entity(listId, APPLICATION_JSON), Void.class);
     }
 
-    public Board updateCardFromList(Long boardId, Long boardListId, Card card) {
+    public BoardList updateCardFromList(Long boardListId, Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/update/" + boardId.toString()) //
+                .target(server).path("api/lists/update/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair<>(boardListId, card),
-                        APPLICATION_JSON), Board.class);
+                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
     }
+
     public Card addCard(Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/cards/add") //
@@ -198,13 +200,20 @@ public class ServerUtils {
                 .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
     }
 
-    public Board deleteCardFromList(Long boardId, Long listId, Card card){
+    public BoardList deleteCardFromList(Long listId, Card card){
         System.out.println(card);
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/delete/" + boardId.toString()) //
+                .target(server).path("api/lists/deleteCard/" + listId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair<>(listId, card), APPLICATION_JSON)
-                        , Board.class);
+                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
+    }
+
+    public BoardList getList(Long listId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/lists/" + listId.toString())
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(BoardList.class);
     }
 }
