@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.MyFXML;
 import client.MyModule;
+import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -11,11 +12,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
 
 import java.io.IOException;
@@ -24,6 +29,7 @@ import static com.google.inject.Guice.createInjector;
 
 public class BoardOverviewCtrl {
     private final ServerUtils server;
+    private final LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
     private static final Injector INJECTOR = createInjector(new MyModule());
@@ -44,10 +50,10 @@ public class BoardOverviewCtrl {
     private TextField search_box;
 
     @Inject
-    public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public BoardOverviewCtrl(LocalUtils localUtils, ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-
+        this.localUtils = localUtils;
     }
 
 
@@ -192,6 +198,16 @@ public class BoardOverviewCtrl {
         }
     }
 
+    public void correctText(Node board, Board board2) {
+        BorderPane tmp = (BorderPane) board.lookup("#mainPane");
+
+        Text id = (Text) tmp.lookup("#boardId");
+        id.setText(board2.getId().toString());
+
+        Text name = (Text) tmp.lookup("#boardName");
+        name.setText(board2.getName());
+    }
+
     public void addJoinedBoard(Board board2) throws IOException {
 
 
@@ -199,10 +215,11 @@ public class BoardOverviewCtrl {
 
         // add board to current hbox
         if (last_row.getChildren().size() < MAX_BOARDS_IN_ROW) {
-
             // create bord and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             AnchorPane board = loader.load();
+
+            correctText(board, board2);
 
             last_row.getChildren().add(board);
 
@@ -227,6 +244,8 @@ public class BoardOverviewCtrl {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             Node board = loader.load();
 
+            correctText(board, board2);
+
             HBox hbox = new HBox();
             hbox.setSpacing(100);
             //hbox.setPadding(new Insets(102, 0, 0, 102));
@@ -249,6 +268,29 @@ public class BoardOverviewCtrl {
 
         }
 
+    }
+
+    public void refresh() {
+        try {
+            localUtils.fetch();
+        }
+        catch(Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Error fetching boards from file!\n" + e.getMessage());
+            alert.showAndWait();
+        }
+        localUtils.getBoards().forEach(x -> {
+            try {
+                addJoinedBoard(server.getBoardById(x));
+            } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Error getting board id: " + x +
+                        " from server\n" + e.getMessage());
+                alert.showAndWait();
+            }
+        });
     }
 
     public void disconnect() {

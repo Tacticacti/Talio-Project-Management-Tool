@@ -91,7 +91,6 @@ public class SingleBoardCtrl implements Initializable {
     public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-
     }
 
     @Override
