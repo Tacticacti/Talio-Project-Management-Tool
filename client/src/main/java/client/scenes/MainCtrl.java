@@ -131,7 +131,8 @@ public class MainCtrl {
             boardOverviewCtrl.refresh();
         }catch (Exception e) {
             showErrorDialog("Error", "An error occurred while trying to display the boards." +
-                    " Please try again later.");
+                    " Please try again later.\n\n" + e.getMessage());
+            e.printStackTrace();
         }
     }
     public void showHome(){

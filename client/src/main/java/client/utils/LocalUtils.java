@@ -69,4 +69,9 @@ public class LocalUtils {
         }
         bw.close();
     }
+
+    public void reset() throws IOException {
+        boards.clear();
+        write();
+    }
 }

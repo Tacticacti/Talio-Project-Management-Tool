@@ -110,7 +110,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void back(){
-        primaryStage.setScene(boverview);
+         primaryStage.setScene(boverview);
     }
 
     public void createNewList() {

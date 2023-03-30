@@ -39,6 +39,7 @@ public class BoardOverviewCtrl {
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
     private Set<Long> drawnBoards;
+    private Set<Node> boardsNodes;
 
     private final int MAX_BOARDS_IN_ROW = 5;
 
@@ -59,6 +60,7 @@ public class BoardOverviewCtrl {
         this.server = server;
         this.localUtils = localUtils;
         drawnBoards = new HashSet<>();
+        boardsNodes = new HashSet<>();
     }
 
 
@@ -204,7 +206,8 @@ public class BoardOverviewCtrl {
         }
     }
 
-    public void correctText(Node board, Board board2) {
+    public void correctText(Node board) {
+        Board board2 = (Board) board.getUserData();
         BorderPane tmp = (BorderPane) board.lookup("#mainPane");
 
         Text id = (Text) tmp.lookup("#boardId");
@@ -227,7 +230,9 @@ public class BoardOverviewCtrl {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             AnchorPane board = loader.load();
 
-            correctText(board, board2);
+            board.setUserData(board2);
+            boardsNodes.add(board);
+            correctText(board);
 
             last_row.getChildren().add(board);
 
@@ -252,7 +257,9 @@ public class BoardOverviewCtrl {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             Node board = loader.load();
 
-            correctText(board, board2);
+            board.setUserData(board2);
+            boardsNodes.add(board);
+            correctText(board);
 
             HBox hbox = new HBox();
             hbox.setSpacing(100);
@@ -281,13 +288,15 @@ public class BoardOverviewCtrl {
     public void refresh() {
         try {
             localUtils.fetch();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("Error fetching boards from file!\n" + e.getMessage());
             alert.showAndWait();
         }
+        boardsNodes.forEach(x -> {
+            correctText(x);
+        });
         localUtils.getBoards().forEach(x -> {
             if(drawnBoards.contains(x))
                 return;
@@ -306,5 +315,18 @@ public class BoardOverviewCtrl {
     public void disconnect() {
         mainCtrl.showHome();
         server.disconnect();
+    }
+
+    public void resetFile() {
+        try {
+            localUtils.reset();
+        }
+        catch(Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Error: " + e.getMessage());
+            alert.showAndWait();
+        }
+        refresh();
     }
 }
