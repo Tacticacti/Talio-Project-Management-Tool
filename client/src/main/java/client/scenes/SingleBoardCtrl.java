@@ -165,7 +165,6 @@ public class SingleBoardCtrl implements Initializable {
         var list_vbox = (VBox) list.getChildren().get(list.getChildren().size()-1);
         Long listId = ((BoardList) list.getUserData()).getId();
         list_vbox.setOnDragDropped(event -> {
-            System.out.println("something!");
             if (dragboard.hasString()) {
                 String[] splitDragboard = dragboard.getString().split(";");
                 long originalListId = Long.parseLong(splitDragboard[1].trim());
@@ -178,7 +177,6 @@ public class SingleBoardCtrl implements Initializable {
                 if (draggedCardNode != null && originalParent != list_vbox) {
                     list_vbox.getChildren().add(0, draggedCardNode);
                     Card draggedCard = nodeCardMap.get(draggedCardNode);
-                    //System.out.println("sending: " + BoardID + " " + listId + " " + draggedCard);
                     deleteCardFromList(BoardID, originalListId, draggedCard);
                     saveCardToList(BoardID, listId, draggedCard);
                 }
@@ -316,9 +314,6 @@ public class SingleBoardCtrl implements Initializable {
         BoardList boardList = (BoardList) parent.getUserData();
         long listId = boardList.getId();
         Card card = server.getCardById(nodeCardMap.get(cardNode).getId());
-        System.out.println("-------------------------");
-        System.out.println("got: " + card);
-        System.out.println("-------------------------");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddCard.fxml"));
         Parent root;
         try {
@@ -440,58 +435,6 @@ public class SingleBoardCtrl implements Initializable {
 
     private void setDragAndDrop(VBox parent, Node cardNode) {
         Long listId = ((BoardList) parent.getUserData()).getId();
-        Button buttonNode = (Button) parent.getChildren().get(parent.getChildren().size()-1);
-        buttonNode.setOnDragEntered(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a button 2!");
-        });
-        buttonNode.setOnDragDropped(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a button 3!");
-        });
-        buttonNode.setOnDragOver(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-//            System.out.println("I'm a button 4!"); //definitely detected
-        });
-        buttonNode.setOnDragExited(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a button 6!");
-        });
-        parent.setOnDragEntered(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a parent 2!");
-        });
-        parent.setOnDragDropped(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a parent 3!");
-        });
-        parent.setOnDragOver(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-//            System.out.println("I'm a parent 4!");
-        });
-        parent.setOnDragExited(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a parent 6!");
-        });
-        
-        AnchorPane bigParent = (AnchorPane) parent.getParent();
-        bigParent.setOnDragEntered(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a bigParent 2!");
-        });
-        bigParent.setOnDragDropped(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a bigParent 3!");
-        });
-        bigParent.setOnDragOver(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-//            System.out.println("I'm a bigParent 4!");
-        });
-        bigParent.setOnDragExited(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-            System.out.println("I'm a bigParent 6!");
-        });
-
         cardNode.setOnDragDetected(event -> {
             dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             content = new ClipboardContent();
@@ -511,21 +454,9 @@ public class SingleBoardCtrl implements Initializable {
         cardNode.setOnDragOver(event -> {
             if (dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
-                System.out.println("draggin over card");
-
             }
             event.consume();
         });
-
-        parent.setOnDragOver(event -> {
-            if (dragboard.hasString()) {
-                System.out.println("draggin vbox");
-            }
-//            System.out.println("Source: " + event.getGestureSource());
-//            System.out.println("Target: " + event.getGestureTarget());
-            event.consume();
-        });
-
 
         cardNode.setOnDragDropped(event -> {
             boolean success = false;
@@ -542,19 +473,13 @@ public class SingleBoardCtrl implements Initializable {
                 if (draggedCardNode != null) {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);
-//                        System.out.println("sending: " + BoardID + " " +
-//                                listId + " " + draggedCard);
                         deleteCardFromList(BoardID, sourceListId, draggedCard);
                         saveCardToList(BoardID, listId, draggedCard);
                         success = true;
-                        System.out.println(parent.getChildren());
                     } else {
-                        System.out.println("Same List!");
                         ObservableList<Node> children = parent.getChildren();
                         int draggedIndex = children.indexOf((AnchorPane) event.getGestureSource());
-                        System.out.println(draggedIndex);
                         int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
-                        System.out.println(dropIndex);
                         draggedCardNode = children.remove(draggedIndex);
                         deleteCardFromList(BoardID, sourceListId, draggedCard);
                         children.add(dropIndex, draggedCardNode);
