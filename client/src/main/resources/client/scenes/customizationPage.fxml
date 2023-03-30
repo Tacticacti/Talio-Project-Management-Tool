@@ -67,7 +67,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button fx:id="deleteBoard" focusTraversable="false" layoutX="20.0" layoutY="440.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="346.0" style="-fx-background-color: Salmon;" text="I understand the consequences please remove this board" textFill="WHITE">
+      <Button fx:id="deleteBoard" focusTraversable="false" layoutX="20.0" layoutY="440.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="346.0" style="-fx-background-color: Salmon;" text="I understand the consequences please leave this board" textFill="WHITE">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>
