@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.MyFXML;
 import client.MyModule;
+import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -11,24 +12,35 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 import static client.scenes.MainCtrl.primaryStage;
 import static com.google.inject.Guice.createInjector;
 
 public class BoardOverviewCtrl {
     private final ServerUtils server;
+    private LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
     private static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
+    private Set<Long> drawnBoards;
+    private Set<Node> boardsNodes;
 
     private final int MAX_BOARDS_IN_ROW = 5;
 
@@ -47,10 +59,9 @@ public class BoardOverviewCtrl {
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-
+        drawnBoards = new HashSet<>();
+        boardsNodes = new HashSet<>();
     }
-
-
 
     public void createBoard() throws IOException {
 
@@ -186,10 +197,23 @@ public class BoardOverviewCtrl {
         System.out.println(server.getBoards());
 
         for (Board board : server.getBoards()) {
-            if (board.getId().toString().equals(text)) {
+            if (board.getId().toString().equals(text) &&
+                    !drawnBoards.contains(board.getId())) {
                 addJoinedBoard(board);
+                localUtils.add(board.getId());
             }
         }
+    }
+
+    public void correctText(Node board) {
+        Board board2 = (Board) board.getUserData();
+        BorderPane tmp = (BorderPane) board.lookup("#mainPane");
+
+        Text id = (Text) tmp.lookup("#boardId");
+        id.setText(board2.getId().toString());
+
+        Text name = (Text) tmp.lookup("#boardName");
+        name.setText(board2.getName());
     }
 
     public void addJoinedBoard(Board board2) throws IOException {
@@ -197,12 +221,17 @@ public class BoardOverviewCtrl {
 
         var last_row = (HBox) board_rows.getChildren().get(board_rows.getChildren().size()-1);
 
+        drawnBoards.add(board2.getId());
+
         // add board to current hbox
         if (last_row.getChildren().size() < MAX_BOARDS_IN_ROW) {
-
             // create bord and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             AnchorPane board = loader.load();
+
+            board.setUserData(board2);
+            boardsNodes.add(board);
+            correctText(board);
 
             last_row.getChildren().add(board);
 
@@ -226,6 +255,10 @@ public class BoardOverviewCtrl {
             // create bord and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             Node board = loader.load();
+
+            board.setUserData(board2);
+            boardsNodes.add(board);
+            correctText(board);
 
             HBox hbox = new HBox();
             hbox.setSpacing(100);
@@ -251,8 +284,58 @@ public class BoardOverviewCtrl {
 
     }
 
+    public void refresh() {
+        if(localUtils == null)
+            localUtils = new LocalUtils();
+        if(!Objects.equals(localUtils.getPath(), server.getPath())) {
+            try {
+                localUtils.setPath(server.getPath());
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            localUtils.fetch();
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Error fetching boards from file!\n" + e.getMessage());
+            alert.showAndWait();
+        }
+        boardsNodes.forEach(x -> {
+            correctText(x);
+        });
+        localUtils.getBoards().forEach(x -> {
+            if(drawnBoards.contains(x))
+                return;
+            try {
+                addJoinedBoard(server.getBoardById(x));
+            } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Error getting board id: " + x +
+                        " from server\n" + e.getMessage());
+                alert.showAndWait();
+            }
+        });
+    }
+
     public void disconnect() {
         mainCtrl.showHome();
         server.disconnect();
+    }
+
+    public void resetFile() {
+        try {
+            localUtils.reset();
+        }
+        catch(Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Error: " + e.getMessage());
+            alert.showAndWait();
+        }
+        refresh();
     }
 }
