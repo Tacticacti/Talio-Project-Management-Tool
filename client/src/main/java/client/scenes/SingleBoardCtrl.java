@@ -42,6 +42,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import javafx.scene.SnapshotParameters;
@@ -535,29 +536,43 @@ public class SingleBoardCtrl implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customizationPage.fxml"));
         AnchorPane customization = loader.load();
 
-        customization.setLayoutY(250);
-        customization.setLayoutX(770);
-
-        customization.setScaleX(1.5);
-        customization.setScaleY(1.5);
+        //customization.setLayoutY(250);
+        //customization.setLayoutX(770);
 
 
-        Button closebtn =  (Button) customization.lookup("#closeCustomizationMenu");
-        closebtn.setOnAction(event -> sb_anchor.getChildren().remove(closebtn.getParent()));
+
+        //customization.setScaleX(1.5);
+        //customization.setScaleY(1.5);
+
+
+        // remove customization
+        //Button closebtn =  (Button) customization.lookup("#closeCustomizationMenu");
+        //closebtn.setOnAction(event -> sb_anchor.getChildren().remove(closebtn.getParent()));
 
         // doesn't actually delete anything just goes back to board overview
         Button delbtn =  (Button) customization.lookup("#deleteBoard");
         delbtn.setOnAction(event -> {
             // remove this specific board
-
+            Node source = (Node) event.getSource();
+            Stage stage = (Stage) source.getScene().getWindow();
+            stage.close();
 
             mainCtrl.showBoardOverview();
-
         });
 
+        Scene scene = new Scene(customization);
+        Stage popUpStage = new Stage();
+        popUpStage.setTitle("Customization Details");
+        popUpStage.setResizable(false);
+        popUpStage.setScene(scene);
+        popUpStage.initModality(Modality.APPLICATION_MODAL);
+        popUpStage.showAndWait();
+
+        //sb_anchor.getChildren().add(customization);
 
 
-        sb_anchor.getChildren().add(customization);
+
+        //sb_anchor.getChildren().add(customization);
 
 
     }
