@@ -393,7 +393,6 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void setDragAndDrop(VBox parent, Node cardNode) {
-        Long listId = ((BoardList) parent.getUserData()).getId();
         cardNode.setOnDragDetected(event -> {
             dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             content = new ClipboardContent();
@@ -458,7 +457,11 @@ public class SingleBoardCtrl implements Initializable {
         });
         cardNode.setOnDragDone(event -> {
             VBox sourceParent = (VBox) ((AnchorPane) event.getGestureSource()).getParent();
-            VBox targetParent = (VBox) ((AnchorPane) event.getGestureTarget()).getParent();
+            VBox targetParent = null;
+            if (event.getGestureTarget() != null &&
+                    event.getGestureTarget() instanceof AnchorPane) {
+                targetParent = (VBox) ((AnchorPane) event.getGestureTarget()).getParent();
+            }
             if (dragboard.hasString() && event.isDropCompleted() && sourceParent != targetParent) {
                 parent.getChildren().remove(cardNode);
             }
