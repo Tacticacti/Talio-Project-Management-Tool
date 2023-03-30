@@ -138,6 +138,19 @@ public class SingleBoardCtrl implements Initializable {
         // set up deleting a board list
         setDeleteBoardList(boardList, board_lists, list);
 
+        // set up draggable items
+//        list.setOnDragEntered(event -> {
+//            event.acceptTransferModes(TransferMode.MOVE);
+//            System.out.println("I'm bigParent alpha!");
+//            System.out.println(list.getParent());
+//        });
+        for (Node anchorPane : hbox_lists.getChildren()) {
+            anchorPane.setOnDragEntered(event -> {
+                event.acceptTransferModes(TransferMode.MOVE);
+                System.out.println("I'm bigParent alpha!");
+            });
+        }
+
         // set up putting list title
         setListTitle(boardList, list);
 
@@ -394,6 +407,58 @@ public class SingleBoardCtrl implements Initializable {
 
     private void setDragAndDrop(VBox parent, Node cardNode) {
         Long listId = ((BoardList) parent.getUserData()).getId();
+        Button buttonNode = (Button) parent.getChildren().get(parent.getChildren().size()-1);
+        buttonNode.setOnDragEntered(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a button 2!");
+        });
+        buttonNode.setOnDragDropped(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a button 3!");
+        });
+        buttonNode.setOnDragOver(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+//            System.out.println("I'm a button 4!"); //definitely detected
+        });
+        buttonNode.setOnDragExited(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a button 6!");
+        });
+        parent.setOnDragEntered(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a parent 2!");
+        });
+        parent.setOnDragDropped(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a parent 3!");
+        });
+        parent.setOnDragOver(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+//            System.out.println("I'm a parent 4!");
+        });
+        parent.setOnDragExited(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a parent 6!");
+        });
+        
+        AnchorPane bigParent = (AnchorPane) parent.getParent();
+        bigParent.setOnDragEntered(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a bigParent 2!");
+        });
+        bigParent.setOnDragDropped(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a bigParent 3!");
+        });
+        bigParent.setOnDragOver(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+//            System.out.println("I'm a bigParent 4!");
+        });
+        bigParent.setOnDragExited(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+            System.out.println("I'm a bigParent 6!");
+        });
+
         cardNode.setOnDragDetected(event -> {
             dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             content = new ClipboardContent();
@@ -414,8 +479,8 @@ public class SingleBoardCtrl implements Initializable {
             if (dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
-            System.out.println("Source: " + event.getGestureSource());
-            System.out.println("Target: " + event.getGestureTarget());
+//            System.out.println("Source: " + event.getGestureSource());
+//            System.out.println("Target: " + event.getGestureTarget());
             event.consume();
         });
         cardNode.setOnDragDropped(event -> {
@@ -447,9 +512,9 @@ public class SingleBoardCtrl implements Initializable {
                         int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
                         System.out.println(dropIndex);
                         draggedCardNode = children.remove(draggedIndex);
-//                    deleteCardFromList(BoardID, sourceListId, draggedCard);
+                        deleteCardFromList(BoardID, sourceListId, draggedCard);
                         children.add(dropIndex, draggedCardNode);
-//                    saveCardToList(BoardID, sourceListId, draggedCard);
+                        server.addCardAtIndex(sourceListId, dropIndex, draggedCard);
                     }
                 }
             }
@@ -466,7 +531,7 @@ public class SingleBoardCtrl implements Initializable {
             if (dragboard.hasString() && event.isDropCompleted() && sourceParent != targetParent) {
                 parent.getChildren().remove(cardNode);
             }
-//            refresh();
+            refresh();
             event.consume();
         });
     }
