@@ -25,7 +25,6 @@ import java.util.List;
 import jakarta.ws.rs.core.Response;
 
 import commons.BoardList;
-import javafx.util.Pair;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Board;
@@ -222,7 +221,8 @@ public class ServerUtils {
                 .target(server).path("api/lists/insertAt/" + listId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class);
+                .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class
+                );
     }
 
 
