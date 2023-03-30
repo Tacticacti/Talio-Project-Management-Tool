@@ -116,10 +116,7 @@ public class SingleBoardCtrl implements Initializable {
     public void createNewList() {
         ObservableList<Node> board_lists = hbox_lists.getChildren();
 
-        //BoardList boardList = server.addEmptyList(BoardID, " ");
-
-        // BoardList boardList = server.addEmptyList(1L, " ");
-        Long listId = server.addEmptyList(BoardID, " ");
+        Long listId = server.addEmptyList(BoardID, "task list");
         BoardList boardList = server.getList(listId);
         Node list;
         try {
@@ -156,23 +153,46 @@ public class SingleBoardCtrl implements Initializable {
         return list;
     }
 
+    public void requestNameChange(TextField title, Node list) throws Exception {
+        if (!title.getText().isEmpty()) {
+            System.out.println(title.getText().trim());
+            BoardList changedBoardList = (BoardList) list.getUserData();
+            System.out.println("requesting change name: " + BoardID +  " " +
+                    changedBoardList.getId() + " " + title.getText().trim());
+            server.changeListName(changedBoardList.getId(), title.getText().trim());
+        }
+        else {
+            throw new Exception("List name cannot be empty.");
+        }
+    }
+
     private void setListTitle(BoardList boardList, Node list) {
         TextField title = (TextField) list.lookup("#list_title");
         title.setText(boardList.getName());
         title.setOnAction(event -> {
             try {
-                if (!title.getText().isEmpty()) {
-                    System.out.println(title.getText());
-                    BoardList changedBoardList = (BoardList) list.getUserData();
-                    System.out.println("requesting change name: " + BoardID +  " " +
-                            changedBoardList.getId() + " " + title.getText());
-                    server.changeListName(changedBoardList.getId(), title.getText());
-                }
+                requestNameChange(title, list);
+                refresh();
             } catch (Exception e) {
+                refresh();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Error changing list's name!");
+                alert.setContentText("Error changing list's name!\n\n" + e.getMessage());
                 alert.showAndWait();
+            }
+        });
+        title.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if(!newVal) {
+                try {
+                    requestNameChange(title, list);
+                    refresh();
+                } catch (Exception e) {
+                    refresh();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.initModality(Modality.APPLICATION_MODAL);
+                    alert.setContentText("Error changing list's name!\n\n" + e.getMessage());
+                    alert.showAndWait();
+                }
             }
         });
     }
