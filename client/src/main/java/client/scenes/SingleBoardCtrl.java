@@ -514,7 +514,7 @@ public class SingleBoardCtrl implements Initializable {
                         draggedCardNode = children.remove(draggedIndex);
                         deleteCardFromList(BoardID, sourceListId, draggedCard);
                         children.add(dropIndex, draggedCardNode);
-                        server.addCardAtIndex(sourceListId, dropIndex, draggedCard);
+                        addCardAtIndex(sourceListId, dropIndex, draggedCard);
                     }
                 }
             }
@@ -536,6 +536,21 @@ public class SingleBoardCtrl implements Initializable {
         });
     }
 
+    private void addCardAtIndex(long sourceListId, int dropIndex, Card draggedCard) {
+        try{
+            server.addCardAtIndex(sourceListId, dropIndex, draggedCard);
+        }catch(WebApplicationException e){
+            alertError(e);
+        }
+    }
+
+    private static void alertError(WebApplicationException e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
+    }
+
 
     public long getListIndex(Long boardId, Long listId){
         Board b = server.getBoardById(boardId);
@@ -552,22 +567,14 @@ public class SingleBoardCtrl implements Initializable {
         try{
             server.updateCardFromList(listId, current);
         }catch(WebApplicationException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            //TODO:set custom error message
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            alertError(e);
         }
     }
     public void saveCardToList(Long boardId, Long listId, Card current){
         try{
             server.addCardToList(listId, current);
         }catch(WebApplicationException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            //TODO:set custom error message
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            alertError(e);
         }
     }
 
@@ -575,11 +582,7 @@ public class SingleBoardCtrl implements Initializable {
         try{
             server.deleteCardFromList(listIdIndex, current);
         }catch(WebApplicationException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            //TODO:set custom error message
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            alertError(e);
         }
     }
 

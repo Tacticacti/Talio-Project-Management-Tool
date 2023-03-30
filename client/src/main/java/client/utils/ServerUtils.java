@@ -224,7 +224,4 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class
                 );
     }
-
-
-
 }
