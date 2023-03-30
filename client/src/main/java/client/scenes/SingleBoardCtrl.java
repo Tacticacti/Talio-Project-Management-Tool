@@ -32,6 +32,7 @@ import javafx.scene.Node;
 
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.Clipboard;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -593,6 +594,12 @@ public class SingleBoardCtrl implements Initializable {
         catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void copyInvite() {
+        ClipboardContent content = new ClipboardContent();
+        content.putString(BoardID.toString());
+        Clipboard.getSystemClipboard().setContent(content);
     }
 }
 

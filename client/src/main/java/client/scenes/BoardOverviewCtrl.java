@@ -24,6 +24,9 @@ import javafx.stage.Modality;
 
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import static client.scenes.MainCtrl.primaryStage;
 import static com.google.inject.Guice.createInjector;
 
@@ -35,6 +38,7 @@ public class BoardOverviewCtrl {
     private static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
+    private Set<Long> drawnBoards;
 
     private final int MAX_BOARDS_IN_ROW = 5;
 
@@ -54,6 +58,7 @@ public class BoardOverviewCtrl {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.localUtils = localUtils;
+        drawnBoards = new HashSet<>();
     }
 
 
@@ -194,6 +199,7 @@ public class BoardOverviewCtrl {
         for (Board board : server.getBoards()) {
             if (board.getId().toString().equals(text)) {
                 addJoinedBoard(board);
+                localUtils.add(board.getId());
             }
         }
     }
@@ -212,6 +218,8 @@ public class BoardOverviewCtrl {
 
 
         var last_row = (HBox) board_rows.getChildren().get(board_rows.getChildren().size()-1);
+
+        drawnBoards.add(board2.getId());
 
         // add board to current hbox
         if (last_row.getChildren().size() < MAX_BOARDS_IN_ROW) {
@@ -281,6 +289,8 @@ public class BoardOverviewCtrl {
             alert.showAndWait();
         }
         localUtils.getBoards().forEach(x -> {
+            if(drawnBoards.contains(x))
+                return;
             try {
                 addJoinedBoard(server.getBoardById(x));
             } catch (IOException e) {

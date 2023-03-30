@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.Scanner;
 import java.util.TreeSet;
@@ -46,14 +45,28 @@ public class LocalUtils {
     public void add(Long id) throws IOException {
         if(isAdded(id))
             return;
-        FileWriter fw = new FileWriter(file);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(id.toString());
-        bw.newLine();
-        bw.close();
+        boards.add(id);
+        write();
+    }
+
+    public void remove(Long id) throws IOException {
+        if(!isAdded(id))
+            return;
+        boards.remove(id);
+        write();
     }
 
     public boolean isAdded(Long id) {
         return boards.contains(id);
+    }
+
+    public void write() throws IOException {
+        FileWriter fw = new FileWriter(file);
+        BufferedWriter bw = new BufferedWriter(fw);
+        for(Long id : boards) {
+            bw.write(id.toString());
+            bw.newLine();
+        }
+        bw.close();
     }
 }
