@@ -85,7 +85,7 @@ public class SingleBoardCtrl implements Initializable {
     private TextField board_name;
     private Map<Node, Card> nodeCardMap;
     private ClipboardContent content;
-    private Dragboard dragboard;
+    private static Dragboard dragboard;
 
 
 
@@ -155,13 +155,57 @@ public class SingleBoardCtrl implements Initializable {
 
     public Node wrapList(BoardList boardList, ObservableList<Node> board_lists) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
-        Node list = loader.load();
+        AnchorPane list = loader.load();
         list.setUserData(boardList);
         // set up deleting a board list
         setDeleteBoardList(boardList, board_lists, list);
 
+        // set up draggable items
+//        list.setOnDragEntered(event -> {
+//            event.acceptTransferModes(TransferMode.MOVE);
+//            System.out.println("I'm bigParent alpha!");
+//            System.out.println(list.getParent());
+//        });
+        for (Node anchorPane : hbox_lists.getChildren()) {
+            anchorPane.setOnDragEntered(event -> {
+                event.acceptTransferModes(TransferMode.MOVE);
+                System.out.println("I'm bigParent alpha!");
+            });
+        }
+
         // set up putting list title
         setListTitle(boardList, list);
+
+        list.setOnDragOver(event -> {
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+                System.out.println("draggin vbox");
+            }
+            event.consume();
+        });
+
+        var list_vbox = (VBox) list.getChildren().get(list.getChildren().size()-1);
+        Long listId = ((BoardList) list.getUserData()).getId();
+        list_vbox.setOnDragDropped(event -> {
+            if (dragboard.hasString()) {
+                String[] splitDragboard = dragboard.getString().split(";");
+                long originalListId = Long.parseLong(splitDragboard[1].trim());
+                long originalListIndex = getListIndex(BoardID, originalListId);
+                ObservableList<Node> hboxChildren = hbox_lists.getChildren();
+                AnchorPane originalList = (AnchorPane) (hboxChildren.get((int) originalListIndex));
+                int originalListSize = originalList.getChildren().size();
+                VBox originalParent = (VBox) originalList.getChildren().get(originalListSize-1);
+                Node draggedCardNode = originalParent.lookup("#" + splitDragboard[0].trim());
+                if (draggedCardNode != null && originalParent != list_vbox) {
+                    list_vbox.getChildren().add(0, draggedCardNode);
+                    Card draggedCard = nodeCardMap.get(draggedCardNode);
+                    deleteCardFromList(BoardID, originalListId, draggedCard);
+                    saveCardToList(BoardID, listId, draggedCard);
+                }
+            }
+            //event.consume();
+        });
+
 
         // set up adding new card
         Button newCardButton =  (Button) list.lookup("#addNewCardButton");
@@ -315,9 +359,6 @@ public class SingleBoardCtrl implements Initializable {
         BoardList boardList = (BoardList) parent.getUserData();
         long listId = boardList.getId();
         Card card = server.getCardById(nodeCardMap.get(cardNode).getId());
-        System.out.println("-------------------------");
-        System.out.println("got: " + card);
-        System.out.println("-------------------------");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AddCard.fxml"));
         Parent root;
         try {
@@ -438,7 +479,6 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void setDragAndDrop(VBox parent, Node cardNode) {
-        Card card = nodeCardMap.get(cardNode);
         Long listId = ((BoardList) parent.getUserData()).getId();
         cardNode.setOnDragDetected(event -> {
             dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
@@ -462,45 +502,74 @@ public class SingleBoardCtrl implements Initializable {
             }
             event.consume();
         });
+
         cardNode.setOnDragDropped(event -> {
             boolean success = false;
             if (dragboard.hasString()) {
                 String[] splitDragboard = dragboard.getString().split(";");
-                long originalListId = Long.parseLong(splitDragboard[1].trim());
-                long originalListIndex = getListIndex(BoardID, originalListId);
+                long sourceListId = Long.parseLong(splitDragboard[1].trim());
+                long sourceListIndex = getListIndex(BoardID, sourceListId);
                 ObservableList<Node> hboxChildren = hbox_lists.getChildren();
-                AnchorPane originalList = (AnchorPane) (hboxChildren.get((int) originalListIndex));
-                int originalListSize = originalList.getChildren().size();
-                VBox originalParent = (VBox) originalList.getChildren().get(originalListSize-1);
-                Node draggedCardNode = originalParent.lookup("#" + splitDragboard[0].trim());
-                if (draggedCardNode != null && originalParent != parent) {
-                    parent.getChildren().add(0, draggedCardNode);
-                    Card draggedCard = nodeCardMap.get(draggedCardNode);
-                    System.out.println("sending: " + BoardID + " " + listId + " " + draggedCard);
-                    deleteCardFromList(BoardID, originalListId, draggedCard);
-                    saveCardToList(BoardID, listId, draggedCard);
-                    success = true;
+                AnchorPane sourceList = (AnchorPane) (hboxChildren.get((int) sourceListIndex));
+                int sourceListSize = sourceList.getChildren().size();
+                VBox sourceParent = (VBox) sourceList.getChildren().get(sourceListSize-1);
+                Node draggedCardNode = sourceParent.lookup("#" + splitDragboard[0].trim());
+                Card draggedCard = nodeCardMap.get(draggedCardNode);
+                if (draggedCardNode != null) {
+                    if (sourceParent != parent) {
+                        parent.getChildren().add(0, draggedCardNode);
+                        deleteCardFromList(BoardID, sourceListId, draggedCard);
+                        saveCardToList(BoardID, listId, draggedCard);
+                        success = true;
+                    } else {
+                        ObservableList<Node> children = parent.getChildren();
+                        int draggedIndex = children.indexOf((AnchorPane) event.getGestureSource());
+                        int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
+                        draggedCardNode = children.remove(draggedIndex);
+                        deleteCardFromList(BoardID, sourceListId, draggedCard);
+                        children.add(dropIndex, draggedCardNode);
+                        addCardAtIndex(sourceListId, dropIndex, draggedCard);
+                    }
                 }
             }
             event.setDropCompleted(success);
             event.consume();
         });
         cardNode.setOnDragDone(event -> {
-            if (dragboard.hasString() && event.isDropCompleted()) {
+            VBox sourceParent = (VBox) ((AnchorPane) event.getGestureSource()).getParent();
+            VBox targetParent = null;
+            if (event.getGestureTarget() != null &&
+                    event.getGestureTarget() instanceof AnchorPane) {
+                targetParent = (VBox) ((AnchorPane) event.getGestureTarget()).getParent();
+            }
+            if (dragboard.hasString() && event.isDropCompleted() && sourceParent != targetParent) {
                 parent.getChildren().remove(cardNode);
             }
             refresh();
             event.consume();
         });
+    }
 
+    private void addCardAtIndex(long sourceListId, int dropIndex, Card draggedCard) {
+        try{
+            server.addCardAtIndex(sourceListId, dropIndex, draggedCard);
+        }catch(WebApplicationException e){
+            alertError(e);
+        }
+    }
 
+    private static void alertError(WebApplicationException e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 
 
     public long getListIndex(Long boardId, Long listId){
         Board b = server.getBoardById(boardId);
         for(int i=0; i<b.getLists().size();++i){
-            if(b.getLists().get(i).getId()==listId){
+            if(Objects.equals(b.getLists().get(i).getId(), listId)){
                 return i;
             }
         }
@@ -512,22 +581,14 @@ public class SingleBoardCtrl implements Initializable {
         try{
             server.updateCardFromList(listId, current);
         }catch(WebApplicationException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            //TODO:set custom error message
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            alertError(e);
         }
     }
     public void saveCardToList(Long boardId, Long listId, Card current){
         try{
             server.addCardToList(listId, current);
         }catch(WebApplicationException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            //TODO:set custom error message
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            alertError(e);
         }
     }
 
@@ -535,11 +596,7 @@ public class SingleBoardCtrl implements Initializable {
         try{
             server.deleteCardFromList(listIdIndex, current);
         }catch(WebApplicationException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            //TODO:set custom error message
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            alertError(e);
         }
     }
 
@@ -581,29 +638,43 @@ public class SingleBoardCtrl implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customizationPage.fxml"));
         AnchorPane customization = loader.load();
 
-        customization.setLayoutY(250);
-        customization.setLayoutX(770);
-
-        customization.setScaleX(1.5);
-        customization.setScaleY(1.5);
+        //customization.setLayoutY(250);
+        //customization.setLayoutX(770);
 
 
-        Button closebtn =  (Button) customization.lookup("#closeCustomizationMenu");
-        closebtn.setOnAction(event -> sb_anchor.getChildren().remove(closebtn.getParent()));
+
+        //customization.setScaleX(1.5);
+        //customization.setScaleY(1.5);
+
+
+        // remove customization
+        //Button closebtn =  (Button) customization.lookup("#closeCustomizationMenu");
+        //closebtn.setOnAction(event -> sb_anchor.getChildren().remove(closebtn.getParent()));
 
         // doesn't actually delete anything just goes back to board overview
         Button delbtn =  (Button) customization.lookup("#deleteBoard");
         delbtn.setOnAction(event -> {
             // remove this specific board
-
+            Node source = (Node) event.getSource();
+            Stage stage = (Stage) source.getScene().getWindow();
+            stage.close();
 
             mainCtrl.showBoardOverview();
-
         });
 
+        Scene scene = new Scene(customization);
+        Stage popUpStage = new Stage();
+        popUpStage.setTitle("Customization Details");
+        popUpStage.setResizable(false);
+        popUpStage.setScene(scene);
+        popUpStage.initModality(Modality.APPLICATION_MODAL);
+        popUpStage.showAndWait();
+
+        //sb_anchor.getChildren().add(customization);
 
 
-        sb_anchor.getChildren().add(customization);
+
+        //sb_anchor.getChildren().add(customization);
 
 
     }

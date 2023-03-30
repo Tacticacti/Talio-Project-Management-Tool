@@ -221,6 +221,12 @@ public class ServerUtils {
                 .get(BoardList.class);
     }
 
-
-
+    public BoardList addCardAtIndex(Long listId, long index, Card card) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/lists/insertAt/" + listId.toString())
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class
+                );
+    }
 }
