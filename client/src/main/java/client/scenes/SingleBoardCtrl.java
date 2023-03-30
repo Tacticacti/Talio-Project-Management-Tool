@@ -393,6 +393,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void setDragAndDrop(VBox parent, Node cardNode) {
+        Long listId = ((BoardList) parent.getUserData()).getId();
         cardNode.setOnDragDetected(event -> {
             dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             content = new ClipboardContent();
@@ -432,8 +433,8 @@ public class SingleBoardCtrl implements Initializable {
                 if (draggedCardNode != null) {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);
-                        System.out.println("sending: " + BoardID + " " +
-                                listId + " " + draggedCard);
+//                        System.out.println("sending: " + BoardID + " " +
+//                                listId + " " + draggedCard);
                         deleteCardFromList(BoardID, sourceListId, draggedCard);
                         saveCardToList(BoardID, listId, draggedCard);
                         success = true;
