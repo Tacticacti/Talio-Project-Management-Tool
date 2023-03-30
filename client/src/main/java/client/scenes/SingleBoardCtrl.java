@@ -58,6 +58,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -94,6 +95,18 @@ public class SingleBoardCtrl implements Initializable {
         this.server = server;
     }
 
+    public void requestBoardName(TextField text, Long id) throws Exception {
+        if(!text.getText().isEmpty() && !Objects.equals(text.getText().trim(), "")) {
+            String name = text.getText().trim();
+            current_board.setName(name);
+            System.out.println("set, " + current_board + " to " + name);
+            server.addBoard(current_board);
+        }
+        else {
+            throw new Exception("board name cannot be empty");
+        }
+    }
+
     @Override
     public void initialize (URL location, ResourceBundle resources){
         ImageView imageView = new ImageView(getClass()
@@ -106,7 +119,20 @@ public class SingleBoardCtrl implements Initializable {
         settingsBtn.setGraphic(imageView);
         nodeCardMap = new HashMap<>();
         current_board = new Board();
-
+        board_name.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if(!newVal) {
+                try {
+                    requestBoardName(board_name, BoardID);
+                    refresh();
+                } catch (Exception e) {
+                    refresh();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.initModality(Modality.APPLICATION_MODAL);
+                    alert.setContentText("Error changing board's name!\n\n" + e.getMessage());
+                    alert.showAndWait();
+                }
+            }
+        });
     }
 
     public void back(){
@@ -582,11 +608,13 @@ public class SingleBoardCtrl implements Initializable {
 
     }
 
+    /*
     public void onTypeTitle() {
         current_board.setName(board_name.getText());
         System.out.println("set, " + current_board + " to " + board_name.getText() );
         server.addBoard(current_board);
     }
+     */
 
     public void setBoard(Board board) {
         this.current_board = board;
