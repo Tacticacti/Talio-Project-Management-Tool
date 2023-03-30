@@ -199,7 +199,8 @@ public class BoardOverviewCtrl {
         System.out.println(server.getBoards());
 
         for (Board board : server.getBoards()) {
-            if (board.getId().toString().equals(text)) {
+            if (board.getId().toString().equals(text) &&
+                    !drawnBoards.contains(board.getId())) {
                 addJoinedBoard(board);
                 localUtils.add(board.getId());
             }
