@@ -57,6 +57,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -392,7 +393,6 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void setDragAndDrop(VBox parent, Node cardNode) {
-        Card card = nodeCardMap.get(cardNode);
         Long listId = ((BoardList) parent.getUserData()).getId();
         cardNode.setOnDragDetected(event -> {
             dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
@@ -414,47 +414,63 @@ public class SingleBoardCtrl implements Initializable {
             if (dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
+            System.out.println("Source: " + event.getGestureSource());
+            System.out.println("Target: " + event.getGestureTarget());
             event.consume();
         });
         cardNode.setOnDragDropped(event -> {
             boolean success = false;
             if (dragboard.hasString()) {
                 String[] splitDragboard = dragboard.getString().split(";");
-                long originalListId = Long.parseLong(splitDragboard[1].trim());
-                long originalListIndex = getListIndex(BoardID, originalListId);
+                long sourceListId = Long.parseLong(splitDragboard[1].trim());
+                long sourceListIndex = getListIndex(BoardID, sourceListId);
                 ObservableList<Node> hboxChildren = hbox_lists.getChildren();
-                AnchorPane originalList = (AnchorPane) (hboxChildren.get((int) originalListIndex));
-                int originalListSize = originalList.getChildren().size();
-                VBox originalParent = (VBox) originalList.getChildren().get(originalListSize-1);
-                Node draggedCardNode = originalParent.lookup("#" + splitDragboard[0].trim());
-                if (draggedCardNode != null && originalParent != parent) {
-                    parent.getChildren().add(0, draggedCardNode);
-                    Card draggedCard = nodeCardMap.get(draggedCardNode);
-                    System.out.println("sending: " + BoardID + " " + listId + " " + draggedCard);
-                    deleteCardFromList(BoardID, originalListId, draggedCard);
-                    saveCardToList(BoardID, listId, draggedCard);
-                    success = true;
+                AnchorPane sourceList = (AnchorPane) (hboxChildren.get((int) sourceListIndex));
+                int sourceListSize = sourceList.getChildren().size();
+                VBox sourceParent = (VBox) sourceList.getChildren().get(sourceListSize-1);
+                Node draggedCardNode = sourceParent.lookup("#" + splitDragboard[0].trim());
+                Card draggedCard = nodeCardMap.get(draggedCardNode);
+                if (draggedCardNode != null) {
+                    if (sourceParent != parent) {
+                        parent.getChildren().add(0, draggedCardNode);
+                        System.out.println("sending: " + BoardID + " " + listId + " " + draggedCard);
+                        deleteCardFromList(BoardID, sourceListId, draggedCard);
+                        saveCardToList(BoardID, listId, draggedCard);
+                        success = true;
+                        System.out.println(parent.getChildren());
+                    } else {
+                        System.out.println("Same List!");
+                        ObservableList<Node> children = parent.getChildren();
+                        int draggedIndex = children.indexOf((AnchorPane) event.getGestureSource());
+                        System.out.println(draggedIndex);
+                        int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
+                        System.out.println(dropIndex);
+                        draggedCardNode = children.remove(draggedIndex);
+//                    deleteCardFromList(BoardID, sourceListId, draggedCard);
+                        children.add(dropIndex, draggedCardNode);
+//                    saveCardToList(BoardID, sourceListId, draggedCard);
+                    }
                 }
             }
             event.setDropCompleted(success);
             event.consume();
         });
         cardNode.setOnDragDone(event -> {
-            if (dragboard.hasString() && event.isDropCompleted()) {
+            VBox sourceParent = (VBox) ((AnchorPane) event.getGestureSource()).getParent();
+            VBox targetParent = (VBox) ((AnchorPane) event.getGestureTarget()).getParent();
+            if (dragboard.hasString() && event.isDropCompleted() && sourceParent != targetParent) {
                 parent.getChildren().remove(cardNode);
             }
-            refresh();
+//            refresh();
             event.consume();
         });
-
-
     }
 
 
     public long getListIndex(Long boardId, Long listId){
         Board b = server.getBoardById(boardId);
         for(int i=0; i<b.getLists().size();++i){
-            if(b.getLists().get(i).getId()==listId){
+            if(Objects.equals(b.getLists().get(i).getId(), listId)){
                 return i;
             }
         }
