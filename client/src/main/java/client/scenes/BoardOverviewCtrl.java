@@ -25,6 +25,7 @@ import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static client.scenes.MainCtrl.primaryStage;
@@ -32,7 +33,7 @@ import static com.google.inject.Guice.createInjector;
 
 public class BoardOverviewCtrl {
     private final ServerUtils server;
-    private final LocalUtils localUtils;
+    private LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
     private static final Injector INJECTOR = createInjector(new MyModule());
@@ -55,15 +56,12 @@ public class BoardOverviewCtrl {
     private TextField search_box;
 
     @Inject
-    public BoardOverviewCtrl(LocalUtils localUtils, ServerUtils server, MainCtrl mainCtrl) {
+    public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-        this.localUtils = localUtils;
         drawnBoards = new HashSet<>();
         boardsNodes = new HashSet<>();
     }
-
-
 
     public void createBoard() throws IOException {
 
@@ -287,6 +285,16 @@ public class BoardOverviewCtrl {
     }
 
     public void refresh() {
+        if(localUtils == null)
+            localUtils = new LocalUtils();
+        if(!Objects.equals(localUtils.getPath(), server.getPath())) {
+            try {
+                localUtils.setPath(server.getPath());
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
         try {
             localUtils.fetch();
         } catch (Exception e) {

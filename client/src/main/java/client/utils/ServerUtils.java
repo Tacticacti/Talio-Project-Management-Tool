@@ -63,6 +63,7 @@ public class ServerUtils {
 
     // private static String server = "http://localhost:8080/";
     private static String server = "";
+    public LocalUtils localUtils;
 
     // returns true if connection is succesful 
     // flase otherwise
@@ -83,6 +84,10 @@ public class ServerUtils {
     public void setServer(String addr) {
         // TODO open socket connection here
         server = addr;
+    }
+
+    public String getPath() {
+        return server;
     }
 
     public void disconnect() {

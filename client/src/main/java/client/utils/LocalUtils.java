@@ -12,18 +12,33 @@ public class LocalUtils {
     private Set<Long> boards;
     private File file;
 
-    public LocalUtils() throws IOException {
+    private String path;
+    public boolean inited;
+
+    public LocalUtils() { inited = false; }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) throws IOException {
+        this.path = path;
         boards = new TreeSet<>();
         File folder = new File("data");
         folder.mkdir();
-        file = new File(folder, "saved_boards.txt");
+        path = path.substring(7);
+        file = new File(folder, path + "@saved_boards.txt");
         if(!file.exists()) {
             file.createNewFile();
         }
 
+        inited = true;
     }
 
     public void fetch() throws IOException {
+        if(!inited) {
+            throw new IOException("loader wasnt initialized");
+        }
         boards.clear();
         Scanner scanner = new Scanner(file);
         while(scanner.hasNextLine()) {
