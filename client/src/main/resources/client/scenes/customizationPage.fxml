@@ -6,8 +6,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
@@ -69,7 +67,7 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button fx:id="deleteBoard" focusTraversable="false" layoutX="20.0" layoutY="440.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="346.0" style="-fx-background-color: Salmon;" text="I understand the consequences please delete this board" textFill="WHITE">
+      <Button fx:id="deleteBoard" focusTraversable="false" layoutX="20.0" layoutY="440.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="346.0" style="-fx-background-color: Salmon;" text="I understand the consequences please remove this board" textFill="WHITE">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>
@@ -91,15 +89,6 @@
          <font>
             <Font size="10.0" />
          </font>
-      </Button>
-      <Button fx:id="closeCustomizationMenu" ellipsisString="" layoutX="345.0" layoutY="8.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-padding: 0; -fx-background-color: salmon;">
-         <graphic>
-            <ImageView fitHeight="17.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true" rotate="45.0">
-               <image>
-                  <Image url="@../images/add.png" />
-               </image>
-            </ImageView>
-         </graphic>
       </Button>
    </children>
 </AnchorPane>

@@ -33,7 +33,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <VBox layoutX="17.0" layoutY="90.0" prefHeight="411.0" prefWidth="297.0">
+      <VBox fx:id="card_list" layoutX="17.0" layoutY="90.0" prefHeight="411.0" prefWidth="297.0" style="-fx-border-color: red; -fx-border-width: 10;">
          <children>
             <Button fx:id="addNewCardButton" focusTraversable="false" mnemonicParsing="false" prefHeight="35.0" prefWidth="277.0" text="+ Add New Card">
                <font>
