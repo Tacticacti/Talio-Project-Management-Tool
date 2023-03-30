@@ -83,7 +83,7 @@ public class SingleBoardCtrl implements Initializable {
     private TextField board_name;
     private Map<Node, Card> nodeCardMap;
     private ClipboardContent content;
-    private Dragboard dragboard;
+    private static Dragboard dragboard;
 
 
 
@@ -132,13 +132,46 @@ public class SingleBoardCtrl implements Initializable {
 
     public Node wrapList(BoardList boardList, ObservableList<Node> board_lists) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("listGUI.fxml"));
-        Node list = loader.load();
+        AnchorPane list = loader.load();
         list.setUserData(boardList);
         // set up deleting a board list
         setDeleteBoardList(boardList, board_lists, list);
 
         // set up putting list title
         setListTitle(boardList, list);
+
+        list.setOnDragOver(event -> {
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+                System.out.println("draggin vbox");
+            }
+            event.consume();
+        });
+
+        var list_vbox = (VBox) list.getChildren().get(list.getChildren().size()-1);
+        Long listId = ((BoardList) list.getUserData()).getId();
+        list_vbox.setOnDragDropped(event -> {
+            System.out.println("something!");
+            if (dragboard.hasString()) {
+                String[] splitDragboard = dragboard.getString().split(";");
+                long originalListId = Long.parseLong(splitDragboard[1].trim());
+                long originalListIndex = getListIndex(BoardID, originalListId);
+                ObservableList<Node> hboxChildren = hbox_lists.getChildren();
+                AnchorPane originalList = (AnchorPane) (hboxChildren.get((int) originalListIndex));
+                int originalListSize = originalList.getChildren().size();
+                VBox originalParent = (VBox) originalList.getChildren().get(originalListSize-1);
+                Node draggedCardNode = originalParent.lookup("#" + splitDragboard[0].trim());
+                if (draggedCardNode != null && originalParent != list_vbox) {
+                    list_vbox.getChildren().add(0, draggedCardNode);
+                    Card draggedCard = nodeCardMap.get(draggedCardNode);
+                    //System.out.println("sending: " + BoardID + " " + listId + " " + draggedCard);
+                    deleteCardFromList(BoardID, originalListId, draggedCard);
+                    saveCardToList(BoardID, listId, draggedCard);
+                }
+            }
+            //event.consume();
+        });
+
 
         // set up adding new card
         Button newCardButton =  (Button) list.lookup("#addNewCardButton");
@@ -413,9 +446,20 @@ public class SingleBoardCtrl implements Initializable {
         cardNode.setOnDragOver(event -> {
             if (dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
+                System.out.println("draggin over card");
+
             }
             event.consume();
         });
+
+        parent.setOnDragOver(event -> {
+            if (dragboard.hasString()) {
+                System.out.println("draggin vbox");
+            }
+            event.consume();
+        });
+
+
         cardNode.setOnDragDropped(event -> {
             boolean success = false;
             if (dragboard.hasString()) {
