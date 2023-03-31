@@ -18,9 +18,12 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import jakarta.ws.rs.core.Response;
 
@@ -32,6 +35,14 @@ import commons.Card;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 class CustomPair<S, T> {
     private S first;
@@ -65,6 +76,9 @@ public class ServerUtils {
     private static String server = "";
     public LocalUtils localUtils;
 
+    private StompSession stompSession = connectToSockets("ws://localhost:8080/websocket");
+
+
     // returns true if connection is succesful 
     // flase otherwise
     public boolean check(String addr) throws IOException {
@@ -84,6 +98,37 @@ public class ServerUtils {
     public void setServer(String addr) {
         // TODO open socket connection here
         server = addr;
+    }
+
+    private StompSession connectToSockets(String url){
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
+        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        try{
+            return stomp.connect(url, new StompSessionHandlerAdapter(){}).get();
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        throw new IllegalStateException();
+    }
+
+    public <T> void checkForUpdatesToRefresh(String update, Class<T> tClass, Consumer<T> consumer){
+        stompSession.subscribe(update, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return tClass;
+            }
+
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((T) payload);
+            }
+        });
     }
 
     public String getPath() {

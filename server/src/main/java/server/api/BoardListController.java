@@ -4,6 +4,7 @@ import commons.BoardList;
 import commons.Card;
 import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,11 +22,14 @@ public class BoardListController {
 
     private final BoardListRepository repo;
     private DatabaseUtils databaseUtils;
+    private SimpMessagingTemplate messagingTemplate;
 
     public BoardListController(BoardListRepository repo,
-                               DatabaseUtils databaseUtils) {
+                               DatabaseUtils databaseUtils
+            , SimpMessagingTemplate messagingTemplate) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping(path = {"", "/"})
@@ -48,6 +52,7 @@ public class BoardListController {
         }
 
         BoardList saved = repo.save(bl);
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -65,6 +70,7 @@ public class BoardListController {
         saved.setName(listName);
 
         saved = repo.save(saved);
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -76,8 +82,9 @@ public class BoardListController {
         }
 
         System.out.println("deleting " + listId);
-
+        BoardList bl = repo.getById(listId);
         repo.deleteById(listId);
+        messagingTemplate.convertAndSend("/topic/lists", bl);
         return ResponseEntity.ok().build();
     }
 
@@ -96,6 +103,7 @@ public class BoardListController {
         list.get().addCard(card);
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
 
         return ResponseEntity.ok(saved);
     }
@@ -116,6 +124,7 @@ public class BoardListController {
         list.get().getCards().removeIf(x -> x.getId() == card.getId());
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -148,6 +157,7 @@ public class BoardListController {
         toUpdate.boardList = list.get();
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -170,6 +180,7 @@ public class BoardListController {
         list.get().getCards().add(index.intValue(), card);
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
 }

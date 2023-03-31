@@ -8,6 +8,7 @@ import commons.Card;
 
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.ScaleTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -133,6 +134,18 @@ public class SingleBoardCtrl implements Initializable {
                 }
             }
         });
+        refresh();
+        server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList->{
+            Platform.runLater(()->{
+                refresh();
+            });
+        });
+        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
+            Platform.runLater(()->{
+                refresh();
+            });
+        });
+
     }
 
     public void back(){
@@ -659,7 +672,7 @@ public class SingleBoardCtrl implements Initializable {
             Stage stage = (Stage) source.getScene().getWindow();
             stage.close();
 
-            mainCtrl.showBoardOverview();
+            //mainCtrl.showBoardOverview();
         });
 
         Scene scene = new Scene(customization);
