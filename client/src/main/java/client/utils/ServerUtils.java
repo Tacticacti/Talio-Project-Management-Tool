@@ -87,6 +87,8 @@ public class ServerUtils {
 
         boolean res = false;
 
+        addr = "http://" + addr;
+
         URL url = new URL(addr + "/TalioPresent");
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.connect();
@@ -99,10 +101,8 @@ public class ServerUtils {
 
     public void setServer(String addr) {
         // TODO open socket connection here
-        server = addr;
-
-        stompSession = connectToSockets("ws://localhost:8080/websocket");
-
+        server = "http://" + addr;
+        stompSession = connectToSockets("ws://"+addr+"/websocket");
     }
 
     private StompSession connectToSockets(String url){
