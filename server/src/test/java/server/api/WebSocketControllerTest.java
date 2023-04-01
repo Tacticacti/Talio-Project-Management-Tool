@@ -12,6 +12,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import server.database.BoardListRepository;
 import server.database.BoardRepository;
 import server.database.CardRepository;
 
@@ -23,6 +24,8 @@ public class WebSocketControllerTest {
     @Mock
     private BoardRepository boardRepository;
     @Mock
+    private BoardListRepository boardListRepository;
+    @Mock
     private CardRepository cardRepository;
     @Mock
     private WebSocketSession session;
@@ -31,7 +34,7 @@ public class WebSocketControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        webSocketController = new WebSocketController(cardRepository, boardRepository);
+        webSocketController = new WebSocketController(cardRepository, boardListRepository, boardRepository);
         sessions = new HashMap<>();
     }
 

@@ -9,6 +9,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import commons.Board;
 import commons.Card;
+import server.database.BoardListRepository;
 import server.database.BoardRepository;
 import server.database.CardRepository;
 
@@ -22,10 +23,13 @@ public class WebSocketController extends TextWebSocketHandler {
 
     private final CardRepository cardRepository;
 
+    private final BoardListRepository boardListRepository;
     private final BoardRepository boardRepository;
 
-    public WebSocketController(CardRepository cardRepository, BoardRepository boardRepository) {
+    public WebSocketController(CardRepository cardRepository, BoardListRepository boardListRepository,
+                               BoardRepository boardRepository) {
         this.cardRepository = cardRepository;
+        this.boardListRepository = boardListRepository;
         this.boardRepository = boardRepository;
     }
 

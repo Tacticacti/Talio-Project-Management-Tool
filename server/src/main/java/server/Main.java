@@ -15,16 +15,26 @@
  */
 package server;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 @EntityScan(basePackages = { "commons", "server" })
 public class Main {
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        // SpringApplication.run(Main.class, args);
+        SpringApplication app = new SpringApplication(Main.class);
+        ConfigurableApplicationContext context = app.run();
+
+        Logger logger = LoggerFactory.getLogger(Main.class);
+
+        Admin admin = context.getBean(Admin.class);
+        logger.info("ADMIN PASSWORD: " + admin.getPassword());
     }
 }
 

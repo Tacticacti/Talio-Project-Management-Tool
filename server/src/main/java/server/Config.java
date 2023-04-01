@@ -20,6 +20,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import server.api.WebSocketController;
+import server.database.BoardListRepository;
 import server.database.BoardRepository;
 import server.database.CardRepository;
 
@@ -28,17 +29,22 @@ import server.database.CardRepository;
 public class Config implements WebSocketConfigurer {
 
     private final CardRepository cardRepository;
+    private final BoardListRepository boardListRepository;
     private final BoardRepository boardRepository;
 
-    public Config(CardRepository cardRepository, BoardRepository boardRepository) {
+
+    public Config(CardRepository cardRepository, BoardListRepository boardListRepository,
+                  BoardRepository boardRepository) {
         this.cardRepository = cardRepository;
+        this.boardListRepository = boardListRepository;
         this.boardRepository = boardRepository;
+
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         WebSocketController webSocketController
-                = new WebSocketController(cardRepository, boardRepository);
+                = new WebSocketController(cardRepository, boardListRepository, boardRepository);
 
         // Register the WebSocketController for the "/websocket" endpoint
         registry.addHandler(webSocketController, "/websocket").setAllowedOrigins("*");
