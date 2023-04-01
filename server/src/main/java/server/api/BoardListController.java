@@ -3,6 +3,7 @@ package server.api;
 import commons.BoardList;
 import commons.Card;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.DatabaseUtils;
 import server.database.BoardListRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/lists")
@@ -125,6 +130,9 @@ public class BoardListController {
 
         BoardList saved = repo.save(list.get());
         messagingTemplate.convertAndSend("/topic/lists", saved);
+        listeners.forEach((k, l)->{
+            l.accept(card);
+        });
         return ResponseEntity.ok(saved);
     }
 
@@ -158,6 +166,7 @@ public class BoardListController {
 
         BoardList saved = repo.save(list.get());
         messagingTemplate.convertAndSend("/topic/lists", saved);
+
         return ResponseEntity.ok(saved);
     }
 
@@ -183,4 +192,21 @@ public class BoardListController {
         messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
+
+    private Map<Object, Consumer<Card>> listeners = new HashMap<>();
+
+    @GetMapping("/deletedtask")
+    public DeferredResult<ResponseEntity<Card>> cardChanges(){
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<Card>>(1000L, noContent);
+        var key = new Object();
+        listeners.put(key, card ->{
+            res.setResult(ResponseEntity.ok(card));
+        });
+        res.onCompletion(()->{
+            listeners.remove(key);
+        });
+        return res;
+    }
+
 }

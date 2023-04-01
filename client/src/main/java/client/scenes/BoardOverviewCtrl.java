@@ -9,8 +9,10 @@ import com.google.inject.Injector;
 import commons.Board;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -24,15 +26,17 @@ import javafx.stage.Modality;
 
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import static client.scenes.MainCtrl.primaryStage;
 import static com.google.inject.Guice.createInjector;
 
-public class BoardOverviewCtrl {
-    private final ServerUtils server;
+public class BoardOverviewCtrl implements Initializable {
+    private ServerUtils server;
     private LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
@@ -41,6 +45,15 @@ public class BoardOverviewCtrl {
 
     private Set<Long> drawnBoards;
     private Set<Node> boardsNodes;
+
+    @FXML
+    private Button createBoard;
+
+    @FXML
+    private Button enter;
+
+    @FXML
+    private Button disconnect;
 
     private final int MAX_BOARDS_IN_ROW = 5;
 
@@ -153,19 +166,15 @@ public class BoardOverviewCtrl {
 
         primaryStage.setTitle("Board");
 
-        //FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
-        //loader.setController();
-        var singleBoardPair = FXML.load(SingleBoardCtrl.class, new_board,
-                "client", "scenes", "SingleBoard.fxml");
-
-        //var singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl);
-        //singleBoardCtrl.setBoard(new_board);
-
-
-        //loader.setController(singleBoardCtrl);
-
-
-        var singleBoard = singleBoardPair.getValue();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
+        //var singleBoardPair = FXML.load(SingleBoardCtrl.class, new_board,
+               // "client", "scenes", "SingleBoard.fxml");
+        System.out.println(server);
+        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl);
+        singleBoardCtrl.setBoard(new_board);
+        loader.setController(singleBoardCtrl);
+       // var singleBoard = singleBoardPair.getValue();
+        var singleBoard = (Parent) loader.load();
 
         //singleBoard.getRoot().setController(singleBoardCtrl);
 
@@ -337,5 +346,41 @@ public class BoardOverviewCtrl {
             alert.showAndWait();
         }
         refresh();
+    }
+    public void setServer(ServerUtils server){
+        this.server = server;
+    }
+    @FXML
+    private Button reset;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        disconnect.setOnAction(e->{
+            disconnect();
+        });
+        createBoard.setOnAction(e->{
+            try {
+                createBoard();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        enter.setOnAction(e->{
+            try {
+                onJoinBoard();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        reset.setOnAction(e->{
+            resetFile();
+        });
+        search_box.setOnAction(e->{
+            try {
+                onJoinBoard();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 }

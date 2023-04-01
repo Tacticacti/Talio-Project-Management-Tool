@@ -45,7 +45,6 @@ public class Main extends Application {
 //      var singleBoard = FXML.load(SingleBoardCtrl.class, "client", "scenes", "SingleBoard.fxml");
         var home = FXML.load(ConnectHomeCtrl.class
                 , "client", "scenes", "ConnectHomePage.fxml");
-
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize1(primaryStage, home, boverview);
     }
