@@ -54,7 +54,7 @@ public class ConnectHomeCtrl {
             return;
         }
         server.setServer(addr);
-        mainCtrl.showBoardOverview();
+        showBoardOverview();
     }
 
     public void connectDefault() {
@@ -97,6 +97,10 @@ public class ConnectHomeCtrl {
         Scene boverview = new Scene(overview);
         primaryStage.setTitle("Board overview");
         primaryStage.setScene(boverview);
+        primaryStage.setOnCloseRequest(e->{
+            server.disconnect();
+            server.stopExec();
+        });
         boardOverviewCtrl.refresh();
     }
 

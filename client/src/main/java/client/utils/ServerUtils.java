@@ -102,7 +102,6 @@ public class ServerUtils {
         server = addr;
 
         stompSession = connectToSockets("ws://localhost:8080/websocket");
-
     }
 
     private StompSession connectToSockets(String url){
@@ -144,7 +143,7 @@ public class ServerUtils {
         stompSession.disconnect();
         // TODO probably close sockets here
         server = "";
-        stopExec();
+
     }
 
     public Board getBoardById(Long id) {

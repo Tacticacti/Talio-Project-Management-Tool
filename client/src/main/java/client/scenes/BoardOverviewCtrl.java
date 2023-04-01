@@ -382,5 +382,8 @@ public class BoardOverviewCtrl implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
+            refresh();
+        });
     }
 }

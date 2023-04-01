@@ -182,8 +182,6 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void back(){
-
-
         ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
         connectHomeCtrl.showBoardOverview();
     }
@@ -493,7 +491,7 @@ public class SingleBoardCtrl implements Initializable {
         }
         server.addCard(current);
         updateCardFromList(BoardID, listId, current);
-        server.stopExec();
+        //server.stopExec();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         refresh();
@@ -671,6 +669,7 @@ public class SingleBoardCtrl implements Initializable {
                 //popup.close();
             }
         });
+        server.stopExec();
 
     }
 
