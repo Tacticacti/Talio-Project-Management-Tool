@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 
 **/*.mv.db
-
+**/*.trace.db
 **/*.swp
 
 ### STS ###
@@ -39,3 +39,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/client/data
+
+data/

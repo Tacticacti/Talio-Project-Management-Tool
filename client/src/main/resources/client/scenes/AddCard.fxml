@@ -11,8 +11,8 @@
 
 <AnchorPane prefHeight="393.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
    <children>
-      <Button fx:id="doneTaskButton" layoutX="407.0" layoutY="360.0" mnemonicParsing="false" onAction="#done" text="Done" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="13.333333333333336" />
-      <Button fx:id="cancelTaskButton" cancelButton="true" layoutX="283.0" layoutY="360.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="130.66666666666666" />
+      <Button fx:id="doneTaskButton" layoutX="407.0" layoutY="360.0" mnemonicParsing="false"  text="Done" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="13.333333333333336" />
+      <Button fx:id="cancelTaskButton" cancelButton="true" layoutX="283.0" layoutY="360.0" mnemonicParsing="false"  text="Cancel" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="130.66666666666666" />
       <TextField fx:id="taskTitle" layoutX="5.0" layoutY="23.0" promptText="Task Title" />
       <Label layoutX="4.0" layoutY="205.0" prefHeight="18.0" prefWidth="83.0" text="Sub-Tasks" AnchorPane.leftAnchor="4.0" AnchorPane.topAnchor="205.0">
          <font>

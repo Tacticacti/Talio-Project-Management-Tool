@@ -4,12 +4,13 @@ import com.google.inject.Inject;
 import client.utils.ServerUtils;
 import commons.Card;
 
-import jakarta.ws.rs.WebApplicationException;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -21,7 +22,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -29,11 +33,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-
-
-public class AddCardCtrl {
+public class AddCardCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -59,6 +63,8 @@ public class AddCardCtrl {
     @FXML
     private Button cancelTaskButton;
 
+    @FXML
+    private Button doneTaskButton;
     private Card current;
 
 
@@ -76,64 +82,13 @@ public class AddCardCtrl {
     }
     private Node node;
 
-    public void setUp(Node card){
 
-    }
-    public void cancel(ActionEvent event) {
-        //node.getParent();
-
-//        for(String s: additions){
-//            current.removeSubTask(s);
-//        }
-//        for(String s: deletions){
-//            current.addSubTask(s);
-//        }
-
-        //clearFields();//clearing all fields
-        Stage popup = (Stage) cancelTaskButton.getScene().getWindow();
-        popup.close();
-        // mainCtrl.showBoard();//returning to the board overview
+    public boolean checkIfValid(Card card, String text) {
+        if(text == "")
+            return false;
+        return !card.getSubtasks().contains(text);
     }
 
-    public void done(){
-        if(!taskTitle.getText().equals(current.getTitle())){
-            current.setTitle(taskTitle.getText());
-        }
-        if(taskDescription.getText()!=null)
-            if(!taskDescription.getText().equals(current.getDescription())){
-                current.setDescription(taskDescription.getText());
-            }
-        Stage popup = (Stage) cancelTaskButton.getScene().getWindow();
-        popup.close();
-        server.addCard(current);
-    }
-
-
-    public void saveCard(){
-        //since we auto create a card in a column,
-        // it is already in the column list and we need to find it via its id
-        //and then change the values of its attributes
-        try {
-            server.addCard(new Card());
-        } catch (WebApplicationException e){
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            return;
-        }
-        //MainCtrl.showPreviousBoardOverview();
-        //save button
-    }
-    public void deleteCard(){
-        server.deleteCard(5L);
-        //finding the card in the database by text in title and description
-        //finding the column id from card
-        //deleting the card from list of cards for column
-        //deleting card from database
-        //delete button
-        //return to board overview
-    }
     public void addSubTask(Card current){
 
         //showcase a textfield for user input
@@ -142,9 +97,14 @@ public class AddCardCtrl {
         subtaskVbox.getChildren().add(0, sub);
         sub.setOnKeyPressed(event ->
         {
-            if(event.getCode() == KeyCode.ENTER){
-                subtaskVbox.getChildren().remove(sub);
-                displaySubs(sub.getText(), current);
+            if(event.getCode() == KeyCode.ENTER) {
+                if(checkIfValid(current, sub.getText().trim())) {
+                    subtaskVbox.getChildren().remove(sub);
+                    displaySubs(sub.getText().trim(), current);
+                }
+                else {
+                    displayAlert("Invalid subtask name!");
+                }
             }
         });
         // added.addSubTask("");
@@ -160,6 +120,19 @@ public class AddCardCtrl {
     public CheckBox createCheckbox(String text, Card current){
         CheckBox cb = new CheckBox();
         cb.setText(text);
+        TextField textField = new TextField();
+        cb.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                textField.setText(cb.getText());
+                cb.setGraphic(textField);
+                textField.requestFocus();
+            }
+        });
+
+        textField.setOnAction(event -> {
+            cb.setText(textField.getText());
+            cb.setGraphic(null);
+        });
         cb.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -198,6 +171,7 @@ public class AddCardCtrl {
         delBtn.setGraphic(imageView);
         sub.getChildren().add(delBtn);
         sub.setPrefWidth(subtaskVbox.getWidth());
+        setDragAndDrop(sub);
         subtaskVbox.getChildren().add(subtaskVbox.getChildren().size(), sub);
     }
 
@@ -207,8 +181,113 @@ public class AddCardCtrl {
         CheckBox cb = (CheckBox) parent.getChildren().get(0);
         current.removeSubTask(cb.getText());
     }
-    public void addTag(){
-        //adding a tag
+
+    private void setDragAndDrop(HBox subtaskBox){
+        subtaskBox.setOnDragDetected(event -> {
+            // Start drag and drop operation
+            Dragboard db = subtaskBox.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("VBoxItem");
+            db.setContent(content);
+            event.consume();
+        });
+
+        subtaskBox.setOnDragOver(event -> {
+            // Accept the drag if it's a MOVE operation
+            if (event.getGestureSource() != subtaskBox && event.getDragboard().hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+                event.consume();
+            }
+        });
+
+        subtaskBox.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                // Get the index of the item being dragged
+                int draggedIndex = subtaskVbox.getChildren()
+                        .indexOf((HBox) event.getGestureSource());
+
+                // Get the index where the item is being dropped
+                int dropIndex = subtaskVbox.getChildren().indexOf(subtaskBox);
+
+                // Remove the item being dragged from its old position
+                subtaskVbox.getChildren().remove(draggedIndex);
+
+                // Add the item being dragged at the new position
+                subtaskVbox.getChildren().add(dropIndex, (HBox) event.getGestureSource());
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
+    }
+    public void addTag(Card current){
+//        TextField tag = new TextField();
+//        tag.setPromptText("Enter new tag");
+//        tagHbox.getChildren().add(0, tag);
+//        tag.setOnKeyPressed(event ->
+//        {
+//            if(event.getCode() == KeyCode.ENTER) {
+//                if(checkIfValid(current, tag.getText().trim())) {
+//                    tagHbox.getChildren().remove(tag);
+//                    displaySubs(tag.getText().trim(), current);
+//                }
+//                else {
+//                    displayAlert("Invalid tag name!");
+//                }
+//            }
+//        });
+    }
+
+    public void displayAlert(String text) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setContentText(text);
+        alert.showAndWait();
+    }
+
+    public void refresh(){
+        if(!current.getTitle().equals(taskTitle.getText())){
+            taskTitle.setText(current.getTitle());
+        }
+        if(!current.getDescription().equals(taskDescription.getText()))
+            taskDescription.setText(current.getDescription());
+        for (String s: current.getSubtasks()){
+            if(current.getCompletedTasks().contains(s)){
+                displayCompletedSubs(s, current);
+            }else{
+                displaySubs(s, current);
+            }
+        }
+
+
+    }
+    public void setCard(Card card){
+        this.current = card;
+    }
+
+    public void setButton(Button button){
+        doneTaskButton = button;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        server.registerForCardUpdate(card->{
+            if(card.getId()==current.getId()){
+                System.out.println("close popup");
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Deleted task");
+                    alert.setContentText("Task has been deleted.");
+                    alert.showAndWait();
+                    Stage popup = (Stage) doneTaskButton.getScene().getWindow();
+                    popup.close();
+                    server.stopExec();
+                });
+            }
+        });
     }
 }
 

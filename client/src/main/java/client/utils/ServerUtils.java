@@ -18,10 +18,16 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
+import commons.Tag;
 import jakarta.ws.rs.core.Response;
 
 import commons.BoardList;
@@ -32,6 +38,14 @@ import commons.Card;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 class CustomPair<S, T> {
     private S first;
@@ -63,6 +77,10 @@ public class ServerUtils {
 
     // private static String server = "http://localhost:8080/";
     private static String server = "";
+    public LocalUtils localUtils;
+
+    StompSession stompSession;
+
 
     // returns true if connection is succesful 
     // flase otherwise
@@ -81,12 +99,52 @@ public class ServerUtils {
     }
 
     public void setServer(String addr) {
+        // TODO open socket connection here
         server = addr;
+
+        stompSession = connectToSockets("ws://localhost:8080/websocket");
+    }
+
+    StompSession connectToSockets(String url){
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
+        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        try{
+            return stomp.connect(url, new StompSessionHandlerAdapter(){}).get();
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        throw new IllegalStateException();
+    }
+
+    public <T> void checkForUpdatesToRefresh(String update, Class<T> tClass, Consumer<T> consumer){
+        stompSession.subscribe(update, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return tClass;
+            }
+
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((T) payload);
+            }
+        });
+    }
+
+    public String getPath() {
+        return server;
     }
 
     public void disconnect() {
+        stompSession.disconnect();
         // TODO probably close sockets here
         server = "";
+
     }
 
     public Board getBoardById(Long id) {
@@ -94,8 +152,7 @@ public class ServerUtils {
                 .target(server).path("api/boards/" + id.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<Board>() {
-                });
+                .get(Board.class);
     }
 
     public List<Board> getBoards() {
@@ -107,31 +164,49 @@ public class ServerUtils {
                 });
     }
 
-    public Board addCardToList(Long boardId, Long boardListId, Card card) {
+    public BoardList addCardToList(Long boardListId, Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/add/" + boardId.toString()) //
+                .target(server).path("api/lists/add/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair<>(boardListId, card),
-                        APPLICATION_JSON), Board.class);
+                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
     }
 
-    public BoardList addEmptyList(Long boardId, String name) {
+    public Board addTagToBoard(Long boardListId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/addTag/" + boardListId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
+    }
+
+    public Board addTagToCard(Long cardId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/addTag/" + cardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
+    }
+
+
+    public Long addEmptyList(Long boardId, String name) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/boards/add/list/" + boardId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(name, APPLICATION_JSON),
-                        BoardList.class);
+                .post(Entity.entity(name, APPLICATION_JSON), Long.class);
     }
 
-    public BoardList changeListName(Long boardId, Long listId, String name) {
+    public BoardList changeListName(Long listId, String name) throws Exception {
+        if(name.equals("")) {
+            throw new Exception("cannot change name to empty name");
+        }
+
         return ClientBuilder.newClient(new ClientConfig())
-                .target(server).path("api/boards/list/changeName/" + boardId.toString())
+                .target(server).path("api/lists/changeName/" + listId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(new CustomPair<>(name, listId),
-                        APPLICATION_JSON), BoardList.class);
+                .post(Entity.entity(name, APPLICATION_JSON), BoardList.class);
     }
 
     public Void removeBoardList(Long boardId, Long listId) {
@@ -142,14 +217,14 @@ public class ServerUtils {
                 .post(Entity.entity(listId, APPLICATION_JSON), Void.class);
     }
 
-    public Board updateCardFromList(Long boardId, Long boardListId, Card card) {
+    public BoardList updateCardFromList(Long boardListId, Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/update/" + boardId.toString()) //
+                .target(server).path("api/lists/update/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair<>(boardListId, card),
-                        APPLICATION_JSON), Board.class);
+                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
     }
+
     public Card addCard(Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/cards/add") //
@@ -198,13 +273,55 @@ public class ServerUtils {
                 .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
     }
 
-    public Board deleteCardFromList(Long boardId, Long listId, Card card){
+    public BoardList deleteCardFromList(Long listId, Card card){
         System.out.println(card);
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/delete/" + boardId.toString()) //
+                .target(server).path("api/lists/deleteCard/" + listId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair<>(listId, card), APPLICATION_JSON)
-                        , Board.class);
+                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
+    }
+
+    public BoardList getList(Long listId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/lists/" + listId.toString())
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(BoardList.class);
+    }
+
+    public BoardList addCardAtIndex(Long listId, long index, Card card) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/lists/insertAt/" + listId.toString())
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class
+                );
+    }
+
+    private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public void registerForCardUpdate(Consumer<Card> cardConsumer){
+        EXEC = Executors.newSingleThreadExecutor();
+        EXEC.submit(()->{
+            System.out.println("running");
+            while(!Thread.interrupted()) {
+                var result = ClientBuilder.newClient(new ClientConfig())
+                        .target(server).path("api/lists/deletedtask")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .get(Response.class);
+                if (result.getStatus() == 204) {
+                    continue;
+                }
+                System.out.println("sent card here");
+                result.getStatus();
+                var card = result.readEntity(Card.class);
+                cardConsumer.accept(card);
+            }
+        });
+
+    }
+    public void stopExec(){
+        EXEC.shutdownNow();
     }
 }
