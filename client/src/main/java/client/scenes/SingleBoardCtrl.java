@@ -744,9 +744,10 @@ public class SingleBoardCtrl implements Initializable {
         this.current_board = board;
         this.BoardID = board.getId();
     }
-    public void pullLists(Long id) {
+    public String pullLists(Long id) {
         current_board = server.getBoardById(id);
         lists = FXCollections.observableList(current_board.getLists());
+        return current_board.getName();
     }
 
     public void drawLists() throws IOException {
@@ -759,7 +760,9 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void refresh() {
-        pullLists(BoardID);
+        String name = pullLists(BoardID);
+        if(!name.equals(board_name.getText()))
+            board_name.setText(name);
         try {
             drawLists();
         }
