@@ -126,7 +126,7 @@ public class BoardListController {
             return ResponseEntity.badRequest().build();
         }
 
-        board.get().addTag(tag);
+      //  board.get().addTag(tag);
 
         BoardList saved = repo.save(board.get());
 
