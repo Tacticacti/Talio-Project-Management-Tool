@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import commons.Board;
 import commons.BoardList;
+import commons.Tag;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
@@ -52,9 +53,9 @@ public class BoardController {
             return ResponseEntity.badRequest().build();
         }
 
-        board.get().addTag(tag);
+        //board.get().addTag(tag);
 
-        BoardList saved = repo.save(board.get());
+        Board saved = repo.save(board.get());
 
         return ResponseEntity.ok(saved);
     }
