@@ -4,12 +4,16 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 
 public class AdminLoginCtrl {
     @FXML
     private TextField psswdField;
+
+    @FXML
+    private Button loginBtn;
 
     private ServerUtils server;
     private MainCtrl mainCtrl;
@@ -36,7 +40,17 @@ public class AdminLoginCtrl {
 
         if(res) {
             System.out.println("ok");
-            //mainCtrl.showDashboard();
+            mainCtrl.showDashboard();
         }
+        else {
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText("Wrong password!");
+            alert.showAndWait();
+        }
+    }
+
+    public void back() {
+        mainCtrl.showBoardOverview();
     }
 }

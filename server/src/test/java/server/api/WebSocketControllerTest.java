@@ -34,7 +34,8 @@ public class WebSocketControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        webSocketController = new WebSocketController(cardRepository, boardListRepository, boardRepository);
+        webSocketController = new WebSocketController(cardRepository, boardListRepository,
+                boardRepository);
         sessions = new HashMap<>();
     }
 

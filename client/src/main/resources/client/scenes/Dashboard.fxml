@@ -40,7 +40,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.DashboardCtrl">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
@@ -49,7 +49,7 @@
             <Font size="18.0" />
           </font>
         </Label>
-            <Button layoutX="14.0" layoutY="360.0" mnemonicParsing="false" text="Back" />
+            <Button layoutX="14.0" layoutY="360.0" mnemonicParsing="false" text="Back" onAction="#back"/>
             <TableView layoutY="2.0" prefHeight="345.0" prefWidth="640.0">
               <columns>
                 <TableColumn prefWidth="125.0" text="board_key" />

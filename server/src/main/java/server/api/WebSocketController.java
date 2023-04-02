@@ -26,7 +26,8 @@ public class WebSocketController extends TextWebSocketHandler {
     private final BoardListRepository boardListRepository;
     private final BoardRepository boardRepository;
 
-    public WebSocketController(CardRepository cardRepository, BoardListRepository boardListRepository,
+    public WebSocketController(CardRepository cardRepository,
+                               BoardListRepository boardListRepository,
                                BoardRepository boardRepository) {
         this.cardRepository = cardRepository;
         this.boardListRepository = boardListRepository;

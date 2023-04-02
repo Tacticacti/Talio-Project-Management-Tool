@@ -338,4 +338,8 @@ public class BoardOverviewCtrl {
         }
         refresh();
     }
+
+    public void adminLogin() {
+        mainCtrl.showAdmin();
+    }
 }
