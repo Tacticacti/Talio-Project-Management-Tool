@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import commons.Board;
 import commons.BoardList;
+import server.Admin;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
 
@@ -22,13 +23,14 @@ public class BoardController {
 
     private final BoardRepository repo;
 
-    private DatabaseUtils databaseUtils;
+    private final DatabaseUtils databaseUtils;
+    private final Admin admin;
 
     public BoardController(BoardRepository repo, 
-        DatabaseUtils databaseUtils) {
+        DatabaseUtils databaseUtils, Admin admin) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
-        
+        this.admin = admin;
 
         // TODO uncomment **ONLY** for debug!!
         /*
@@ -108,8 +110,10 @@ public class BoardController {
     public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
             @RequestBody String psswd) {
 
-        if(psswd == null || psswd.equals(""))
+        if(psswd == null || !psswd.equals(admin.getPassword()))
             return ResponseEntity.badRequest().build();
 
+        repo.deleteById(boardId);
+        return ResponseEntity.ok(true);
     }
 }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+import server.Admin;
 import server.DatabaseUtils;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class BoardControllerTest {
     public void setup() {
         databaseUtils = new DatabaseUtils();
         boardRepo = new TestBoardRepository();
-        controller = new BoardController(boardRepo, new DatabaseUtils());
+        controller = new BoardController(boardRepo, new DatabaseUtils(), new Admin());
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");

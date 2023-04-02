@@ -6,6 +6,7 @@ import commons.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
+import server.Admin;
 import server.DatabaseUtils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,7 +33,7 @@ public class BoardListControllerTest {
         boardRepo = new TestBoardRepository();
         repo = new TestBoardListRepository();
         controller = new BoardListController(repo, new DatabaseUtils());
-        boardController = new BoardController(boardRepo, new DatabaseUtils());
+        boardController = new BoardController(boardRepo, new DatabaseUtils(), new Admin());
 
         b1 = new Board("b1");
         b1.setId(0L);
