@@ -40,6 +40,24 @@ public class BoardController {
         repo.save(board);
         */
     }
+    @PostMapping(path = "/addTag/{id}")
+    public ResponseEntity<BoardList> addTagToId(@PathVariable("id") long listId,
+                                                 @RequestBody Tag tag) {
+
+        System.out.println("add tag: " + listId + " " + tag);
+
+        var board = repo.findById(listId);
+
+        if(board.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        board.get().addTag(tag);
+
+        BoardList saved = repo.save(board.get());
+
+        return ResponseEntity.ok(saved);
+    }
 
     @GetMapping(path = {"", "/"})
     public List<Board> getAll() {
