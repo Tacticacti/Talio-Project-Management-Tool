@@ -83,27 +83,15 @@ public class BoardOverviewCtrl implements Initializable {
         // add board to current hbox
         if (last_row.getChildren().size() < MAX_BOARDS_IN_ROW) {
 
-            // create bord and style it
+            // load board and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             AnchorPane board = loader.load();
-            //HBox.setMargin(board, new Insets(20, 20, 20, 20));
-
-            // enter clicked board
+            last_row.getChildren().add(board);
 
             Board new_board = server.addBoard(new Board());
 
-
-            // add created board
-            last_row.getChildren().add(board);
-
-            //Board new_board = new Board();
-            //System.out.println(new_board.getId());
-
-
-
-            //Board new_board = server.addBoard(new Board());
+            // enter board when you click it
             Button btn =  (Button) board.lookup("#enterButton");
-
             btn.setOnAction(event -> {
                 try {
                     enterBoard(new_board);
@@ -112,40 +100,28 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
 
-            //.add(new_board);
-
-
-
+            // enter board after creating it by default
+            enterBoard(new_board);
         }
         // create a new row in vbox
         else {
 
-            // create bord and style it
+            // load board and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             Node board = loader.load();
 
+            // add new row to vbox and style it to be consistent
             HBox hbox = new HBox();
             hbox.setSpacing(100);
-            //hbox.setPadding(new Insets(102, 0, 0, 102));
             HBox.setMargin(board, new Insets(0, 0, 0, 187.5));
 
             Board new_board = server.addBoard(new Board());
 
-
+            // add it to board overview
             hbox.getChildren().add(board);
-
-
-
-            // enter clicked board
-
-
-
-            // add created board
             board_rows.getChildren().add(hbox);
 
-
-           // Board new_board = server.addBoard(new Board());
-
+            // enter board when you click it
             Button btn =  (Button) board.lookup("#enterButton");
             btn.setOnAction(event -> {
                 try {
@@ -155,7 +131,8 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
 
-
+            // enter board after creating it by default
+            enterBoard(new_board);
         }
 
     }
@@ -205,13 +182,28 @@ public class BoardOverviewCtrl implements Initializable {
         // debug
         System.out.println(server.getBoards());
 
+        var added_board = false;
+
         for (Board board : server.getBoards()) {
             if (board.getId().toString().equals(text) &&
                     !drawnBoards.contains(board.getId())) {
                 addJoinedBoard(board);
                 localUtils.add(board.getId());
+                added_board = true;
+
+                enterBoard(board);
+                System.out.println("hello!");
             }
         }
+
+        if (!added_board) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setHeaderText("Error joining board!");
+            alert.setContentText("invalid ID or already joined board");
+            alert.showAndWait();
+        }
+
     }
 
     public void correctText(Node board) {
