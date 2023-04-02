@@ -78,11 +78,6 @@ public class BoardList {
         return cards;
     }
 
-    public void addTag(Tag tag) {
-        tag.board = this.board;
-        tag.boardList = this;
-        this.tags.add(tag);
-    }
 
     public List<Tag> getTags() {
         return tags;
