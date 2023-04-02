@@ -6,6 +6,7 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
+import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
@@ -71,6 +72,7 @@ public class SingleBoardCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private Long BoardID = 1L;
     private Node newCardBtn;
+    private Node newTagBtn;
     @FXML
     private HBox hbox_lists;
     @FXML
@@ -719,6 +721,76 @@ public class SingleBoardCtrl implements Initializable {
         ClipboardContent content = new ClipboardContent();
         content.putString(BoardID.toString());
         Clipboard.getSystemClipboard().setContent(content);
+    }
+
+    public Optional<String> enterTagName(){
+        TextInputDialog tagInput = new TextInputDialog();
+        tagInput.setTitle("Tag name");
+        tagInput.setHeaderText("Create new tag");
+        tagInput.setContentText("Enter tag");
+        Optional<String> result = tagInput.showAndWait();
+        if (result.isPresent() && result.get().trim().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                    "Tag cannot be empty!", ButtonType.OK);
+            alert.showAndWait();
+
+            return showTitleDialog();
+        }
+        return result;
+
+    }
+
+    public void addNewTag(HBox parent){
+        BoardList boardList = (BoardList) parent.getUserData();
+        long listId = boardList.getId();
+        Optional<String> tagTitle = enterTagName();
+        if (tagTitle.isPresent()) {
+            Tag newTag = new Tag(tagTitle.get());
+            placeTag(parent, newTag);
+            refresh();
+        }
+    }
+
+    public void setUpNewTag(BoardList boardList)
+            throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
+        AnchorPane list = loader.load();
+
+        Button newTagBtn =  (Button) list.lookup("#newTagBtn");
+        HBox parentList = (HBox) newTagBtn.getParent();
+        parentList.setUserData(boardList);
+        parentList.setSpacing(5);
+        for(Tag tag: boardList.getTags()){
+            placeTag(parentList, tag);
+        }
+        newTagBtn.setOnAction(event ->{
+            addNewTag(parentList);
+        });
+    }
+
+    public void placeTag(HBox parent, Tag tag){
+        String tagTitle = tag.getTitle();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
+        try {
+            Node tagNode = fxmlLoader.load();
+            Border border = new Border(new BorderStroke(Paint.valueOf("black")
+                    , BorderStrokeStyle.DASHED
+                    , new CornerRadii(10), BorderWidths.DEFAULT));
+            ((AnchorPane) tagNode).setBorder(border);
+            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), tagNode);
+            scaleTransition.setToX(1.1);
+            scaleTransition.setToY(1.1);
+            tagNode.setOnMouseEntered(event -> {
+                scaleTransition.play();
+            });
+            tagNode.setOnMouseExited(event -> {
+                scaleTransition.stop();
+                tagNode.setScaleX(1);
+                tagNode.setScaleY(1);
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
