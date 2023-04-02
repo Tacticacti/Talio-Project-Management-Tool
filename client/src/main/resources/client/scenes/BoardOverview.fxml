@@ -82,5 +82,6 @@
       <Button layoutX="1207.0" layoutY="25.0" mnemonicParsing="false" onAction="#onJoinBoard" prefHeight="62.0" prefWidth="74.0" text="Enter" AnchorPane.leftAnchor="1207.0" AnchorPane.topAnchor="25.0" />
       <Button layoutX="163.0" layoutY="30.0" mnemonicParsing="false" onAction="#disconnect" prefHeight="43.0" prefWidth="147.0" text="Disconnect" AnchorPane.leftAnchor="163.0" AnchorPane.topAnchor="25.0" />
       <Button layoutX="322.0" layoutY="25.0" mnemonicParsing="false" onAction="#resetFile" prefHeight="43.0" prefWidth="147.0" text="Reset storage" />
+      <Button layoutX="481.0" layoutY="25.0" mnemonicParsing="false" onAction="#resetFile" prefHeight="43.0" prefWidth="147.0" text="Dashboard" />
    </children>
 </AnchorPane>
