@@ -264,8 +264,13 @@ public class AddCardCtrl implements Initializable {
             if(card.getId()==current.getId()){
                 System.out.println("close popup");
                 Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Deleted task");
+                    alert.setContentText("Task has been deleted.");
+                    alert.showAndWait();
                     Stage popup = (Stage) doneTaskButton.getScene().getWindow();
                     popup.close();
+                    server.stopExec();
                 });
             }
         });
