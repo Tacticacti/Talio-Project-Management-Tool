@@ -174,7 +174,7 @@ public class SingleBoardCtrl implements Initializable {
         });
         newTagBtn.setOnAction(event ->{
             addNewTag(tagHbox);
-        }
+        });
         refresh();
         System.out.println(server);
         server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList->{
