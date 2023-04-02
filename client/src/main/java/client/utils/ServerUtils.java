@@ -78,7 +78,7 @@ public class ServerUtils {
     private static String server = "";
     public LocalUtils localUtils;
 
-    private StompSession stompSession;
+    StompSession stompSession;
 
 
     // returns true if connection is succesful 
@@ -104,7 +104,7 @@ public class ServerUtils {
         stompSession = connectToSockets("ws://localhost:8080/websocket");
     }
 
-    private StompSession connectToSockets(String url){
+    StompSession connectToSockets(String url){
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
