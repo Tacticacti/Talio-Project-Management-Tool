@@ -28,6 +28,9 @@ public class BoardList {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tag> tags;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     // @JoinColumn(name = "list_id")
     private List<Card> cards;
 
@@ -73,5 +76,10 @@ public class BoardList {
     // other helper methods
     public List<Card> getCards() {
         return cards;
+    }
+
+
+    public List<Tag> getTags() {
+        return tags;
     }
 }

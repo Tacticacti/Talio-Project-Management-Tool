@@ -223,8 +223,22 @@ public class AddCardCtrl implements Initializable {
         });
 
     }
-    public void addTag(){
-        //adding a tag
+    public void addTag(Card current){
+//        TextField tag = new TextField();
+//        tag.setPromptText("Enter new tag");
+//        tagHbox.getChildren().add(0, tag);
+//        tag.setOnKeyPressed(event ->
+//        {
+//            if(event.getCode() == KeyCode.ENTER) {
+//                if(checkIfValid(current, tag.getText().trim())) {
+//                    tagHbox.getChildren().remove(tag);
+//                    displaySubs(tag.getText().trim(), current);
+//                }
+//                else {
+//                    displayAlert("Invalid tag name!");
+//                }
+//            }
+//        });
     }
 
     public void displayAlert(String text) {

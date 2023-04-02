@@ -1,6 +1,7 @@
 package server.api;
 import commons.Card;
 
+//import commons.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,17 @@ public class CardController {
         Card saved = repo.save(card);
         return ResponseEntity.ok(saved);
     }
+
+//    @PostMapping(path={"", "/addTag"})
+//    public ResponseEntity<Tag> addTag(@RequestBody Tag tag){
+//        if(tag == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        Tag saved = repo.save(tag);
+//        return ResponseEntity.ok(saved);
+//    }
+
     @PostMapping(path="/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long cardId){
         if(!repo.existsById(cardId)){
