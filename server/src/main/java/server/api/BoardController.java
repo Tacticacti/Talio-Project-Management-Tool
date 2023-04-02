@@ -103,4 +103,13 @@ public class BoardController {
         repo.save(board);
         return ResponseEntity.ok(board);
     }
+
+    @PostMapping(path = "/delete/{id}")
+    public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
+            @RequestBody String psswd) {
+
+        if(psswd == null || psswd.equals(""))
+            return ResponseEntity.badRequest().build();
+
+    }
 }
