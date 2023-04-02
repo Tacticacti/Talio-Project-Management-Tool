@@ -196,13 +196,25 @@ public class BoardOverviewCtrl {
         // debug
         System.out.println(server.getBoards());
 
+        var added_board = false;
+
         for (Board board : server.getBoards()) {
             if (board.getId().toString().equals(text) &&
                     !drawnBoards.contains(board.getId())) {
                 addJoinedBoard(board);
                 localUtils.add(board.getId());
+                added_board = true;
             }
         }
+
+        if (!added_board) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setHeaderText("Error joining board!");
+            alert.setContentText("invalid ID or already joined board");
+            alert.showAndWait();
+        }
+
     }
 
     public void correctText(Node board) {
