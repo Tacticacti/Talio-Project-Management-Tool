@@ -18,9 +18,14 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import jakarta.ws.rs.core.Response;
 
@@ -32,6 +37,14 @@ import commons.Card;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 class CustomPair<S, T> {
     private S first;
@@ -65,6 +78,9 @@ public class ServerUtils {
     private static String server = "";
     public LocalUtils localUtils;
 
+    private StompSession stompSession;
+
+
     // returns true if connection is succesful 
     // flase otherwise
     public boolean check(String addr) throws IOException {
@@ -84,6 +100,39 @@ public class ServerUtils {
     public void setServer(String addr) {
         // TODO open socket connection here
         server = addr;
+
+        stompSession = connectToSockets("ws://localhost:8080/websocket");
+    }
+
+    private StompSession connectToSockets(String url){
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
+        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        try{
+            return stomp.connect(url, new StompSessionHandlerAdapter(){}).get();
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        throw new IllegalStateException();
+    }
+
+    public <T> void checkForUpdatesToRefresh(String update, Class<T> tClass, Consumer<T> consumer){
+        stompSession.subscribe(update, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return tClass;
+            }
+
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((T) payload);
+            }
+        });
     }
 
     public String getPath() {
@@ -91,8 +140,10 @@ public class ServerUtils {
     }
 
     public void disconnect() {
+        stompSession.disconnect();
         // TODO probably close sockets here
         server = "";
+
     }
 
     public Board getBoardById(Long id) {
@@ -228,5 +279,31 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class
                 );
+    }
+
+    private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public void registerForCardUpdate(Consumer<Card> cardConsumer){
+        EXEC = Executors.newSingleThreadExecutor();
+        EXEC.submit(()->{
+            System.out.println("running");
+            while(!Thread.interrupted()) {
+                var result = ClientBuilder.newClient(new ClientConfig())
+                        .target(server).path("api/lists/deletedtask")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .get(Response.class);
+                if (result.getStatus() == 204) {
+                    continue;
+                }
+                System.out.println("sent card here");
+                result.getStatus();
+                var card = result.readEntity(Card.class);
+                cardConsumer.accept(card);
+            }
+        });
+
+    }
+    public void stopExec(){
+        EXEC.shutdownNow();
     }
 }

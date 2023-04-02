@@ -4,12 +4,13 @@ import com.google.inject.Inject;
 import client.utils.ServerUtils;
 import commons.Card;
 
-import jakarta.ws.rs.WebApplicationException;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -32,11 +33,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
-
-
-public class AddCardCtrl {
+public class AddCardCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
@@ -62,6 +63,8 @@ public class AddCardCtrl {
     @FXML
     private Button cancelTaskButton;
 
+    @FXML
+    private Button doneTaskButton;
     private Card current;
 
 
@@ -79,64 +82,6 @@ public class AddCardCtrl {
     }
     private Node node;
 
-    public void setUp(Node card){
-
-    }
-    public void cancel(ActionEvent event) {
-        //node.getParent();
-
-//        for(String s: additions){
-//            current.removeSubTask(s);
-//        }
-//        for(String s: deletions){
-//            current.addSubTask(s);
-//        }
-
-        //clearFields();//clearing all fields
-        Stage popup = (Stage) cancelTaskButton.getScene().getWindow();
-        popup.close();
-        // mainCtrl.showBoard();//returning to the board overview
-    }
-
-    public void done(){
-        if(!taskTitle.getText().equals(current.getTitle())){
-            current.setTitle(taskTitle.getText());
-        }
-        if(taskDescription.getText()!=null)
-            if(!taskDescription.getText().equals(current.getDescription())){
-                current.setDescription(taskDescription.getText());
-            }
-        Stage popup = (Stage) cancelTaskButton.getScene().getWindow();
-        popup.close();
-        server.addCard(current);
-    }
-
-
-    public void saveCard(){
-        //since we auto create a card in a column,
-        // it is already in the column list and we need to find it via its id
-        //and then change the values of its attributes
-        try {
-            server.addCard(new Card());
-        } catch (WebApplicationException e){
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            return;
-        }
-        //MainCtrl.showPreviousBoardOverview();
-        //save button
-    }
-    public void deleteCard(){
-        server.deleteCard(5L);
-        //finding the card in the database by text in title and description
-        //finding the column id from card
-        //deleting the card from list of cards for column
-        //deleting card from database
-        //delete button
-        //return to board overview
-    }
 
     public boolean checkIfValid(Card card, String text) {
         if(text == "")
@@ -287,6 +232,48 @@ public class AddCardCtrl {
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setContentText(text);
         alert.showAndWait();
+    }
+
+    public void refresh(){
+        if(!current.getTitle().equals(taskTitle.getText())){
+            taskTitle.setText(current.getTitle());
+        }
+        if(!current.getDescription().equals(taskDescription.getText()))
+            taskDescription.setText(current.getDescription());
+        for (String s: current.getSubtasks()){
+            if(current.getCompletedTasks().contains(s)){
+                displayCompletedSubs(s, current);
+            }else{
+                displaySubs(s, current);
+            }
+        }
+
+
+    }
+    public void setCard(Card card){
+        this.current = card;
+    }
+
+    public void setButton(Button button){
+        doneTaskButton = button;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        server.registerForCardUpdate(card->{
+            if(card.getId()==current.getId()){
+                System.out.println("close popup");
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Deleted task");
+                    alert.setContentText("Task has been deleted.");
+                    alert.showAndWait();
+                    Stage popup = (Stage) doneTaskButton.getScene().getWindow();
+                    popup.close();
+                    server.stopExec();
+                });
+            }
+        });
     }
 }
 
