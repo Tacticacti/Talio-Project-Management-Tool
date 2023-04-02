@@ -174,7 +174,7 @@ public class SingleBoardCtrl implements Initializable {
         });
         newTagBtn.setOnAction(event ->{
             addNewTag(tagHbox);
-
+        }
         refresh();
         System.out.println(server);
         server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList->{
@@ -187,7 +187,6 @@ public class SingleBoardCtrl implements Initializable {
                 refresh();
             });
         });
-
     }
 
     public void back(){
@@ -502,7 +501,6 @@ public class SingleBoardCtrl implements Initializable {
         server.addCard(current);
         updateCardFromList(BoardID, listId, current);
         //server.stopExec();
->>>>>>> client/src/main/java/client/scenes/SingleBoardCtrl.java
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         refresh();
@@ -788,7 +786,6 @@ public class SingleBoardCtrl implements Initializable {
         Clipboard.getSystemClipboard().setContent(content);
     }
 
-<<<<<<< client/src/main/java/client/scenes/SingleBoardCtrl.java
     public Optional<String> enterTagName(){
         TextInputDialog tagInput = new TextInputDialog();
         tagInput.setTitle("Tag name");
