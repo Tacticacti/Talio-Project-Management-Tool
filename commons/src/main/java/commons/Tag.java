@@ -25,8 +25,8 @@ public class Tag {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "BOARDLIST_ID")
-    public BoardList boardList;
+    @JoinColumn(name = "CARD_ID")
+    public Card card;
 
 
     public String title;
