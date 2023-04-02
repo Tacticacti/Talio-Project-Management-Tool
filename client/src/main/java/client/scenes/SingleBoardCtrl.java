@@ -278,26 +278,27 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void setDeleteBoardList(BoardList boardList, ObservableList<Node> board_lists,
-                                    Node list) {
+                                    Node list)
+    {
         Button deleteBoardList =  (Button) list.lookup("#deleteBtn");
         deleteBoardList.setOnAction(event -> {
                     // deleting on client(GUI) side
-                    board_lists.remove(deleteBoardList.getParent());
+            board_lists.remove(deleteBoardList.getParent());
 
                     // deleting list on server side
-                    server.removeBoardList(BoardID, boardList.getId());
-                    current_board.removeList(boardList);
-                    try {
-                        refresh();
-                    }
-                    catch(Exception e) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setContentText("Error removing list!");
-                        alert.showAndWait();
-                    }
-                }
-        );
+            server.removeBoardList(BoardID, boardList.getId());
+            current_board.removeList(boardList);
+            try {
+                refresh();
+            }
+            catch(Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Error removing list!");
+                alert.showAndWait();
+            }
+        });
+
     }
     public void placeCard(VBox parent, Card card){
         String cardTitle = card.getTitle();
@@ -754,7 +755,7 @@ public class SingleBoardCtrl implements Initializable {
         if (tagTitle.isPresent()) {
             Tag newTag = new Tag(tagTitle.get());
             placeTag(parent, newTag);
-            refresh();
+            server.addTagToBoard(BoardID, newTag);
         }
     }
 

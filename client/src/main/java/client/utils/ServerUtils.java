@@ -121,13 +121,22 @@ public class ServerUtils {
                 .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
     }
 
-    public Board addTagToList(Long boardListId, Tag tag) {
+    public Board addTagToBoard(Long boardListId, Tag tag) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/addTag/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
     }
+
+    public Board addTagToCard(Long cardId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/addTag/" + cardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
+    }
+
 
     public Long addEmptyList(Long boardId, String name) {
         return ClientBuilder.newClient(new ClientConfig())
