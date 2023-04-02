@@ -73,6 +73,6 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Button id="newTagBtn" layoutX="998.0" layoutY="51.0" mnemonicParsing="false" text="Add tag" />
+      <Button fx:id="newTagBtn" layoutX="998.0" layoutY="51.0" mnemonicParsing="false" text="Add tag" />
    </children>
 </AnchorPane>

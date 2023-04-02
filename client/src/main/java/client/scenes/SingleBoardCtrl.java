@@ -72,7 +72,11 @@ public class SingleBoardCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private Long BoardID = 1L;
     private Node newCardBtn;
-    private Node newTagBtn;
+
+    @FXML
+    private HBox tagHbox;
+    @FXML
+    private Button newTagBtn;
     @FXML
     private HBox hbox_lists;
     @FXML
@@ -112,8 +116,8 @@ public class SingleBoardCtrl implements Initializable {
     @Override
     public void initialize (URL location, ResourceBundle resources){
         ImageView imageView = new ImageView(getClass()
-            .getResource("../images/settings_icon.png")
-            .toExternalForm());
+                .getResource("../images/settings_icon.png")
+                .toExternalForm());
         newCardBtn = hbox_lists.getChildren().get(0);
         imageView.setFitWidth(settingsBtn.getPrefWidth());
         imageView.setFitHeight(settingsBtn.getPrefHeight());
@@ -135,6 +139,10 @@ public class SingleBoardCtrl implements Initializable {
                 }
             }
         });
+        newTagBtn.setOnAction(event ->{
+            addNewTag(tagHbox);
+        });
+
     }
 
     public void back(){
@@ -273,22 +281,22 @@ public class SingleBoardCtrl implements Initializable {
                                     Node list) {
         Button deleteBoardList =  (Button) list.lookup("#deleteBtn");
         deleteBoardList.setOnAction(event -> {
-                // deleting on client(GUI) side
-                board_lists.remove(deleteBoardList.getParent());
+                    // deleting on client(GUI) side
+                    board_lists.remove(deleteBoardList.getParent());
 
-                // deleting list on server side
-                server.removeBoardList(BoardID, boardList.getId());
-                current_board.removeList(boardList);
-                try {
-                    refresh();
+                    // deleting list on server side
+                    server.removeBoardList(BoardID, boardList.getId());
+                    current_board.removeList(boardList);
+                    try {
+                        refresh();
+                    }
+                    catch(Exception e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setContentText("Error removing list!");
+                        alert.showAndWait();
+                    }
                 }
-                catch(Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.initModality(Modality.APPLICATION_MODAL);
-                    alert.setContentText("Error removing list!");
-                    alert.showAndWait();
-                }
-            }
         );
     }
     public void placeCard(VBox parent, Card card){
@@ -335,7 +343,7 @@ public class SingleBoardCtrl implements Initializable {
                 detail.setEffect(shadow);
                 detail.setStyle(
                         "-fx-cursor:hand;" +
-                        " -fx-background-color: transparent");
+                                " -fx-background-color: transparent");
             });
             detail.setOnMouseExited(event -> {
                 detail.setEffect(null);
@@ -354,7 +362,7 @@ public class SingleBoardCtrl implements Initializable {
             parent.getChildren().add(index, cardNode);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }        
+        }
     }
     public void setCardDetail(Node cardNode, VBox parent){
 //        AnchorPane list = (AnchorPane) parent.getParent(); unused variable
@@ -443,7 +451,7 @@ public class SingleBoardCtrl implements Initializable {
         }
         server.addCard(current);
         updateCardFromList(BoardID, listId, current);
-        
+
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         refresh();
@@ -741,8 +749,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void addNewTag(HBox parent){
-        BoardList boardList = (BoardList) parent.getUserData();
-        long listId = boardList.getId();
+
         Optional<String> tagTitle = enterTagName();
         if (tagTitle.isPresent()) {
             Tag newTag = new Tag(tagTitle.get());
@@ -763,13 +770,12 @@ public class SingleBoardCtrl implements Initializable {
         for(Tag tag: boardList.getTags()){
             placeTag(parentList, tag);
         }
-        newTagBtn.setOnAction(event ->{
-            addNewTag(parentList);
-        });
+
     }
 
     public void placeTag(HBox parent, Tag tag){
         String tagTitle = tag.getTitle();
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
         try {
             Node tagNode = fxmlLoader.load();

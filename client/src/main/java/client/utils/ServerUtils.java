@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import commons.Tag;
 import jakarta.ws.rs.core.Response;
 
 import commons.BoardList;
@@ -118,6 +119,14 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
+    }
+
+    public Board addTagToList(Long boardListId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/addTag/" + boardListId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
     }
 
     public Long addEmptyList(Long boardId, String name) {
