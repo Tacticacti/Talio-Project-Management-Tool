@@ -229,4 +229,17 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class
                 );
     }
+
+    public boolean checkPsswd(String psswd) {
+        if(psswd == null || psswd.equals("")) {
+            return false;
+        }
+
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("adminLogin")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(psswd, APPLICATION_JSON),
+                        boolean.class);
+    }
 }
