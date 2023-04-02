@@ -9,6 +9,7 @@ import commons.Card;
 import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.ScaleTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,20 +18,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 
 
 import java.net.URL;
 
 import javafx.scene.Node;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.Clipboard;
@@ -64,11 +66,10 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-import static client.scenes.MainCtrl.boverview;
-import static client.scenes.MainCtrl.primaryStage;
+
 
 public class SingleBoardCtrl implements Initializable {
-    private final ServerUtils server;
+    private ServerUtils server;
     private final MainCtrl mainCtrl;
     private Long BoardID = 1L;
     private Node newCardBtn;
@@ -92,7 +93,20 @@ public class SingleBoardCtrl implements Initializable {
     private Map<Node, Card> nodeCardMap;
     private ClipboardContent content;
     private static Dragboard dragboard;
+    @FXML
+    private Button backBtn;
 
+    @FXML
+    private ScrollPane main_pane;
+
+    @FXML
+    private Button newListBtn;
+
+    @FXML
+    private Button refreshBtn;
+
+    @FXML
+    private Button copyInvite;
 
 
     @Inject
@@ -122,6 +136,25 @@ public class SingleBoardCtrl implements Initializable {
         imageView.setFitWidth(settingsBtn.getPrefWidth());
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
+        copyInvite.setOnAction(e->{
+            copyInvite();
+        });
+        settingsBtn.setOnAction(e->{
+            try {
+                openBoardSettings();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        refreshBtn.setOnAction(e->{
+            refresh();
+        });
+        newListBtn.setOnAction(e->{
+            createNewList();
+        });
+        backBtn.setOnAction(e->{
+            back();
+        });
         settingsBtn.setGraphic(imageView);
         nodeCardMap = new HashMap<>();
         current_board = new Board();
@@ -141,12 +174,25 @@ public class SingleBoardCtrl implements Initializable {
         });
         newTagBtn.setOnAction(event ->{
             addNewTag(tagHbox);
+
+        refresh();
+        System.out.println(server);
+        server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList->{
+            Platform.runLater(()->{
+                refresh();
+            });
+        });
+        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
+            Platform.runLater(()->{
+                refresh();
+            });
         });
 
     }
 
     public void back(){
-        primaryStage.setScene(boverview);
+        ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
+        connectHomeCtrl.showBoardOverview();
     }
 
     public void createNewList() {
@@ -400,6 +446,8 @@ public class SingleBoardCtrl implements Initializable {
         // sets up sub-task operations
         Button addSubTask = (Button) root.lookup("#addSubtaskButton");
         AddCardCtrl addCardCtrl = fxmlLoader.getController();
+        addCardCtrl.setCard(card);
+        addCardCtrl.setButton(doneButton);
         addSubTask.setOnAction(event ->  addCardCtrl.addSubTask(card));
         if(card.getSubtasks()!=null){
             for(String str: card.getSubtasks()){
@@ -416,6 +464,7 @@ public class SingleBoardCtrl implements Initializable {
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
+
     }
 
     private void setDone(long listId, Card current, ActionEvent event) {
@@ -452,7 +501,8 @@ public class SingleBoardCtrl implements Initializable {
         }
         server.addCard(current);
         updateCardFromList(BoardID, listId, current);
-
+        //server.stopExec();
+>>>>>>> client/src/main/java/client/scenes/SingleBoardCtrl.java
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         refresh();
@@ -626,9 +676,11 @@ public class SingleBoardCtrl implements Initializable {
                 refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
-                popup.close();
+                System.out.println(popup);
+                //popup.close();
             }
         });
+        server.stopExec();
 
     }
 
@@ -638,6 +690,7 @@ public class SingleBoardCtrl implements Initializable {
         Button cancel = (Button) event.getSource();
         Stage popup = (Stage) cancel.getScene().getWindow();
         popup.close();
+        server.stopExec();
     }
 
 
@@ -670,7 +723,7 @@ public class SingleBoardCtrl implements Initializable {
             Stage stage = (Stage) source.getScene().getWindow();
             stage.close();
 
-            mainCtrl.showBoardOverview();
+            //mainCtrl.showBoardOverview();
         });
 
         Scene scene = new Scene(customization);
@@ -702,9 +755,10 @@ public class SingleBoardCtrl implements Initializable {
         this.current_board = board;
         this.BoardID = board.getId();
     }
-    public void pullLists(Long id) {
+    public String pullLists(Long id) {
         current_board = server.getBoardById(id);
         lists = FXCollections.observableList(current_board.getLists());
+        return current_board.getName();
     }
 
     public void drawLists() throws IOException {
@@ -717,7 +771,9 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void refresh() {
-        pullLists(BoardID);
+        String name = pullLists(BoardID);
+        if(!name.equals(board_name.getText()))
+            board_name.setText(name);
         try {
             drawLists();
         }
@@ -732,6 +788,7 @@ public class SingleBoardCtrl implements Initializable {
         Clipboard.getSystemClipboard().setContent(content);
     }
 
+<<<<<<< client/src/main/java/client/scenes/SingleBoardCtrl.java
     public Optional<String> enterTagName(){
         TextInputDialog tagInput = new TextInputDialog();
         tagInput.setTitle("Tag name");
@@ -799,5 +856,9 @@ public class SingleBoardCtrl implements Initializable {
             throw new RuntimeException(e);
         }
     }
+    public void setServer(ServerUtils server){
+        this.server = server;
+    }
+
 }
 

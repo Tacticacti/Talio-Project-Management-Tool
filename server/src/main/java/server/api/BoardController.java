@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import commons.Board;
 import commons.BoardList;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
 
@@ -24,10 +25,13 @@ public class BoardController {
 
     private DatabaseUtils databaseUtils;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     public BoardController(BoardRepository repo, 
-        DatabaseUtils databaseUtils) {
+        DatabaseUtils databaseUtils, SimpMessagingTemplate messagingTemplate) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
+        this.messagingTemplate = messagingTemplate;
         
 
         // TODO uncomment **ONLY** for debug!!
@@ -64,8 +68,8 @@ public class BoardController {
         if(board == null) {
             return ResponseEntity.badRequest().build();
         }
-
         Board saved = repo.save(board);
+        messagingTemplate.convertAndSend("/topic/boards", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -83,10 +87,12 @@ public class BoardController {
         Board board = repo.findById(boardId).get();
         board.addList(new BoardList(listName));
         Board saved = repo.save(board);
+        messagingTemplate.convertAndSend("/topic/boards", saved);
         int index = saved.getLists().size()-1;
         Long listId = saved.getLists().get(index).getId();
         return ResponseEntity.ok(listId);
     }
+
 
     @PostMapping(path = "/list/delete/{id}")
     public ResponseEntity<Board> deleteList(@PathVariable("id") long boardId,
@@ -101,6 +107,7 @@ public class BoardController {
         Board board = repo.findById(boardId).get();
         board.getLists().removeIf(x -> Objects.equals(x.getId(), listId));
         repo.save(board);
+        messagingTemplate.convertAndSend("/topic/boards", board);
         return ResponseEntity.ok(board);
     }
 }
