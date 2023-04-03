@@ -4,21 +4,17 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class DashboardCtrl implements Initializable {
@@ -46,6 +42,7 @@ public class DashboardCtrl implements Initializable {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:Indentation")
     public void initialize(URL location, ResourceBundle resources) {
         boardKey.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getId().toString())
@@ -54,9 +51,10 @@ public class DashboardCtrl implements Initializable {
                 new SimpleStringProperty(c.getValue().getName())
         );
 
-        Callback<TableColumn<Board, Button>, TableCell<Board, Button>> cellFactory = new Callback<>() {
+        Callback<TableColumn<Board, Button>, TableCell<Board, Button>> cellFactory =
+                new Callback<>() {
             public TableCell<Board, Button> call(TableColumn<Board, Button> param) {
-                final TableCell<Board, Button> cell = new TableCell<Board, Button>() {
+                final TableCell<Board, Button> cell = new TableCell<>() {
                     private final Button deleteButton = new Button("Delete");
 
                     {
