@@ -35,9 +35,9 @@ public class SomeController {
         if(psswd == null || psswd.equals(""))
             return ResponseEntity.ok(false);
 
-        // wait around 1.5 sec to avoid bruteforce attack
+        // wait around 0.5 sec to avoid bruteforce attack
         try {
-            TimeUnit.MILLISECONDS.sleep(1500);
+            TimeUnit.MILLISECONDS.sleep(500);
         }
         catch(Exception e) {
             e.printStackTrace();
