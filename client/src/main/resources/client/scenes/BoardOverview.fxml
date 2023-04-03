@@ -80,8 +80,8 @@
       </ScrollPane>
       <Line endX="1920.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
       <Button fx:id="enter" layoutX="1207.0" layoutY="25.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="74.0" text="Enter" AnchorPane.leftAnchor="1207.0" AnchorPane.topAnchor="25.0" />
-      <Button fx:id="disconnect" layoutX="163.0" layoutY="30.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Disconnect" AnchorPane.leftAnchor="163.0" AnchorPane.topAnchor="25.0" />
-      <Button fx:id="reset" layoutX="322.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Reset storage" />
-      <Button fx:id="reset1" layoutX="480.0" layoutY="25.0" mnemonicParsing="false" onAction="#adminLogin" prefHeight="43.0" prefWidth="147.0" text="Dashboard" />
+      <Button fx:id="disconnect" onAction="#disconnect" layoutX="163.0" layoutY="30.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Disconnect" AnchorPane.leftAnchor="163.0" AnchorPane.topAnchor="25.0" />
+      <Button fx:id="reset" onAction="#resetFile" layoutX="322.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Reset storage" />
+      <Button fx:id="adminLogin" onAction="#adminLogin" layoutX="480.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Dashboard" />
    </children>
 </AnchorPane>
