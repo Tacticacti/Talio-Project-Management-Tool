@@ -1,13 +1,15 @@
 package commons;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
-import javax.persistence.GenerationType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -44,8 +46,9 @@ public class Card implements Serializable {
     public String description;
     @ElementCollection
     public List<String> subtasks;
-    @ElementCollection
-    public List<String> tags;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<Tag> tags;
     private int completedSubs;
 
     @ElementCollection
@@ -104,7 +107,7 @@ public class Card implements Serializable {
         return subtasks;
     }
 
-    public List<String> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
@@ -154,12 +157,13 @@ public class Card implements Serializable {
 
     }
     //add a tag to card
-    public void addTag(String tag){
+    public void addTag(Tag tag){
         tags.add(tag);
+        tag.card=this;
     }
 
     //remove a tag from card
-    public void removeTag(String tag){
+    public void removeTag(Tag tag){
         tags.remove(tag);
     }
      //equals method
@@ -194,9 +198,14 @@ public class Card implements Serializable {
         subtasks.add(index, s);
     }
 
+    public String getSubtaskAtIndex(int index){
+        return subtasks.get(index);
+    }
+
     public void setCompletedSubs(int number){
         completedSubs = number;
     }
+
     public void setSubtasks(List<String> subtasks){
         this.subtasks = subtasks;
     }

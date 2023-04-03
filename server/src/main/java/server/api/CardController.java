@@ -2,6 +2,7 @@ package server.api;
 import commons.Card;
 
 //import commons.Tag;
+import commons.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import server.database.CardRepository;
 //import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -43,15 +45,39 @@ public class CardController {
         return ResponseEntity.ok(saved);
     }
 
-//    @PostMapping(path={"", "/addTag"})
-//    public ResponseEntity<Tag> addTag(@RequestBody Tag tag){
-//        if(tag == null) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//
-//        Tag saved = repo.save(tag);
-//        return ResponseEntity.ok(saved);
-//    }
+    @PostMapping(path={"", "/addTag/{id}"})
+    public ResponseEntity<Card> addTag(@RequestBody Tag tag, @PathVariable("id") long cardId){
+        if(tag == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        Optional<Card> card =repo.findById(cardId);
+        if(card.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Card update = card.get();
+        update.addTag(tag);
+        Card cardSaved= repo.save(update);
+
+        return ResponseEntity.ok(cardSaved);
+    }
+
+    @PostMapping(path={"", "/deleteTag/{id}"})
+    public ResponseEntity<Card> deleteTag(@RequestBody Tag tag, @PathVariable("id") long cardId){
+        if(tag == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        Optional<Card> card =repo.findById(cardId);
+        if(card.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+
+        Card update = card.get();
+        update.removeTag(tag);
+        Card cardSaved= repo.save(update);
+
+        return ResponseEntity.ok(cardSaved);
+    }
 
     @PostMapping(path="/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") long cardId){

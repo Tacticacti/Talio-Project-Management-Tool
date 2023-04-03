@@ -21,6 +21,18 @@ class CardTest {
         assertEquals(0, c1.getCompletedSubs());
         assertTrue(c1.getCompletedTasks().isEmpty());
     }
+
+    @Test
+    void constructorTest(){
+        Card c1 = new Card("Slides");
+        assertEquals("Slides", c1.getTitle());
+        assertTrue(c1.getSubtasks().isEmpty());
+        assertTrue(c1.getTags().isEmpty());
+        assertEquals(0, c1.getCompletedSubs());
+        assertTrue(c1.getCompletedTasks().isEmpty());
+    }
+
+
     @Test
     void getTitle() {
         Card c1 = new Card("Slides", "prep slide3-5");
@@ -45,9 +57,10 @@ class CardTest {
     @Test
     void getTags() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        c1.addTag("animals");
-        List<String> tags = new ArrayList<>();
-        tags.add("animals");
+        Tag tag= new Tag("animals");
+        c1.addTag(tag);
+        List<Tag> tags = new ArrayList<>();
+        tags.add(tag);
         assertEquals(tags, c1.getTags());
 
     }
@@ -171,9 +184,10 @@ class CardTest {
     @Test
     void addTag() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        c1.addTag("animals");
-        List<String> tags = new ArrayList<>();
-        tags.add("animals");
+        Tag t = new Tag("");
+        c1.addTag(t);
+        List<Tag> tags = new ArrayList<>();
+        tags.add(t);
         assertEquals(tags, c1.getTags());
 
     }
@@ -181,12 +195,13 @@ class CardTest {
     @Test
     void removeTag() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        c1.addTag("animals");
-        List<String> tags = new ArrayList<>();
-        tags.add("animals");
+        Tag tag= new Tag("animals");
+        c1.addTag(tag);
+        List<Tag> tags = new ArrayList<>();
+        tags.add(tag);
         assertEquals(tags, c1.getTags());
-        c1.removeTag("animals");
-        tags.remove("animals");
+        c1.removeTag(tag);
+        tags.remove(tag);
         assertEquals(tags, c1.getTags());
     }
 
@@ -205,13 +220,61 @@ class CardTest {
     }
 
     @Test
-    void testToString(){
+    void setBoardList(){
+        Card card = new Card("Card title", "Card description");
+        BoardList boardList = new BoardList("Board");
+        card.setBoardList(boardList);
+        assertEquals(boardList, card.getBoardList());
+    }
+
+    @Test
+    void SubtaskAtIndex(){
         Card card = new Card("Card title", "Card description");
         card.getSubtasks().add("Subtask 1");
+        card.getSubtasks().add("Subtask 3");
+        card.addSubtaskAtIndex("Subtask 2", 1);
+        assertEquals("Subtask 2", card.getSubtaskAtIndex(1));
+    }
+
+    @Test
+    void setSubtasks(){
+        Card card = new Card("Card title", "Card description");
+        List<String> subtasks= new ArrayList<>();
+        subtasks.add("Subtask 1");
+        subtasks.add("Subtask 2");
+
+        card.setSubtasks(subtasks);
+        assertEquals(subtasks, card.getSubtasks());
+    }
+
+    @Test
+    void completedTasksTest(){
+        Card c1 = new Card("Slides", "prep slide 3-5");
+        List<String> completed= new ArrayList<>();
+        completed.add("Subtask 1");
+        completed.add("Subtask 2");
+        c1.setCompletedTasks(completed);
+
+        assertEquals(completed, c1.getCompletedTasks());
+    }
+    @Test
+    void CompletedSubsTest(){
+        Card card = new Card("Card title", "Card description");
+        card.getSubtasks().add("Subtask 1");
+        card.getSubtasks().add("Subtask 3");
+
+        card.setCompletedSubs(2);
+        assertEquals(2, card.getCompletedSubs());
+    }
+    @Test
+    void testToString(){
+        Card card = new Card("Card title", "Card description");
+        Tag tag=new Tag("tag");
+        card.getSubtasks().add("Subtask 1");
         card.getSubtasks().add("Subtask 2");
-        card.getTags().add("Tag 1");
-        card.getTags().add("Tag 2");
-        card.getTags().add("Tag 3");
+        card.getTags().add(tag);
+//        card.getTags().add("Tag 2");
+//        card.getTags().add("Tag 3");
 
         String result = card.toString();
         String expected = new ToStringBuilder(card, MULTI_LINE_STYLE)

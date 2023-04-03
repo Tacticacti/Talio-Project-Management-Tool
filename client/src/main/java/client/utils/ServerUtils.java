@@ -173,6 +173,7 @@ public class ServerUtils {
     }
 
     public Board addTagToBoard(Long boardListId, Tag tag) {
+        System.out.println("reached tag");
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/addTag/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
@@ -180,12 +181,28 @@ public class ServerUtils {
                 .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
     }
 
-    public Board addTagToCard(Long cardId, Tag tag) {
+    public Board deleteTagToBoard(Long boardListId, Tag tag) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/addTag/" + cardId.toString()) //
+                .target(server).path("api/boards/tag/delete/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
+    }
+
+    public Card addTagToCard(Long cardId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/cards/addTag/" + cardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Card.class);
+    }
+
+    public Card deleteTagToCard(Long cardId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/cards/deleteTag/" + cardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Card.class);
     }
 
 

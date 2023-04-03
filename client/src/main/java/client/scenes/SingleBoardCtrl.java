@@ -831,27 +831,7 @@ public class SingleBoardCtrl implements Initializable {
     public void placeTag(HBox parent, Tag tag){
         String tagTitle = tag.getTitle();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
-        try {
-            Node tagNode = fxmlLoader.load();
-            Border border = new Border(new BorderStroke(Paint.valueOf("black")
-                    , BorderStrokeStyle.DASHED
-                    , new CornerRadii(10), BorderWidths.DEFAULT));
-            ((AnchorPane) tagNode).setBorder(border);
-            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), tagNode);
-            scaleTransition.setToX(1.1);
-            scaleTransition.setToY(1.1);
-            tagNode.setOnMouseEntered(event -> {
-                scaleTransition.play();
-            });
-            tagNode.setOnMouseExited(event -> {
-                scaleTransition.stop();
-                tagNode.setScaleX(1);
-                tagNode.setScaleY(1);
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
     }
     public void setServer(ServerUtils server){
         this.server = server;
