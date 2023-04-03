@@ -17,6 +17,7 @@ dependencies {
 	implementation project(":commons")
 	implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: '+'
 	implementation group: 'javax.websocket', name: 'javax.websocket-client-api', version: '+'
+	implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
 
 
 	implementation group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '3.0.3'
