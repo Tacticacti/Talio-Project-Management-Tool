@@ -21,8 +21,8 @@ Does anyone have any additions to the agenda?
 Present potentially shipping product.
 
 # 15:34 - 15:39 Question round
-How do we test server utils?
-Do we need explicit endpoint testing?
+How do we test server utils?\
+Do we need explicit endpoint testing?\
 Does anyone have any other questions to add before the meeting closes? Feel free to ask anything!
 
 # 15:39 - 15:40 Closure
