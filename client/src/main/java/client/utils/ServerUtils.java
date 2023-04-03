@@ -66,8 +66,8 @@ public class ServerUtils {
     private String psswd;
     public LocalUtils localUtils;
 
-    // returns true if connection is succesful 
-    // flase otherwise
+    // returns true if connection is successful
+    // false otherwise
     public boolean check(String addr) throws IOException {
 
         boolean res = false;
@@ -98,6 +98,7 @@ public class ServerUtils {
 
     public void setPassword(String psswd) {
         this.psswd = psswd;
+        System.out.println("setting psswd: " + this.psswd);
     }
 
     public Board getBoardById(Long id) {
@@ -194,6 +195,7 @@ public class ServerUtils {
     }
 
     public boolean deleteBoardById(Long id) {
+        System.out.println("sending delete by id: " + psswd + " " + id.toString());
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server)
                 .path("api/boards/" + id.toString())
