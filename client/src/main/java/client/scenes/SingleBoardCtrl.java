@@ -24,7 +24,19 @@ import java.net.URL;
 
 import javafx.scene.Node;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextInputDialog;
+
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.Clipboard;
@@ -51,7 +63,17 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.Optional;
+
+
+
+
+
 
 
 public class SingleBoardCtrl implements Initializable {
@@ -125,25 +147,30 @@ public class SingleBoardCtrl implements Initializable {
         String currentPassword, newPassword, confirmPassword;
 
         // If the board has a password and is unlocked
-        if (current_board.getPassword() != null && !current_board.getPassword().isEmpty() && isUnlocked) {
+        if (current_board.getPassword() != null
+                && !current_board.getPassword().isEmpty() && isUnlocked) {
             currentPassword = promptForPassword("Enter Current Password", "Current Password:");
             if (currentPassword == null) {
                 return;
             }
             if (!current_board.getPassword().equals(currentPassword)) {
-                showAlert(Alert.AlertType.ERROR, "Incorrect Password", "The current password entered is incorrect.");
+                showAlert(Alert.AlertType.ERROR,
+                        "Incorrect Password", "The current password entered is incorrect.");
                 return;
             }
         }
 
         // If the board has a password and is locked
-        if (current_board.getPassword() != null && !current_board.getPassword().isEmpty() && !isUnlocked) {
-            currentPassword = promptForPassword("Unlock Board", "Enter password to unlock the board:");
+        if (current_board.getPassword() != null
+                && !current_board.getPassword().isEmpty() && !isUnlocked) {
+            currentPassword =
+                    promptForPassword("Unlock Board", "Enter password to unlock the board:");
             if (currentPassword == null) {
                 return;
             }
             if (!current_board.getPassword().equals(currentPassword)) {
-                showAlert(Alert.AlertType.ERROR, "Incorrect Password", "The password entered is incorrect.");
+                showAlert(Alert.AlertType.ERROR,
+                        "Incorrect Password", "The password entered is incorrect.");
                 return;
             }
             setIsUnlocked(true);
@@ -162,13 +189,15 @@ public class SingleBoardCtrl implements Initializable {
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            showAlert(Alert.AlertType.ERROR, "Password Mismatch", "The new password and confirmation do not match.");
+            showAlert(Alert.AlertType.ERROR,
+                    "Password Mismatch", "The new password and confirmation do not match.");
             return;
         }
 
         current_board.setPassword(newPassword);
         server.addBoard(current_board);
-        showAlert(Alert.AlertType.INFORMATION, "Password Updated", "The board password has been updated.");
+        showAlert(Alert.AlertType.INFORMATION,
+                "Password Updated", "The board password has been updated.");
         updatePasswordButtonImage();
     }
 
@@ -183,7 +212,8 @@ public class SingleBoardCtrl implements Initializable {
         ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 
-        dialog.setResultConverter(button -> button == okButtonType ? passwordField.getText() : null);
+        dialog.setResultConverter(button ->
+                button == okButtonType ? passwordField.getText() : null);
         return dialog.showAndWait().orElse(null);
     }
 
@@ -308,7 +338,7 @@ public class SingleBoardCtrl implements Initializable {
             alert.showAndWait();
             return true;
         } else {
-        return false; }
+            return false; }
     }
 
 

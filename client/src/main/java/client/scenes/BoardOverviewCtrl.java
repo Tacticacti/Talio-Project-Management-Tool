@@ -14,7 +14,13 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -25,7 +31,11 @@ import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Optional;
 
 import static client.scenes.MainCtrl.primaryStage;
 import static com.google.inject.Guice.createInjector;
@@ -185,7 +195,8 @@ public class BoardOverviewCtrl implements Initializable {
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setTitle("Enter Board Password");
                     dialog.setHeaderText("This board is password protected.");
-                    dialog.setContentText("Please enter the password, or leave empty for Read-Only mode:");
+                    dialog.setContentText("Please enter the password," +
+                            " or leave empty for Read-Only mode:");
 
                     PasswordField passwordField = new PasswordField();
                     passwordField.setPromptText("Password");
@@ -194,14 +205,17 @@ public class BoardOverviewCtrl implements Initializable {
                     ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
                     dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 
-                    dialog.setResultConverter(button -> button == okButtonType ? passwordField.getText() : null);
+                    dialog.setResultConverter(button ->
+                            button == okButtonType ? passwordField.getText() : null);
                     Optional<String> result = dialog.showAndWait();
 
                     if (result.isPresent() && result.get().equals(board.getPassword())) {
                         addJoinedBoard(board);
                         localUtils.add(board.getId());
                         enterBoard(board);
-                    } else if (result.isPresent() && !result.get().isEmpty() && !result.get().equals(board.getPassword())) {
+                    } else if (result.isPresent()
+                            && !result.get().isEmpty()
+                            && !result.get().equals(board.getPassword())) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.initModality(Modality.APPLICATION_MODAL);
                         alert.setHeaderText("Error joining board!");
