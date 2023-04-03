@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
+import commons.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +33,7 @@ public class BoardControllerTest {
     private Board b1, b2;
     private BoardList bl1;
     private Card c1, c2;
+    private Tag t1, t2;
 
     @BeforeEach
     public void setup() {
@@ -51,6 +53,9 @@ public class BoardControllerTest {
         c2 = new Card("c2");
         c2.description = "new description";
         c2.subtasks = List.of("st1", "st2");
+
+        t1 = new Tag("tag1");
+        t2 = new Tag("tag2");
     }
 
     @Test
@@ -120,5 +125,17 @@ public class BoardControllerTest {
         controller.add(b1);
         var ret = controller.deleteList(0L, 0L);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void addTagToId() {
+        controller.add(b1);
+        var ret = controller.addTagToId(99L, t1);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTagToId(0L, t1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        // TODO
+        // assertTrue(ret.getBody().getTags().contains(t1));
     }
 }
