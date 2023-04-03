@@ -63,6 +63,7 @@ public class ServerUtils {
 
     // private static String server = "http://localhost:8080/";
     private static String server = "";
+    private String psswd;
     public LocalUtils localUtils;
 
     // returns true if connection is succesful 
@@ -93,6 +94,10 @@ public class ServerUtils {
     public void disconnect() {
         // TODO probably close sockets here
         server = "";
+    }
+
+    public void setPassword(String psswd) {
+        this.psswd = psswd;
     }
 
     public Board getBoardById(Long id) {
@@ -188,12 +193,12 @@ public class ServerUtils {
         }
     }
 
-    public void deleteBoardById(Long id) {
-        Response response = ClientBuilder.newClient(new ClientConfig())
+    public boolean deleteBoardById(Long id) {
+        return ClientBuilder.newClient(new ClientConfig())
                 .target(server)
                 .path("api/boards/" + id.toString())
                 .request()
-                .delete();
+                .post(Entity.entity(psswd, APPLICATION_JSON), boolean.class);
     }
 
     public Card deleteCard(Long cardId) {
