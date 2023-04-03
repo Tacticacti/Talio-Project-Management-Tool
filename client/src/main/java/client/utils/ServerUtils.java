@@ -198,7 +198,7 @@ public class ServerUtils {
         System.out.println("sending delete by id: " + psswd + " " + id.toString());
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server)
-                .path("api/boards/" + id.toString())
+                .path("api/boards/delete/" + id.toString())
                 .request()
                 .post(Entity.entity(psswd, APPLICATION_JSON), boolean.class);
     }
