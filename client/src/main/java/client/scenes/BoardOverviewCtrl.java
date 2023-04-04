@@ -14,9 +14,14 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -27,10 +32,11 @@ import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Optional;
 
 import static client.scenes.MainCtrl.primaryStage;
 import static com.google.inject.Guice.createInjector;
@@ -44,7 +50,7 @@ public class BoardOverviewCtrl implements Initializable {
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
     private Set<Long> drawnBoards;
-    private Set<Node> boardsNodes;
+    static Set<Node> boardsNodes;
 
     @FXML
     private Button createBoard;
@@ -97,6 +103,8 @@ public class BoardOverviewCtrl implements Initializable {
             Button btn =  (Button) board.lookup("#enterButton");
             btn.setOnAction(event -> {
                 try {
+                    addJoinedBoard(new_board);
+                    localUtils.add(new_board.getId());
                     enterBoard(new_board);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -104,6 +112,8 @@ public class BoardOverviewCtrl implements Initializable {
             });
 
             // enter board after creating it by default
+            addJoinedBoard(new_board);
+            localUtils.add(new_board.getId());
             enterBoard(new_board);
         }
         // create a new row in vbox
@@ -128,6 +138,8 @@ public class BoardOverviewCtrl implements Initializable {
             Button btn =  (Button) board.lookup("#enterButton");
             btn.setOnAction(event -> {
                 try {
+                    addJoinedBoard(new_board);
+                    localUtils.add(new_board.getId());
                     enterBoard(new_board);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -135,30 +147,28 @@ public class BoardOverviewCtrl implements Initializable {
             });
 
             // enter board after creating it by default
+            addJoinedBoard(new_board);
+            localUtils.add(new_board.getId());
             enterBoard(new_board);
         }
 
     }
 
     private void enterBoard(Board new_board) throws IOException {
-
         System.out.println(server.getBoards());
 
         primaryStage.setTitle("Board");
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
-        //var singleBoardPair = FXML.load(SingleBoardCtrl.class, new_board,
-               // "client", "scenes", "SingleBoard.fxml");
-        System.out.println(server);
-        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl);
+
+        // Check if the board is already joined
+        boolean isUnlocked = drawnBoards.contains(new_board.getId());
+
+        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl, isUnlocked);
         singleBoardCtrl.setBoard(new_board);
         loader.setController(singleBoardCtrl);
-       // var singleBoard = singleBoardPair.getValue();
+
         var singleBoard = (Parent) loader.load();
-
-        //singleBoard.getRoot().setController(singleBoardCtrl);
-
-
 
         Scene new_scene = new Scene(singleBoard);
         TextField board_name = (TextField) new_scene.lookup("#board_name");
@@ -166,47 +176,88 @@ public class BoardOverviewCtrl implements Initializable {
         board_name.setText(new_board.getName());
         System.out.println(new_board.getName());
 
-
-            //primaryStage.setScene(new Scene(loaded_board.getValue()));
-            // build board from board
-
         primaryStage.setScene(new_scene);
 
         System.out.println(new_scene);
-        //System.out.println();
-
-
     }
 
 
     public void onJoinBoard() throws IOException {
         String text = search_box.getText();
+        Boolean boardFound = false;
 
         // debug
         System.out.println(server.getBoards());
 
-        var added_board = false;
-
         for (Board board : server.getBoards()) {
             if (board.getId().toString().equals(text) &&
                     !drawnBoards.contains(board.getId())) {
-                addJoinedBoard(board);
-                localUtils.add(board.getId());
-                added_board = true;
+                boardFound = true;
+                // check if board is password protected
+                if (board.getPassword() != null) {
+                    // prompt user for password
+                    Dialog<String> dialog = new Dialog<>();
+                    dialog.setTitle("Enter Board Password");
+                    dialog.setHeaderText("This board is password protected.");
 
-                enterBoard(board);
+                    Label promptLabel = new Label("Please enter the password," +
+                            " or leave empty for Read-Only mode:");
+                    PasswordField passwordField = new PasswordField();
+                    passwordField.setPromptText("Password");
+
+                    VBox vbox = new VBox();
+                    vbox.getChildren().addAll(promptLabel, passwordField);
+                    vbox.setSpacing(10);
+
+                    dialog.getDialogPane().setContent(vbox);
+
+                    ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                    dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+                    dialog.setResultConverter(button ->
+                            button == okButtonType ? passwordField.getText() : null);
+
+                    Optional<String> result = dialog.showAndWait();
+
+
+                    if (result.isPresent() && result.get().equals(board.getPassword())) {
+                        addJoinedBoard(board);
+                        localUtils.add(board.getId());
+                        enterBoard(board);
+                    } else if (result.isPresent()
+                            && !result.get().isEmpty()
+                            && !result.get().equals(board.getPassword())) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setHeaderText("Error joining board!");
+                        alert.setContentText("Invalid password for password-protected board.");
+                        alert.showAndWait();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setHeaderText("Read-Only Mode");
+                        alert.setContentText("You are now entering the board in Read-Only mode.");
+                        alert.showAndWait();
+
+                        enterBoard(board);
+                    }
+                } else {
+                    addJoinedBoard(board);
+                    localUtils.add(board.getId());
+                    enterBoard(board);
+                }
                 System.out.println("hello!");
             }
         }
 
-        if (!added_board) {
+        // show error message if board not found
+        if (!boardFound) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setHeaderText("Error joining board!");
-            alert.setContentText("invalid ID or already joined board");
+            alert.setContentText("Invalid board ID or board is already joined.");
             alert.showAndWait();
         }
-
     }
 
     public void correctText(Node board) {

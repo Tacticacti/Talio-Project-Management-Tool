@@ -47,18 +47,23 @@
             <Font size="14.0" />
          </font>
       </Button>
-      <Button fx:id="settingsBtn" focusTraversable="false" layoutX="496.0" layoutY="25.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="40.0" style="-fx-padding: 0;">
+      <Button fx:id="settingsBtn" focusTraversable="false" layoutX="500.0" layoutY="25.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="40.0" style="-fx-padding: 0;">
          <font>
             <Font size="18.0" />
          </font>
       </Button>
-      <Line endX="1923.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
-      <Button fx:id="refreshBtn" focusTraversable="false" layoutX="572.0" layoutY="24.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="159.0" style="-fx-padding: 0;" text="refresh">
+      <Button fx:id="passwordBtn" focusTraversable="false" layoutX="550.0" layoutY="25.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="40.0" style="-fx-padding: 0;">
          <font>
             <Font size="18.0" />
          </font>
       </Button>
-      <Button fx:id="copyInvite" focusTraversable="false" layoutX="748.0" layoutY="24.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="159.0" style="-fx-padding: 0;" text="copy invite">
+      <Line endX="2000.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
+      <Button fx:id="refreshBtn" focusTraversable="false" layoutX="625.0" layoutY="25.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="150.0" style="-fx-padding: 0;" text="refresh">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="copyInvite" focusTraversable="false" layoutX="800.0" layoutY="25.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="150.0" style="-fx-padding: 0;" text="copy invite">
          <font>
             <Font size="18.0" />
          </font>

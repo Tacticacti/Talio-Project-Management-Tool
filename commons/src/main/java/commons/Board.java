@@ -19,6 +19,7 @@ public class Board {
     private Long id;
 
     private String name;
+    private String password;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     // @JoinColumn(name = "board_id")
@@ -30,9 +31,16 @@ public class Board {
         this.lists = new ArrayList<>();
     }
 
-    // constructor
+    // constructors
     public Board(String name) {
         this.name = name;
+        this.password = null;
+        this.lists = new ArrayList<>();
+    }
+
+    public Board(String name, String password) {
+        this.name = name;
+        this.password = password;
         this.lists = new ArrayList<>();
     }
 
@@ -47,6 +55,14 @@ public class Board {
 
     public String getName() {
         return name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setName(String name) {

@@ -24,15 +24,19 @@ import java.net.URL;
 
 import javafx.scene.Node;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextInputDialog;
+
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.Clipboard;
@@ -59,12 +63,16 @@ import javafx.stage.Modality;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.HashMap;
 import java.util.UUID;
+import java.util.Optional;
+
+
+
+
 
 
 
@@ -82,6 +90,9 @@ public class SingleBoardCtrl implements Initializable {
     private HBox hbox_lists;
     @FXML
     private AnchorPane sb_anchor;
+
+    @FXML
+    private Button passwordBtn;
     @FXML
     private Button settingsBtn;
     private ObservableList<BoardList> lists;
@@ -107,16 +118,21 @@ public class SingleBoardCtrl implements Initializable {
 
     @FXML
     private Button copyInvite;
+    private boolean isUnlocked;
 
 
     @Inject
-    public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl, Boolean isUnlocked) {
         this.mainCtrl = mainCtrl;
         this.server = server;
+        this.isUnlocked = isUnlocked;
     }
 
     public void requestBoardName(TextField text, Long id) throws Exception {
         if(!text.getText().isEmpty() && !Objects.equals(text.getText().trim(), "")) {
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
             String name = text.getText().trim();
             current_board.setName(name);
             System.out.println("set, " + current_board + " to " + name);
@@ -127,20 +143,145 @@ public class SingleBoardCtrl implements Initializable {
         }
     }
 
+    public void requestPasswordChange() {
+        String currentPassword, newPassword, confirmPassword;
+
+        // If the board has a password and is unlocked
+        if (current_board.getPassword() != null
+                && !current_board.getPassword().isEmpty() && isUnlocked) {
+            currentPassword = promptForPassword("Enter Current Password", "Current Password:");
+            if (currentPassword == null) {
+                return;
+            }
+            if (!current_board.getPassword().equals(currentPassword)) {
+                showAlert(Alert.AlertType.ERROR,
+                        "Incorrect Password", "The current password entered is incorrect.");
+                return;
+            }
+        }
+
+        // If the board has a password and is locked
+        if (current_board.getPassword() != null
+                && !current_board.getPassword().isEmpty() && !isUnlocked) {
+            currentPassword =
+                    promptForPassword("Unlock Board", "Enter password to unlock the board:");
+            if (currentPassword == null) {
+                return;
+            }
+            if (!current_board.getPassword().equals(currentPassword)) {
+                showAlert(Alert.AlertType.ERROR,
+                        "Incorrect Password", "The password entered is incorrect.");
+                return;
+            }
+            setIsUnlocked(true);
+            showAlert(Alert.AlertType.INFORMATION, "Board Unlocked", "The board is now unlocked.");
+            return;
+        }
+
+        newPassword = promptForPassword("Enter New Password", "New Password:");
+        if (newPassword == null) {
+            return;
+        }
+
+        confirmPassword = promptForPassword("Confirm New Password", "Confirm New Password:");
+        if (confirmPassword == null) {
+            return;
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            showAlert(Alert.AlertType.ERROR,
+                    "Password Mismatch", "The new password and confirmation do not match.");
+            return;
+        }
+
+        current_board.setPassword(newPassword);
+        server.addBoard(current_board);
+        showAlert(Alert.AlertType.INFORMATION,
+                "Password Updated", "The board password has been updated.");
+        updatePasswordButtonImage();
+    }
+
+    private String promptForPassword(String title, String contentText) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle(title);
+
+        Label promptLabel = new Label(contentText);
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(promptLabel, passwordField);
+        vbox.setSpacing(10);
+
+        dialog.getDialogPane().setContent(vbox);
+
+        ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+        dialog.setResultConverter(button ->
+                button == okButtonType ? passwordField.getText() : null);
+
+        return dialog.showAndWait().orElse(null);
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String contentText) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(contentText);
+        alert.showAndWait();
+    }
+
+
+    public boolean setIsUnlocked(boolean newIsUnlocked) {
+        isUnlocked = newIsUnlocked;
+        return isUnlocked;
+    }
+
+    private void updatePasswordButtonImage() {
+        if (current_board.getPassword() == null
+                || current_board.getPassword().isEmpty()) {
+            ImageView imageUnlocked = new ImageView(getClass()
+                    .getResource("../images/unlocked.png")
+                    .toExternalForm());
+            imageUnlocked.setFitWidth(passwordBtn.getPrefWidth());
+            imageUnlocked.setFitHeight(passwordBtn.getPrefHeight());
+            imageUnlocked.setPreserveRatio(true);
+            passwordBtn.setGraphic(imageUnlocked);
+        } else {
+            ImageView imageLocked = new ImageView(getClass()
+                    .getResource("../images/locked.png")
+                    .toExternalForm());
+            imageLocked.setFitWidth(passwordBtn.getPrefWidth());
+            imageLocked.setFitHeight(passwordBtn.getPrefHeight());
+            imageLocked.setPreserveRatio(true);
+            passwordBtn.setGraphic(imageLocked);
+        }
+    }
+
     @Override
     public void initialize (URL location, ResourceBundle resources){
         ImageView imageView = new ImageView(getClass()
                 .getResource("../images/settings_icon.png")
                 .toExternalForm());
-        newCardBtn = hbox_lists.getChildren().get(0);
         imageView.setFitWidth(settingsBtn.getPrefWidth());
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
+        settingsBtn.setGraphic(imageView);
+        updatePasswordButtonImage();
+
+        newCardBtn = hbox_lists.getChildren().get(0);
         copyInvite.setOnAction(e->{
             copyInvite();
         });
+        passwordBtn.setOnAction(e -> {
+            requestPasswordChange();
+        });
         settingsBtn.setOnAction(e->{
             try {
+                if (checkReadOnlyMode(current_board, isUnlocked)) {
+                    return;
+                }
                 openBoardSettings();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -150,12 +291,14 @@ public class SingleBoardCtrl implements Initializable {
             refresh();
         });
         newListBtn.setOnAction(e->{
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
             createNewList();
         });
         backBtn.setOnAction(e->{
             back();
         });
-        settingsBtn.setGraphic(imageView);
         nodeCardMap = new HashMap<>();
         current_board = new Board();
         board_name.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -173,6 +316,9 @@ public class SingleBoardCtrl implements Initializable {
             }
         });
         newTagBtn.setOnAction(event ->{
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
             addNewTag(tagHbox);
         });
         refresh();
@@ -194,7 +340,24 @@ public class SingleBoardCtrl implements Initializable {
         connectHomeCtrl.showBoardOverview();
     }
 
+    private boolean checkReadOnlyMode(Board board, boolean isUnlocked) {
+        if (!isUnlocked) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Read-only Mode");
+            alert.setHeaderText(null);
+            alert.setContentText("This board is locked. You can only view it in read-only mode.");
+            alert.showAndWait();
+            return true;
+        } else {
+            return false; }
+    }
+
+
+
     public void createNewList() {
+        if (checkReadOnlyMode(current_board, isUnlocked)) {
+            return;
+        }
         ObservableList<Node> board_lists = hbox_lists.getChildren();
 
         Long listId = server.addEmptyList(BoardID, "task list");
@@ -271,6 +434,9 @@ public class SingleBoardCtrl implements Initializable {
             placeCard(parentList, card);
         }
         newCardButton.setOnAction(event ->{
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
             addNewCard(parentList);
         });
         // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
@@ -292,9 +458,13 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void setListTitle(BoardList boardList, Node list) {
+
         TextField title = (TextField) list.lookup("#list_title");
         title.setText(boardList.getName());
         title.setOnAction(event -> {
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
             try {
                 requestNameChange(title, list);
                 refresh();
@@ -308,6 +478,9 @@ public class SingleBoardCtrl implements Initializable {
         });
         title.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if(!newVal) {
+                if (checkReadOnlyMode(current_board, isUnlocked)) {
+                    return;
+                }
                 try {
                     requestNameChange(title, list);
                     refresh();
@@ -327,6 +500,9 @@ public class SingleBoardCtrl implements Initializable {
     {
         Button deleteBoardList =  (Button) list.lookup("#deleteBtn");
         deleteBoardList.setOnAction(event -> {
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
                     // deleting on client(GUI) side
             board_lists.remove(deleteBoardList.getParent());
 
@@ -412,6 +588,12 @@ public class SingleBoardCtrl implements Initializable {
     }
     public void setCardDetail(Node cardNode, VBox parent){
 //        AnchorPane list = (AnchorPane) parent.getParent(); unused variable
+        if (!isUnlocked) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Read-only Mode");
+            alert.setHeaderText(null);
+            alert.setContentText("You cannot edit the content of the card in Read-only Mode.");
+            alert.showAndWait();}
         BoardList boardList = (BoardList) parent.getUserData();
         long listId = boardList.getId();
         Card card = server.getCardById(nodeCardMap.get(cardNode).getId());
@@ -422,17 +604,30 @@ public class SingleBoardCtrl implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         // sets up done card button
         Button doneButton = (Button) root.lookup("#doneTaskButton");
-        doneButton.setOnAction(event -> {setDone(listId, card, event);});
+        doneButton.setOnAction(event -> {
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
+            setDone(listId, card, event);
+        });
 
         //sets up delete card button
         Button deleteButton = (Button) root.lookup("#deleteTaskButton");
-        deleteButton.setOnAction(event -> setDelete(event, cardNode, card, listId));
+        deleteButton.setOnAction(event -> {
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
+            setDelete(event, cardNode, card, listId);
+        });
 
         //sets up cancel card button
         Button cancelButton = (Button) root.lookup("#cancelTaskButton");
-        cancelButton.setOnAction(event -> setCancel(event, cardNode));
+        cancelButton.setOnAction(event -> {
+            setCancel(event, cardNode);
+        });
 
         //sets up card title
         TextField title = (TextField) root.lookup("#taskTitle");
@@ -540,6 +735,9 @@ public class SingleBoardCtrl implements Initializable {
     private void setDragAndDrop(VBox parent, Node cardNode) {
         Long listId = ((BoardList) parent.getUserData()).getId();
         cardNode.setOnDragDetected(event -> {
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
             dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             content = new ClipboardContent();
             content.putString(cardNode.getId() + "; " + ((BoardList) parent.getUserData()).getId());
@@ -716,6 +914,9 @@ public class SingleBoardCtrl implements Initializable {
         // doesn't actually delete anything just goes back to board overview
         Button delbtn =  (Button) customization.lookup("#deleteBoard");
         delbtn.setOnAction(event -> {
+            if (checkReadOnlyMode(current_board, isUnlocked)) {
+                return;
+            }
             // remove this specific board
             Node source = (Node) event.getSource();
             Stage stage = (Stage) source.getScene().getWindow();
@@ -788,6 +989,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public Optional<String> enterTagName(){
+
         TextInputDialog tagInput = new TextInputDialog();
         tagInput.setTitle("Tag name");
         tagInput.setHeaderText("Create new tag");
@@ -816,6 +1018,9 @@ public class SingleBoardCtrl implements Initializable {
 
     public void setUpNewTag(BoardList boardList)
             throws IOException {
+        if (checkReadOnlyMode(current_board, isUnlocked)) {
+            return;
+        }
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
         AnchorPane list = loader.load();
 
