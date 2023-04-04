@@ -77,6 +77,7 @@ public class ServerUtils {
 
     // private static String server = "http://localhost:8080/";
     private static String server = "";
+    private String psswd;
     public LocalUtils localUtils;
 
     StompSession stompSession;
@@ -87,6 +88,8 @@ public class ServerUtils {
     public boolean check(String addr) throws IOException {
 
         boolean res = false;
+
+        addr = "http://" + addr;
 
         URL url = new URL(addr + "/TalioPresent");
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
@@ -100,9 +103,8 @@ public class ServerUtils {
 
     public void setServer(String addr) {
         // TODO open socket connection here
-        server = addr;
-
-        stompSession = connectToSockets("ws://localhost:8080/websocket");
+        server = "http://" + addr;
+        stompSession = connectToSockets("ws://"+addr+"/websocket");
     }
 
     StompSession connectToSockets(String url){
@@ -145,6 +147,11 @@ public class ServerUtils {
         // TODO probably close sockets here
         server = "";
 
+    }
+
+    public void setPassword(String psswd) {
+        this.psswd = psswd;
+        System.out.println("setting psswd: " + this.psswd);
     }
 
     public Board getBoardById(Long id) {
@@ -274,12 +281,13 @@ public class ServerUtils {
         }
     }
 
-    public void deleteBoardById(Long id) {
-        Response response = ClientBuilder.newClient(new ClientConfig())
+    public boolean deleteBoardById(Long id) {
+        System.out.println("sending delete by id: " + psswd + " " + id.toString());
+        return ClientBuilder.newClient(new ClientConfig())
                 .target(server)
-                .path("api/boards/" + id.toString())
+                .path("api/boards/delete/" + id.toString())
                 .request()
-                .delete();
+                .post(Entity.entity(psswd, APPLICATION_JSON), boolean.class);
     }
 
     public Card deleteCard(Long cardId) {
@@ -316,6 +324,19 @@ public class ServerUtils {
                 );
     }
 
+    public boolean checkPsswd(String psswd) {
+        if (psswd == null || psswd.equals("")) {
+            return false;
+        }
+
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("adminLogin")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(psswd, APPLICATION_JSON),
+                        boolean.class);
+    }
+
     private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
     public void registerForCardUpdate(Consumer<Card> cardConsumer){
         EXEC = Executors.newSingleThreadExecutor();
@@ -338,6 +359,7 @@ public class ServerUtils {
         });
 
     }
+
     public void stopExec(){
         EXEC.shutdownNow();
     }

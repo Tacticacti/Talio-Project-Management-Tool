@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import commons.Board;
 import commons.BoardList;
+import server.Admin;
 import commons.Tag;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
@@ -24,16 +25,17 @@ public class BoardController {
 
     private final BoardRepository repo;
 
-    private DatabaseUtils databaseUtils;
+    private final DatabaseUtils databaseUtils;
+    private final Admin admin;
 
     private final SimpMessagingTemplate messagingTemplate;
 
     public BoardController(BoardRepository repo, 
-        DatabaseUtils databaseUtils, SimpMessagingTemplate messagingTemplate) {
+        DatabaseUtils databaseUtils, SimpMessagingTemplate messagingTemplate, Admin admin) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
         this.messagingTemplate = messagingTemplate;
-        
+        this.admin = admin;
 
         // TODO uncomment **ONLY** for debug!!
         /*
@@ -146,5 +148,17 @@ public class BoardController {
         repo.save(board);
         messagingTemplate.convertAndSend("/topic/boards", board);
         return ResponseEntity.ok(board);
+
+    }
+    
+    @PostMapping(path = "/delete/{id}")
+    public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
+            @RequestBody String psswd) {
+
+        if(psswd == null || !psswd.equals(admin.getPassword()))
+            return ResponseEntity.badRequest().build();
+
+        repo.deleteById(boardId);
+        return ResponseEntity.ok(true);
     }
 }

@@ -55,6 +55,9 @@ public class BoardOverviewCtrl implements Initializable {
     @FXML
     private Button disconnect;
 
+    @FXML
+    private Button adminLogin;
+
     private final int MAX_BOARDS_IN_ROW = 5;
 
     //private ArrayList board_scenes = new ArrayList<Board>();
@@ -339,6 +342,11 @@ public class BoardOverviewCtrl implements Initializable {
         }
         refresh();
     }
+
+    public void adminLogin() {
+        mainCtrl.showAdmin();
+    }
+
     public void setServer(ServerUtils server){
         this.server = server;
     }
@@ -350,6 +358,7 @@ public class BoardOverviewCtrl implements Initializable {
         disconnect.setOnAction(e->{
             disconnect();
         });
+        adminLogin.setOnAction(e -> adminLogin());
         createBoard.setOnAction(e->{
             try {
                 createBoard();

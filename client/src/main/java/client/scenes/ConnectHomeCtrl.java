@@ -54,13 +54,14 @@ public class ConnectHomeCtrl {
             return;
         }
         server.setServer(addr);
+        // mainCtrl.showBoardOverview();
         showBoardOverview();
     }
 
     public void connectDefault() {
         boolean ok = false;
         boolean exception = false;
-        String addr = "http://localhost:8080";
+        String addr = "localhost:8080";
         try {
             addr = addr.trim();
             ok = server.check(addr);
