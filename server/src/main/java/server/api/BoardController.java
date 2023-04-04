@@ -6,6 +6,8 @@ import java.util.Objects;
 import commons.Board;
 import commons.BoardList;
 import server.Admin;
+import commons.Tag;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
 
@@ -26,10 +28,13 @@ public class BoardController {
     private final DatabaseUtils databaseUtils;
     private final Admin admin;
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     public BoardController(BoardRepository repo, 
-        DatabaseUtils databaseUtils, Admin admin) {
+        DatabaseUtils databaseUtils, SimpMessagingTemplate messagingTemplate, Admin admin) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
+        this.messagingTemplate = messagingTemplate;
         this.admin = admin;
 
         // TODO uncomment **ONLY** for debug!!
@@ -37,6 +42,24 @@ public class BoardController {
         Board board = databaseUtils.mockSimpleBoard();
         repo.save(board);
         */
+    }
+    @PostMapping(path = "/addTag/{id}")
+    public ResponseEntity<Board> addTagToId(@PathVariable("id") long listId,
+                                                 @RequestBody Tag tag) {
+
+        System.out.println("add tag: " + listId + " " + tag);
+
+        var board = repo.findById(listId);
+
+        if(board.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        //board.get().addTag(tag);
+
+        Board saved = repo.save(board.get());
+
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping(path = {"", "/"})
@@ -66,8 +89,8 @@ public class BoardController {
         if(board == null) {
             return ResponseEntity.badRequest().build();
         }
-
         Board saved = repo.save(board);
+        messagingTemplate.convertAndSend("/topic/boards", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -85,10 +108,12 @@ public class BoardController {
         Board board = repo.findById(boardId).get();
         board.addList(new BoardList(listName));
         Board saved = repo.save(board);
+        messagingTemplate.convertAndSend("/topic/boards", saved);
         int index = saved.getLists().size()-1;
         Long listId = saved.getLists().get(index).getId();
         return ResponseEntity.ok(listId);
     }
+
 
     @PostMapping(path = "/list/delete/{id}")
     public ResponseEntity<Board> deleteList(@PathVariable("id") long boardId,
@@ -103,6 +128,7 @@ public class BoardController {
         Board board = repo.findById(boardId).get();
         board.getLists().removeIf(x -> Objects.equals(x.getId(), listId));
         repo.save(board);
+        messagingTemplate.convertAndSend("/topic/boards", board);
         return ResponseEntity.ok(board);
     }
 

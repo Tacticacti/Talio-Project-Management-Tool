@@ -5,8 +5,13 @@ import commons.BoardList;
 import commons.Card;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.util.Pair;
+<<<<<<< HEAD
 import server.Admin;
+=======
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+>>>>>>> secondary_branch
 import server.DatabaseUtils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -17,7 +22,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
 public class BoardListControllerTest {
+
+
+    private SimpMessagingTemplate messagingTemplate;
+
     private DatabaseUtils databaseUtils;
     private TestBoardListRepository repo;
     private TestBoardRepository boardRepo;
@@ -32,8 +42,14 @@ public class BoardListControllerTest {
         databaseUtils = new DatabaseUtils();
         boardRepo = new TestBoardRepository();
         repo = new TestBoardListRepository();
+<<<<<<< HEAD
         controller = new BoardListController(repo, new DatabaseUtils());
         boardController = new BoardController(boardRepo, new DatabaseUtils(), new Admin());
+=======
+        messagingTemplate = (SimpMessagingTemplate) new TestSimpMessagingTemplate();
+        controller = new BoardListController(repo, new DatabaseUtils(), messagingTemplate);
+        boardController = new BoardController(boardRepo, new DatabaseUtils(), messagingTemplate);
+>>>>>>> secondary_branch
 
         b1 = new Board("b1");
         b1.setId(0L);
@@ -76,7 +92,8 @@ public class BoardListControllerTest {
         controller.addList(bl1);
         var ret = controller.addCardToId(0L, c1);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertTrue(boardController.getById(0L).getBody().getLists().get(0).getCards().contains(c1));
+        assertTrue(boardController.getById(0L)
+                .getBody().getLists().get(0).getCards().contains(c1));
     }
 
     @Test

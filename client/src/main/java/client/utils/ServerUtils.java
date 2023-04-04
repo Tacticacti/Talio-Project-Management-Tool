@@ -18,10 +18,16 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
+import commons.Tag;
 import jakarta.ws.rs.core.Response;
 
 import commons.BoardList;
@@ -32,6 +38,14 @@ import commons.Card;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 class CustomPair<S, T> {
     private S first;
@@ -66,11 +80,16 @@ public class ServerUtils {
     private String psswd;
     public LocalUtils localUtils;
 
-    // returns true if connection is successful
-    // false otherwise
+    StompSession stompSession;
+
+
+    // returns true if connection is succesful 
+    // flase otherwise
     public boolean check(String addr) throws IOException {
 
         boolean res = false;
+
+        addr = "http://" + addr;
 
         URL url = new URL(addr + "/TalioPresent");
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
@@ -84,7 +103,39 @@ public class ServerUtils {
 
     public void setServer(String addr) {
         // TODO open socket connection here
-        server = addr;
+        server = "http://" + addr;
+        stompSession = connectToSockets("ws://"+addr+"/websocket");
+    }
+
+    StompSession connectToSockets(String url){
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
+        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        try{
+            return stomp.connect(url, new StompSessionHandlerAdapter(){}).get();
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        throw new IllegalStateException();
+    }
+
+    public <T> void checkForUpdatesToRefresh(String update, Class<T> tClass, Consumer<T> consumer){
+        stompSession.subscribe(update, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return tClass;
+            }
+
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((T) payload);
+            }
+        });
     }
 
     public String getPath() {
@@ -92,8 +143,10 @@ public class ServerUtils {
     }
 
     public void disconnect() {
+        stompSession.disconnect();
         // TODO probably close sockets here
         server = "";
+
     }
 
     public void setPassword(String psswd) {
@@ -125,6 +178,23 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
     }
+
+    public Board addTagToBoard(Long boardListId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/addTag/" + boardListId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
+    }
+
+    public Board addTagToCard(Long cardId, Tag tag) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/addTag/" + cardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
+    }
+
 
     public Long addEmptyList(Long boardId, String name) {
         return ClientBuilder.newClient(new ClientConfig())
@@ -238,7 +308,7 @@ public class ServerUtils {
     }
 
     public boolean checkPsswd(String psswd) {
-        if(psswd == null || psswd.equals("")) {
+        if (psswd == null || psswd.equals("")) {
             return false;
         }
 
@@ -248,5 +318,32 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(psswd, APPLICATION_JSON),
                         boolean.class);
+    }
+
+    private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public void registerForCardUpdate(Consumer<Card> cardConsumer){
+        EXEC = Executors.newSingleThreadExecutor();
+        EXEC.submit(()->{
+            System.out.println("running");
+            while(!Thread.interrupted()) {
+                var result = ClientBuilder.newClient(new ClientConfig())
+                        .target(server).path("api/lists/deletedtask")
+                        .request(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .get(Response.class);
+                if (result.getStatus() == 204) {
+                    continue;
+                }
+                System.out.println("sent card here");
+                result.getStatus();
+                var card = result.readEntity(Card.class);
+                cardConsumer.accept(card);
+            }
+        });
+
+    }
+
+    public void stopExec(){
+        EXEC.shutdownNow();
     }
 }

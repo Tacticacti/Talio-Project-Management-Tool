@@ -2,12 +2,19 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.scene.input.KeyEvent;
 
 import com.google.inject.Inject;
+
+import java.io.IOException;
+
+import static client.scenes.MainCtrl.primaryStage;
 
 public class ConnectHomeCtrl {
     private final ServerUtils server;
@@ -47,13 +54,14 @@ public class ConnectHomeCtrl {
             return;
         }
         server.setServer(addr);
-        mainCtrl.showBoardOverview();
+        // mainCtrl.showBoardOverview();
+        showBoardOverview();
     }
 
     public void connectDefault() {
         boolean ok = false;
         boolean exception = false;
-        String addr = "http://localhost:8080";
+        String addr = "localhost:8080";
         try {
             addr = addr.trim();
             ok = server.check(addr);
@@ -74,7 +82,27 @@ public class ConnectHomeCtrl {
             return;
         }
         server.setServer(addr);
-        mainCtrl.showBoardOverview();
+        showBoardOverview();
+    }
+
+    public void showBoardOverview(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("BoardOverview.fxml"));
+        BoardOverviewCtrl boardOverviewCtrl = new BoardOverviewCtrl(server, mainCtrl);
+        loader.setController(boardOverviewCtrl);
+        AnchorPane overview;
+        try {
+            overview = (AnchorPane) loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Scene boverview = new Scene(overview);
+        primaryStage.setTitle("Board overview");
+        primaryStage.setScene(boverview);
+        primaryStage.setOnCloseRequest(e->{
+            server.disconnect();
+            server.stopExec();
+        });
+        boardOverviewCtrl.refresh();
     }
 
     public void keyPressed(KeyEvent e) {

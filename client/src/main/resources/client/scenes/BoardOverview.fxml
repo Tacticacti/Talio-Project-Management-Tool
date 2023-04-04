@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="1002.0" prefWidth="1923.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.BoardOverviewCtrl">
+<AnchorPane prefHeight="1002.0" prefWidth="1923.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#403e3e" height="102.0" stroke="BLACK" strokeType="INSIDE" width="1923.0" />
       <TextField fx:id="search_box" layoutX="880.0" layoutY="24.0" prefHeight="62.0" prefWidth="317.0" promptText="Search" style="-fx-border-color: gray; -fx-border-width: 2;" AnchorPane.leftAnchor="880.0" AnchorPane.topAnchor="24.0">
@@ -80,8 +80,13 @@
       </ScrollPane>
       <Line endX="1920.0" endY="100.0" startY="100.0" strokeWidth="5.0" />
       <Button fx:id="enter" layoutX="1207.0" layoutY="25.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="74.0" text="Enter" AnchorPane.leftAnchor="1207.0" AnchorPane.topAnchor="25.0" />
-      <Button fx:id="disconnect" onAction="#disconnect" layoutX="163.0" layoutY="30.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Disconnect" AnchorPane.leftAnchor="163.0" AnchorPane.topAnchor="25.0" />
-      <Button fx:id="reset" onAction="#resetFile" layoutX="322.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Reset storage" />
-      <Button fx:id="adminLogin" onAction="#adminLogin" layoutX="480.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Dashboard" />
+<!--<<<<<<< HEAD-->
+<!--      <Button fx:id="disconnect" onAction="#disconnect" layoutX="163.0" layoutY="30.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Disconnect" AnchorPane.leftAnchor="163.0" AnchorPane.topAnchor="25.0" />-->
+<!--      <Button fx:id="reset" onAction="#resetFile" layoutX="322.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Reset storage" />-->
+<!--=======-->
+      <Button fx:id="disconnect" layoutX="163.0" layoutY="30.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Disconnect" AnchorPane.leftAnchor="163.0" AnchorPane.topAnchor="25.0" />
+      <Button fx:id="reset" layoutX="322.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Reset storage" />
+      <Button fx:id="adminLogin" layoutX="480.0" layoutY="25.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="147.0" text="Dashboard" />
+<!--&gt;>>>>>> secondary_branch-->
    </children>
 </AnchorPane>

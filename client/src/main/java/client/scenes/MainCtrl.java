@@ -56,24 +56,19 @@ public class MainCtrl {
 
 
     public void initialize1(Stage primaryStage, Pair<ConnectHomeCtrl, Parent> homePair,
-                            Pair<BoardOverviewCtrl, Parent> boverviewPair,
-                            Pair<SingleBoardCtrl, Parent> singleBoardPair,
-                            Pair<AddCardCtrl, Parent> addCardPair,
+                            Pair<BoardOverviewCtrl, Parent> boardOverviewCtrlParentPair,
                             Pair<AdminLoginCtrl, Parent> adminLoginPair,
                             Pair<DashboardCtrl, Parent> dashboardPair) {
         try {
             this.primaryStage = primaryStage;
-            this.boardOverviewCtrl = boverviewPair.getKey();
-            this.boverview = new Scene(boverviewPair.getValue());
 
-            this.addCardCtrl = addCardPair.getKey();
-            this.addCard = new Scene(addCardPair.getValue());
+
+            this.boardOverviewCtrl = boardOverviewCtrlParentPair.getKey();
+            this.boverview = new Scene(boardOverviewCtrlParentPair.getValue());
 
             this.connectHomeCtrl = homePair.getKey();
             this.home = new Scene(homePair.getValue());
 
-            this.singleBoardCtrl = singleBoardPair.getKey();
-            this.singleBoard = new Scene(singleBoardPair.getValue());
 
             this.adminLoginCtrl = adminLoginPair.getKey();
             this.adminLogin = new Scene(adminLoginPair.getValue());

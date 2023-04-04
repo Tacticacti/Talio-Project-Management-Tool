@@ -2,18 +2,25 @@ package server.api;
 
 import commons.BoardList;
 import commons.Card;
+import commons.Tag;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.DatabaseUtils;
 import server.database.BoardListRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/lists")
@@ -21,11 +28,14 @@ public class BoardListController {
 
     private final BoardListRepository repo;
     private DatabaseUtils databaseUtils;
+    private SimpMessagingTemplate messagingTemplate;
 
     public BoardListController(BoardListRepository repo,
-                               DatabaseUtils databaseUtils) {
+                               DatabaseUtils databaseUtils
+            , SimpMessagingTemplate messagingTemplate) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @GetMapping(path = {"", "/"})
@@ -48,6 +58,7 @@ public class BoardListController {
         }
 
         BoardList saved = repo.save(bl);
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -65,6 +76,7 @@ public class BoardListController {
         saved.setName(listName);
 
         saved = repo.save(saved);
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
 
@@ -76,8 +88,9 @@ public class BoardListController {
         }
 
         System.out.println("deleting " + listId);
-
+        BoardList bl = repo.getById(listId);
         repo.deleteById(listId);
+        messagingTemplate.convertAndSend("/topic/lists", bl);
         return ResponseEntity.ok().build();
     }
 
@@ -96,6 +109,26 @@ public class BoardListController {
         list.get().addCard(card);
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
+
+        return ResponseEntity.ok(saved);
+    }
+
+    @PostMapping(path = "/addTag/{id}")
+    public ResponseEntity<BoardList> addTagToId(@PathVariable("id") long listId,
+                                                 @RequestBody Tag tag) {
+
+        System.out.println("add tag: " + listId + " " + tag);
+
+        var board = repo.findById(listId);
+
+        if(board.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+      //  board.get().addTag(tag);
+
+        BoardList saved = repo.save(board.get());
 
         return ResponseEntity.ok(saved);
     }
@@ -116,6 +149,10 @@ public class BoardListController {
         list.get().getCards().removeIf(x -> x.getId() == card.getId());
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
+        listeners.forEach((k, l)->{
+            l.accept(card);
+        });
         return ResponseEntity.ok(saved);
     }
 
@@ -148,6 +185,8 @@ public class BoardListController {
         toUpdate.boardList = list.get();
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
+
         return ResponseEntity.ok(saved);
     }
 
@@ -170,6 +209,24 @@ public class BoardListController {
         list.get().getCards().add(index.intValue(), card);
 
         BoardList saved = repo.save(list.get());
+        messagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
+
+    private Map<Object, Consumer<Card>> listeners = new HashMap<>();
+
+    @GetMapping("/deletedtask")
+    public DeferredResult<ResponseEntity<Card>> cardChanges(){
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<Card>>(1000L, noContent);
+        var key = new Object();
+        listeners.put(key, card ->{
+            res.setResult(ResponseEntity.ok(card));
+        });
+        res.onCompletion(()->{
+            listeners.remove(key);
+        });
+        return res;
+    }
+
 }

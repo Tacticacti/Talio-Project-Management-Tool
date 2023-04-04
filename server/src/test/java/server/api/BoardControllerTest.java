@@ -6,18 +6,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
+import commons.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+<<<<<<< HEAD
 import server.Admin;
+=======
+import org.springframework.boot.test.context.SpringBootTest;
+
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+>>>>>>> secondary_branch
 import server.DatabaseUtils;
 
 import java.util.List;
 
+@SpringBootTest
 public class BoardControllerTest {
+
+
+    private SimpMessagingTemplate messagingTemplate;
 
     private DatabaseUtils databaseUtils;
     private TestBoardRepository boardRepo;
@@ -25,12 +37,18 @@ public class BoardControllerTest {
     private Board b1, b2;
     private BoardList bl1;
     private Card c1, c2;
+    private Tag t1, t2;
 
     @BeforeEach
     public void setup() {
         databaseUtils = new DatabaseUtils();
         boardRepo = new TestBoardRepository();
+<<<<<<< HEAD
         controller = new BoardController(boardRepo, new DatabaseUtils(), new Admin());
+=======
+        messagingTemplate = (SimpMessagingTemplate) new TestSimpMessagingTemplate();
+        controller = new BoardController(boardRepo, new DatabaseUtils(), messagingTemplate);
+>>>>>>> secondary_branch
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");
@@ -43,6 +61,9 @@ public class BoardControllerTest {
         c2 = new Card("c2");
         c2.description = "new description";
         c2.subtasks = List.of("st1", "st2");
+
+        t1 = new Tag("tag1");
+        t2 = new Tag("tag2");
     }
 
     @Test
@@ -53,6 +74,7 @@ public class BoardControllerTest {
 
     @Test
     public void addBoard() {
+
         var ret = controller.add(new Board("board"));
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertTrue(boardRepo.calledMethods.contains("save"));
@@ -111,5 +133,17 @@ public class BoardControllerTest {
         controller.add(b1);
         var ret = controller.deleteList(0L, 0L);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void addTagToId() {
+        controller.add(b1);
+        var ret = controller.addTagToId(99L, t1);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTagToId(0L, t1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        // TODO
+        // assertTrue(ret.getBody().getTags().contains(t1));
     }
 }

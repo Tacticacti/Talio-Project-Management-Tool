@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,13 +18,7 @@ public class SomeController {
         this.admin = admin;
     }
 
-    @GetMapping("/")
-    @ResponseBody
-    public String index() {
-        return "Hello world!";
-    }
-
-    @GetMapping(path = "/TalioPresent")
+    @GetMapping(path = {"", "/", "/TalioPresent"})
     public ResponseEntity<String> talioPresenceCheck() {
         return ResponseEntity.ok("Welcome to Talio!");
     }

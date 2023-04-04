@@ -20,9 +20,7 @@ import static com.google.inject.Guice.createInjector;
 import client.scenes.AdminLoginCtrl;
 import client.scenes.DashboardCtrl;
 import client.scenes.MainCtrl;
-import client.scenes.AddCardCtrl;
 import client.scenes.BoardOverviewCtrl;
-import client.scenes.SingleBoardCtrl;
 import client.scenes.ConnectHomeCtrl;
 import com.google.inject.Injector;
 
@@ -40,17 +38,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-        var bOverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes",
+        var boverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes",
 			"BoardOverview.fxml");
-        var addCard = FXML.load(AddCardCtrl.class, "client", "scenes", "AddCard.fxml");
-        var singleBoard = FXML.load(SingleBoardCtrl.class, "client", "scenes", "SingleBoard.fxml");
-        var home = FXML.load(ConnectHomeCtrl.class, "client", "scenes", "ConnectHomePage.fxml");
+//      var addcard = FXML.load(AddCardCtrl.class, "client", "scenes", "AddCard.fxml");
+//      var singleBoard = FXML.load(SingleBoardCtrl.class, "client", "scenes", "SingleBoard.fxml");
+        var home = FXML.load(ConnectHomeCtrl.class
+                , "client", "scenes", "ConnectHomePage.fxml");
         var admin = FXML.load(AdminLoginCtrl.class, "client", "scenes", "AdminLogin.fxml");
         var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
-
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-
-        mainCtrl.initialize1(primaryStage, home, bOverview, singleBoard, addCard, admin, dashboard);
+        mainCtrl.initialize1(primaryStage, home, boverview, admin, dashboard);
     }
 }

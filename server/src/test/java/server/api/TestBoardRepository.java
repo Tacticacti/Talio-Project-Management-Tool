@@ -124,7 +124,8 @@ public class TestBoardRepository implements BoardRepository {
     @Override
     public Optional<Board> findById(Long id) {
         call("findById");
-        return Optional.of(boards.get(id.intValue()));
+        return Optional.ofNullable(id.intValue() >= boards.size() ?
+                null : boards.get(id.intValue()));
     }
 
     @Override

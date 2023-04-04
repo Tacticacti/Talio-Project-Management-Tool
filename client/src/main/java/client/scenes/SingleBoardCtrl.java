@@ -6,8 +6,10 @@ import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
+import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.ScaleTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,20 +18,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 
 
 import java.net.URL;
 
 import javafx.scene.Node;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.Clipboard;
@@ -63,14 +66,18 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-import static client.scenes.MainCtrl.boverview;
-import static client.scenes.MainCtrl.primaryStage;
+
 
 public class SingleBoardCtrl implements Initializable {
-    private final ServerUtils server;
+    private ServerUtils server;
     private final MainCtrl mainCtrl;
     private Long BoardID = 1L;
     private Node newCardBtn;
+
+    @FXML
+    private HBox tagHbox;
+    @FXML
+    private Button newTagBtn;
     @FXML
     private HBox hbox_lists;
     @FXML
@@ -86,7 +93,20 @@ public class SingleBoardCtrl implements Initializable {
     private Map<Node, Card> nodeCardMap;
     private ClipboardContent content;
     private static Dragboard dragboard;
+    @FXML
+    private Button backBtn;
 
+    @FXML
+    private ScrollPane main_pane;
+
+    @FXML
+    private Button newListBtn;
+
+    @FXML
+    private Button refreshBtn;
+
+    @FXML
+    private Button copyInvite;
 
 
     @Inject
@@ -110,12 +130,31 @@ public class SingleBoardCtrl implements Initializable {
     @Override
     public void initialize (URL location, ResourceBundle resources){
         ImageView imageView = new ImageView(getClass()
-            .getResource("../images/settings_icon.png")
-            .toExternalForm());
+                .getResource("../images/settings_icon.png")
+                .toExternalForm());
         newCardBtn = hbox_lists.getChildren().get(0);
         imageView.setFitWidth(settingsBtn.getPrefWidth());
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
+        copyInvite.setOnAction(e->{
+            copyInvite();
+        });
+        settingsBtn.setOnAction(e->{
+            try {
+                openBoardSettings();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        refreshBtn.setOnAction(e->{
+            refresh();
+        });
+        newListBtn.setOnAction(e->{
+            createNewList();
+        });
+        backBtn.setOnAction(e->{
+            back();
+        });
         settingsBtn.setGraphic(imageView);
         nodeCardMap = new HashMap<>();
         current_board = new Board();
@@ -133,10 +172,26 @@ public class SingleBoardCtrl implements Initializable {
                 }
             }
         });
+        newTagBtn.setOnAction(event ->{
+            addNewTag(tagHbox);
+        });
+        refresh();
+        System.out.println(server);
+        server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList->{
+            Platform.runLater(()->{
+                refresh();
+            });
+        });
+        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
+            Platform.runLater(()->{
+                refresh();
+            });
+        });
     }
 
     public void back(){
-        primaryStage.setScene(boverview);
+        ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
+        connectHomeCtrl.showBoardOverview();
     }
 
     public void createNewList() {
@@ -268,26 +323,27 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void setDeleteBoardList(BoardList boardList, ObservableList<Node> board_lists,
-                                    Node list) {
+                                    Node list)
+    {
         Button deleteBoardList =  (Button) list.lookup("#deleteBtn");
         deleteBoardList.setOnAction(event -> {
-                // deleting on client(GUI) side
-                board_lists.remove(deleteBoardList.getParent());
+                    // deleting on client(GUI) side
+            board_lists.remove(deleteBoardList.getParent());
 
-                // deleting list on server side
-                server.removeBoardList(BoardID, boardList.getId());
-                current_board.removeList(boardList);
-                try {
-                    refresh();
-                }
-                catch(Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.initModality(Modality.APPLICATION_MODAL);
-                    alert.setContentText("Error removing list!");
-                    alert.showAndWait();
-                }
+                    // deleting list on server side
+            server.removeBoardList(BoardID, boardList.getId());
+            current_board.removeList(boardList);
+            try {
+                refresh();
             }
-        );
+            catch(Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setContentText("Error removing list!");
+                alert.showAndWait();
+            }
+        });
+
     }
     public void placeCard(VBox parent, Card card){
         String cardTitle = card.getTitle();
@@ -333,7 +389,7 @@ public class SingleBoardCtrl implements Initializable {
                 detail.setEffect(shadow);
                 detail.setStyle(
                         "-fx-cursor:hand;" +
-                        " -fx-background-color: transparent");
+                                " -fx-background-color: transparent");
             });
             detail.setOnMouseExited(event -> {
                 detail.setEffect(null);
@@ -352,7 +408,7 @@ public class SingleBoardCtrl implements Initializable {
             parent.getChildren().add(index, cardNode);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }        
+        }
     }
     public void setCardDetail(Node cardNode, VBox parent){
 //        AnchorPane list = (AnchorPane) parent.getParent(); unused variable
@@ -389,6 +445,8 @@ public class SingleBoardCtrl implements Initializable {
         // sets up sub-task operations
         Button addSubTask = (Button) root.lookup("#addSubtaskButton");
         AddCardCtrl addCardCtrl = fxmlLoader.getController();
+        addCardCtrl.setCard(card);
+        addCardCtrl.setButton(doneButton);
         addSubTask.setOnAction(event ->  addCardCtrl.addSubTask(card));
         if(card.getSubtasks()!=null){
             for(String str: card.getSubtasks()){
@@ -405,6 +463,7 @@ public class SingleBoardCtrl implements Initializable {
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
+
     }
 
     private void setDone(long listId, Card current, ActionEvent event) {
@@ -441,7 +500,7 @@ public class SingleBoardCtrl implements Initializable {
         }
         server.addCard(current);
         updateCardFromList(BoardID, listId, current);
-        
+        //server.stopExec();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         refresh();
@@ -615,9 +674,11 @@ public class SingleBoardCtrl implements Initializable {
                 refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
-                popup.close();
+                System.out.println(popup);
+                //popup.close();
             }
         });
+        server.stopExec();
 
     }
 
@@ -627,6 +688,7 @@ public class SingleBoardCtrl implements Initializable {
         Button cancel = (Button) event.getSource();
         Stage popup = (Stage) cancel.getScene().getWindow();
         popup.close();
+        server.stopExec();
     }
 
 
@@ -659,7 +721,7 @@ public class SingleBoardCtrl implements Initializable {
             Stage stage = (Stage) source.getScene().getWindow();
             stage.close();
 
-            mainCtrl.showBoardOverview();
+            //mainCtrl.showBoardOverview();
         });
 
         Scene scene = new Scene(customization);
@@ -692,9 +754,10 @@ public class SingleBoardCtrl implements Initializable {
         this.BoardID = board.getId();
     }
 
-    public void pullLists(Long id) {
+    public String pullLists(Long id) {
         current_board = server.getBoardById(id);
         lists = FXCollections.observableList(current_board.getLists());
+        return current_board.getName();
     }
 
     public void drawLists() throws IOException {
@@ -707,7 +770,9 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void refresh() {
-        pullLists(BoardID);
+        String name = pullLists(BoardID);
+        if(!name.equals(board_name.getText()))
+            board_name.setText(name);
         try {
             drawLists();
         }
@@ -721,5 +786,77 @@ public class SingleBoardCtrl implements Initializable {
         content.putString(BoardID.toString());
         Clipboard.getSystemClipboard().setContent(content);
     }
+
+    public Optional<String> enterTagName(){
+        TextInputDialog tagInput = new TextInputDialog();
+        tagInput.setTitle("Tag name");
+        tagInput.setHeaderText("Create new tag");
+        tagInput.setContentText("Enter tag");
+        Optional<String> result = tagInput.showAndWait();
+        if (result.isPresent() && result.get().trim().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                    "Tag cannot be empty!", ButtonType.OK);
+            alert.showAndWait();
+
+            return showTitleDialog();
+        }
+        return result;
+
+    }
+
+    public void addNewTag(HBox parent){
+
+        Optional<String> tagTitle = enterTagName();
+        if (tagTitle.isPresent()) {
+            Tag newTag = new Tag(tagTitle.get());
+            placeTag(parent, newTag);
+            server.addTagToBoard(BoardID, newTag);
+        }
+    }
+
+    public void setUpNewTag(BoardList boardList)
+            throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
+        AnchorPane list = loader.load();
+
+        Button newTagBtn =  (Button) list.lookup("#newTagBtn");
+        HBox parentList = (HBox) newTagBtn.getParent();
+        parentList.setUserData(boardList);
+        parentList.setSpacing(5);
+        for(Tag tag: boardList.getTags()){
+            placeTag(parentList, tag);
+        }
+
+    }
+
+    public void placeTag(HBox parent, Tag tag){
+        String tagTitle = tag.getTitle();
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
+        try {
+            Node tagNode = fxmlLoader.load();
+            Border border = new Border(new BorderStroke(Paint.valueOf("black")
+                    , BorderStrokeStyle.DASHED
+                    , new CornerRadii(10), BorderWidths.DEFAULT));
+            ((AnchorPane) tagNode).setBorder(border);
+            ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), tagNode);
+            scaleTransition.setToX(1.1);
+            scaleTransition.setToY(1.1);
+            tagNode.setOnMouseEntered(event -> {
+                scaleTransition.play();
+            });
+            tagNode.setOnMouseExited(event -> {
+                scaleTransition.stop();
+                tagNode.setScaleX(1);
+                tagNode.setScaleY(1);
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void setServer(ServerUtils server){
+        this.server = server;
+    }
+
 }
 

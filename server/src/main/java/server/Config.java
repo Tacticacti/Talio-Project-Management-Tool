@@ -21,12 +21,13 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import server.api.WebSocketController;
 import server.database.BoardListRepository;
+
 import server.database.BoardRepository;
 import server.database.CardRepository;
 
 @Configuration
 @EnableWebSocket
-public class Config implements WebSocketConfigurer {
+public class Config  {
 
     private final CardRepository cardRepository;
     private final BoardListRepository boardListRepository;
@@ -39,14 +40,5 @@ public class Config implements WebSocketConfigurer {
         this.boardListRepository = boardListRepository;
         this.boardRepository = boardRepository;
 
-    }
-
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        WebSocketController webSocketController
-                = new WebSocketController(cardRepository, boardListRepository, boardRepository);
-
-        // Register the WebSocketController for the "/websocket" endpoint
-        registry.addHandler(webSocketController, "/websocket").setAllowedOrigins("*");
     }
 }
