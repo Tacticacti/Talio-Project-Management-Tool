@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringRunner;
 import server.Admin;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -3,6 +3,7 @@ package server.api;
 import commons.BoardList;
 import commons.Card;
 import commons.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import server.DatabaseUtils;
 import server.database.BoardListRepository;
+import server.services.BoardListServiceImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,90 +32,60 @@ public class BoardListController {
     private DatabaseUtils databaseUtils;
     private SimpMessagingTemplate messagingTemplate;
 
+
+    private BoardListServiceImpl boardListService;
+
     public BoardListController(BoardListRepository repo,
                                DatabaseUtils databaseUtils
             , SimpMessagingTemplate messagingTemplate) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
         this.messagingTemplate = messagingTemplate;
+        this.boardListService = new BoardListServiceImpl(repo,messagingTemplate);
     }
 
     @GetMapping(path = {"", "/"})
     public List<BoardList> getAll() {
-        return repo.findAll();
+
+        return boardListService.getAll();
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<BoardList> getById(@PathVariable("id") long id) {
-        if(!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return boardListService.getById(id);
+
     }
 
     @PostMapping(path = "/add")
     public ResponseEntity<BoardList> addList(@RequestBody BoardList bl) {
-        if(bl == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        BoardList saved = repo.save(bl);
-        messagingTemplate.convertAndSend("/topic/lists", saved);
-        return ResponseEntity.ok(saved);
+        return boardListService.addList(bl);
     }
 
     @PostMapping(path = "/changeName/{id}")
     public ResponseEntity<BoardList> changeListsName(@PathVariable("id") long listId,
                                                      @RequestBody String listName) {
 
-        var result = repo.findById(listId);
-
-        if(result.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        BoardList saved = result.get();
-        saved.setName(listName);
-
-        saved = repo.save(saved);
-        messagingTemplate.convertAndSend("/topic/lists", saved);
-        return ResponseEntity.ok(saved);
+        return boardListService.changeName(listId,listName);
     }
 
     @PostMapping(path = "/delete/{id}")
     public ResponseEntity<Void> deleteList(@PathVariable("id") long listId) {
 
-        if(!repo.existsById(listId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        BoardList bl = repo.getById(listId);
-        repo.deleteById(listId);
-        messagingTemplate.convertAndSend("/topic/lists", bl);
-        return ResponseEntity.ok().build();
+        return boardListService.deleteList(listId);
     }
 
     @PostMapping(path = "/add/{id}")
     public ResponseEntity<BoardList> addCardToId(@PathVariable("id") long listId,
-        @RequestBody Card card) {
+                                                 @RequestBody Card card) {
 
-        var list = repo.findById(listId);
-
-        if(list.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        list.get().addCard(card);
-
-        BoardList saved = repo.save(list.get());
-        messagingTemplate.convertAndSend("/topic/lists", saved);
-
-        return ResponseEntity.ok(saved);
+        return boardListService.addCard(listId,card);
     }
 
     @PostMapping(path = "/addTag/{id}")
     public ResponseEntity<BoardList> addTagToId(@PathVariable("id") long listId,
-                                                 @RequestBody Tag tag) {
+                                                @RequestBody Tag tag) {
+
+        System.out.println("add tag: " + listId + " " + tag);
 
         var board = repo.findById(listId);
 
@@ -121,7 +93,7 @@ public class BoardListController {
             return ResponseEntity.badRequest().build();
         }
 
-      //  board.get().addTag(tag);
+        //  board.get().addTag(tag);
 
         BoardList saved = repo.save(board.get());
 
@@ -130,28 +102,19 @@ public class BoardListController {
 
     @PostMapping(path="/deleteCard/{id}")
     public ResponseEntity<BoardList> deleteCardFromId(@PathVariable ("id") long listId,
-            @RequestBody Card card)
-    {
-
-        var list = repo.findById(listId);
-
-        if(list.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        list.get().getCards().removeIf(x -> x.getId() == card.getId());
-
-        BoardList saved = repo.save(list.get());
-        messagingTemplate.convertAndSend("/topic/lists", saved);
+                                                      @RequestBody Card card) {
         listeners.forEach((k, l)->{
             l.accept(card);
         });
-        return ResponseEntity.ok(saved);
+        return boardListService.deleteCard(listId,card);
     }
 
     @PostMapping(path="/update/{id}")
     public ResponseEntity<BoardList> updateCardInId(@PathVariable("id") long listId,
-            @RequestBody Card card){
+                                                    @RequestBody Card card){
+
+        System.out.println("updating card: ");
+        System.out.println(listId + " " + card);
 
         var list = repo.findById(listId);
 
@@ -183,21 +146,9 @@ public class BoardListController {
     public ResponseEntity<BoardList> insertAt(@PathVariable("id") long listId,
                                               @RequestBody Pair<Long, Card> req) {
 
-        var list = repo.findById(listId);
-
-        if(list.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Long index = req.getFirst();
-        Card card = req.getSecond();
-
-        list.get().getCards().add(index.intValue(), card);
-
-        BoardList saved = repo.save(list.get());
-        messagingTemplate.convertAndSend("/topic/lists", saved);
-        return ResponseEntity.ok(saved);
+        return boardListService.insertAt(listId,req);
     }
+
 
     private Map<Object, Consumer<Card>> listeners = new HashMap<>();
 
