@@ -12,7 +12,7 @@ Atendees:       Aleksandra Jach (TA), Bobi Marinov, Eduard Faraon(chair), Eduard
 How is everyone doing?
 
 # 15:17 - 15:18 Announcements
-We have 4 days left until the project repository closes.
+Deadlines extended! We have 7 days left until the project repository closes.
 
 # 15:18 - 15:19 Approval of the agenda
 Does anyone have any additions to the agenda?
