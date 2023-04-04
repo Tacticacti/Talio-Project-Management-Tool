@@ -87,7 +87,6 @@ public class BoardListController {
             return ResponseEntity.badRequest().build();
         }
 
-        System.out.println("deleting " + listId);
         BoardList bl = repo.getById(listId);
         repo.deleteById(listId);
         messagingTemplate.convertAndSend("/topic/lists", bl);
@@ -97,8 +96,6 @@ public class BoardListController {
     @PostMapping(path = "/add/{id}")
     public ResponseEntity<BoardList> addCardToId(@PathVariable("id") long listId,
         @RequestBody Card card) {
-
-        System.out.println("add card: " + listId + " " + card);
 
         var list = repo.findById(listId);
 
@@ -118,8 +115,6 @@ public class BoardListController {
     public ResponseEntity<BoardList> addTagToId(@PathVariable("id") long listId,
                                                  @RequestBody Tag tag) {
 
-        System.out.println("add tag: " + listId + " " + tag);
-
         var board = repo.findById(listId);
 
         if(board.isEmpty()) {
@@ -137,8 +132,6 @@ public class BoardListController {
     public ResponseEntity<BoardList> deleteCardFromId(@PathVariable ("id") long listId,
             @RequestBody Card card)
     {
-
-        System.out.println("delete from: " + listId + " " + card);
 
         var list = repo.findById(listId);
 
@@ -159,10 +152,6 @@ public class BoardListController {
     @PostMapping(path="/update/{id}")
     public ResponseEntity<BoardList> updateCardInId(@PathVariable("id") long listId,
             @RequestBody Card card){
-
-     
-        System.out.println("updating card: ");
-        System.out.println(listId + " " + card);
 
         var list = repo.findById(listId);
 
@@ -202,9 +191,6 @@ public class BoardListController {
 
         Long index = req.getFirst();
         Card card = req.getSecond();
-
-        System.out.println("inserting card: ");
-        System.out.println(listId + " " + card + " at: " + index);
 
         list.get().getCards().add(index.intValue(), card);
 
