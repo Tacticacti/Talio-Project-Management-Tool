@@ -753,6 +753,7 @@ public class SingleBoardCtrl implements Initializable {
         this.current_board = board;
         this.BoardID = board.getId();
     }
+
     public String pullLists(Long id) {
         current_board = server.getBoardById(id);
         lists = FXCollections.observableList(current_board.getLists());

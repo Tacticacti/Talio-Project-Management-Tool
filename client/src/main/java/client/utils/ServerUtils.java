@@ -77,6 +77,7 @@ public class ServerUtils {
 
     // private static String server = "http://localhost:8080/";
     private static String server = "";
+    private String psswd;
     public LocalUtils localUtils;
 
     StompSession stompSession;
@@ -146,6 +147,11 @@ public class ServerUtils {
         // TODO probably close sockets here
         server = "";
 
+    }
+
+    public void setPassword(String psswd) {
+        this.psswd = psswd;
+        System.out.println("setting psswd: " + this.psswd);
     }
 
     public Board getBoardById(Long id) {
@@ -258,12 +264,13 @@ public class ServerUtils {
         }
     }
 
-    public void deleteBoardById(Long id) {
-        Response response = ClientBuilder.newClient(new ClientConfig())
+    public boolean deleteBoardById(Long id) {
+        System.out.println("sending delete by id: " + psswd + " " + id.toString());
+        return ClientBuilder.newClient(new ClientConfig())
                 .target(server)
-                .path("api/boards/" + id.toString())
+                .path("api/boards/delete/" + id.toString())
                 .request()
-                .delete();
+                .post(Entity.entity(psswd, APPLICATION_JSON), boolean.class);
     }
 
     public Card deleteCard(Long cardId) {
@@ -300,6 +307,19 @@ public class ServerUtils {
                 );
     }
 
+    public boolean checkPsswd(String psswd) {
+        if (psswd == null || psswd.equals("")) {
+            return false;
+        }
+
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("adminLogin")
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(psswd, APPLICATION_JSON),
+                        boolean.class);
+    }
+
     private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
     public void registerForCardUpdate(Consumer<Card> cardConsumer){
         EXEC = Executors.newSingleThreadExecutor();
@@ -322,6 +342,7 @@ public class ServerUtils {
         });
 
     }
+
     public void stopExec(){
         EXEC.shutdownNow();
     }

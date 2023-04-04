@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+import server.Admin;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -34,13 +35,17 @@ public class BoardControllerTest {
     private BoardList bl1;
     private Card c1, c2;
     private Tag t1, t2;
+    private Admin admin;
 
     @BeforeEach
     public void setup() {
         databaseUtils = new DatabaseUtils();
         boardRepo = new TestBoardRepository();
         messagingTemplate = (SimpMessagingTemplate) new TestSimpMessagingTemplate();
-        controller = new BoardController(boardRepo, new DatabaseUtils(), messagingTemplate);
+
+        admin = new Admin();
+        controller = new BoardController(boardRepo, new DatabaseUtils(),
+                messagingTemplate, admin);
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");
@@ -137,5 +142,22 @@ public class BoardControllerTest {
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         // TODO
         // assertTrue(ret.getBody().getTags().contains(t1));
+    }
+
+    @Test
+    public void deleteBoard() {
+        controller.add(b1);
+        var ret = controller.deleteBoard(0L, "");
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteBoard(0L, null);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteBoard(0L, admin.getPassword());
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody());
+
+        var ret2 = controller.getById(0L);
+        assertEquals(BAD_REQUEST, ret2.getStatusCode());
     }
 }

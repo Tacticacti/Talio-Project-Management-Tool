@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.util.Pair;
+import server.Admin;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
 
@@ -40,7 +41,8 @@ public class BoardListControllerTest {
         repo = new TestBoardListRepository();
         messagingTemplate = (SimpMessagingTemplate) new TestSimpMessagingTemplate();
         controller = new BoardListController(repo, new DatabaseUtils(), messagingTemplate);
-        boardController = new BoardController(boardRepo, new DatabaseUtils(), messagingTemplate);
+        boardController = new BoardController(boardRepo, new DatabaseUtils(),
+                messagingTemplate, new Admin());
 
         b1 = new Board("b1");
         b1.setId(0L);

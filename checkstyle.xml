@@ -4,7 +4,9 @@
         "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name = "Checker">
+    <module name="SuppressWarningsFilter" />
     <module name="TreeWalker">
+        <module name="SuppressWarningsHolder" />
         <module name="UnusedImports" />
         <module name="AvoidStarImport"/>
         <module name="Indentation" />

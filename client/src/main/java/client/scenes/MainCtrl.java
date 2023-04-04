@@ -44,13 +44,21 @@ public class MainCtrl {
     private ConnectHomeCtrl connectHomeCtrl;
     private Scene home;
 
+    private AdminLoginCtrl adminLoginCtrl;
+    private Scene adminLogin;
+
+    private DashboardCtrl dashboardCtrl;
+    private Scene dashboard;
+
     private final Injector INJECTOR = createInjector(new MyModule());
     private final MyFXML FXML = new MyFXML(INJECTOR);
 
 
 
     public void initialize1(Stage primaryStage, Pair<ConnectHomeCtrl, Parent> homePair,
-                            Pair<BoardOverviewCtrl, Parent> boardOverviewCtrlParentPair) {
+                            Pair<BoardOverviewCtrl, Parent> boardOverviewCtrlParentPair,
+                            Pair<AdminLoginCtrl, Parent> adminLoginPair,
+                            Pair<DashboardCtrl, Parent> dashboardPair) {
         try {
             this.primaryStage = primaryStage;
 
@@ -61,6 +69,12 @@ public class MainCtrl {
             this.connectHomeCtrl = homePair.getKey();
             this.home = new Scene(homePair.getValue());
 
+
+            this.adminLoginCtrl = adminLoginPair.getKey();
+            this.adminLogin = new Scene(adminLoginPair.getValue());
+
+            this.dashboardCtrl = dashboardPair.getKey();
+            this.dashboard = new Scene(dashboardPair.getValue());
 
             showHome();
             primaryStage.show();
@@ -92,31 +106,6 @@ public class MainCtrl {
         }
     }
 
-    //public void showBoard(Board board) throws IOException {
-
-    //    primaryStage.setTitle("Board");
-
-    //    FXMLLoader loader = new FXMLLoader(getClass().getResource("SingleBoard.fxml"));
-
-    //    Node root = loader.load();
-
-
-        //Scene new_scene = new Scene(root);
-
-
-
-        //TextField board_name = (TextField) new_scene.lookup("#board_name");
-
-        //board_name.setText(board.getId().toString());
-
-        //primaryStage.setScene(new Scene(loaded_board.getValue()));
-        // build board from board
-
-    //    primaryStage.setScene(root.getScene());
-    //    System.out.println("after entering board, " + primaryStage);
-    //}
-
-
     public void showBoardOverview(){
         try{
             System.out.println("show overview: " +boverview);
@@ -142,6 +131,16 @@ public class MainCtrl {
 
     public String getPrimaryStage() {
         return primaryStage.toString();
+    }
+
+    public void showAdmin() {
+        primaryStage.setTitle("Admin login");
+        primaryStage.setScene(adminLogin);
+    }
+
+    public void showDashboard() {
+        primaryStage.setTitle("Talio: Admin Dashboard");
+        primaryStage.setScene(dashboard);
     }
 
     private void showErrorDialog(String title, String message) {
