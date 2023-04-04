@@ -21,6 +21,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -195,19 +196,26 @@ public class BoardOverviewCtrl implements Initializable {
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setTitle("Enter Board Password");
                     dialog.setHeaderText("This board is password protected.");
-                    dialog.setContentText("Please enter the password," +
-                            " or leave empty for Read-Only mode:");
 
+                    Label promptLabel = new Label("Please enter the password," +
+                            " or leave empty for Read-Only mode:");
                     PasswordField passwordField = new PasswordField();
                     passwordField.setPromptText("Password");
-                    dialog.getDialogPane().setContent(passwordField);
+
+                    VBox vbox = new VBox();
+                    vbox.getChildren().addAll(promptLabel, passwordField);
+                    vbox.setSpacing(10);
+
+                    dialog.getDialogPane().setContent(vbox);
 
                     ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
                     dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 
                     dialog.setResultConverter(button ->
                             button == okButtonType ? passwordField.getText() : null);
+
                     Optional<String> result = dialog.showAndWait();
+
 
                     if (result.isPresent() && result.get().equals(board.getPassword())) {
                         addJoinedBoard(board);

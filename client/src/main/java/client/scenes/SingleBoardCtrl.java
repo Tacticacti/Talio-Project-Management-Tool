@@ -205,15 +205,22 @@ public class SingleBoardCtrl implements Initializable {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle(title);
 
+        Label promptLabel = new Label(contentText);
         PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText(contentText);
-        dialog.getDialogPane().setContent(passwordField);
+        passwordField.setPromptText("Password");
+
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(promptLabel, passwordField);
+        vbox.setSpacing(10);
+
+        dialog.getDialogPane().setContent(vbox);
 
         ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 
         dialog.setResultConverter(button ->
                 button == okButtonType ? passwordField.getText() : null);
+
         return dialog.showAndWait().orElse(null);
     }
 
@@ -232,7 +239,8 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     private void updatePasswordButtonImage() {
-        if (current_board.getPassword() == null) {
+        if (current_board.getPassword() == null
+                || current_board.getPassword().isEmpty()) {
             ImageView imageUnlocked = new ImageView(getClass()
                     .getResource("../images/unlocked.png")
                     .toExternalForm());
@@ -271,6 +279,9 @@ public class SingleBoardCtrl implements Initializable {
         });
         settingsBtn.setOnAction(e->{
             try {
+                if (checkReadOnlyMode(current_board, isUnlocked)) {
+                    return;
+                }
                 openBoardSettings();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
