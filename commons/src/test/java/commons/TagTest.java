@@ -8,6 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TagTest {
 
     @Test
+    void emptyConstructor(){
+        Tag tag=new Tag();
+        tag.setTitle("Tag");
+        assertEquals("Tag", tag.getTitle());
+    }
+    @Test
     void setTitle() {
         Tag tag= new Tag("Tag");
         tag.setTitle("Tag2");
@@ -18,6 +24,13 @@ class TagTest {
     void getTitle() {
         Tag tag= new Tag("Tag");
         assertEquals("Tag", tag.getTitle());
+    }
+
+    @Test
+    void IdTest(){
+        Tag tag = new Tag("tag");
+        tag.setId(123);
+        assertEquals(123, tag.getId());
     }
 
     @Test

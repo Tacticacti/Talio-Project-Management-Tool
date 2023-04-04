@@ -25,10 +25,15 @@ public class Board {
     // @JoinColumn(name = "board_id")
     private List<BoardList> lists;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tag> tagList;
+
     // added to fix repo.findAll()
     public Board() {
         this.name = "";
         this.lists = new ArrayList<>();
+        this.tagList=new ArrayList<>();
+
     }
 
     // constructors
@@ -42,6 +47,7 @@ public class Board {
         this.name = name;
         this.password = password;
         this.lists = new ArrayList<>();
+        this.tagList=new ArrayList<>();
     }
 
     // getters and setters
@@ -77,13 +83,24 @@ public class Board {
         this.lists.add(list);
     }
 
+    public void addBoardTag(Tag tag) {
+        tag.board = this;
+        this.tagList.add(tag);
+    }
+
     public void removeList(BoardList list) {
         this.lists.remove(list);
+    }
+    public void removeBoardTag(Tag tag) {
+        this.tagList.remove(tag);
     }
 
     // other helper methods
     public List<BoardList> getLists() {
         return lists;
+    }
+    public List<Tag> getTagLists() {
+        return tagList;
     }
 
     public void addToList(int listId, Card card) {

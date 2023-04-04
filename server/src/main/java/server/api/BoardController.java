@@ -43,7 +43,7 @@ public class BoardController {
         repo.save(board);
         */
     }
-    @PostMapping(path = "/addTag/{id}")
+    @PostMapping( "/addTag/{id}")
     public ResponseEntity<Board> addTagToId(@PathVariable("id") long listId,
                                                  @RequestBody Tag tag) {
 
@@ -51,13 +51,14 @@ public class BoardController {
 
         var board = repo.findById(listId);
 
-        if(board.isEmpty()) {
+        if (!repo.existsById(listId)) {
             return ResponseEntity.badRequest().build();
         }
 
-        //board.get().addTag(tag);
+        board.get().addBoardTag(tag);
 
         Board saved = repo.save(board.get());
+        messagingTemplate.convertAndSend("/topic/boards", saved);
 
         return ResponseEntity.ok(saved);
     }
@@ -132,6 +133,24 @@ public class BoardController {
         return ResponseEntity.ok(board);
     }
 
+    @PostMapping(path = "/tag/delete/{id}")
+    public ResponseEntity<Board> deleteTag(@PathVariable("id") long boardId,
+                                            @RequestBody Tag tag) {
+
+        if (!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        System.out.println("deleting " + boardId + " " + tag);
+
+        Board board = repo.findById(boardId).get();
+        board.getTagLists().removeIf(x -> Objects.equals(x.getId(), tag.getId()));
+        repo.save(board);
+        messagingTemplate.convertAndSend("/topic/boards", board);
+        return ResponseEntity.ok(board);
+
+    }
+    
     @PostMapping(path = "/delete/{id}")
     public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
             @RequestBody String psswd) {
