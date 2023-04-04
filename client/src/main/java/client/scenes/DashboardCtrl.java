@@ -86,6 +86,8 @@ public class DashboardCtrl implements Initializable {
     }
 
     public void back() {
-        mainCtrl.showBoardOverview();
+        ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
+        connectHomeCtrl.showBoardOverview();
+        //mainCtrl.showBoardOverview();
     }
 }
