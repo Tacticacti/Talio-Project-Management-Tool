@@ -13,14 +13,11 @@ import org.junit.jupiter.api.Test;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
-<<<<<<< HEAD
 import server.Admin;
-=======
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
->>>>>>> secondary_branch
 import server.DatabaseUtils;
 
 import java.util.List;
@@ -43,12 +40,9 @@ public class BoardControllerTest {
     public void setup() {
         databaseUtils = new DatabaseUtils();
         boardRepo = new TestBoardRepository();
-<<<<<<< HEAD
-        controller = new BoardController(boardRepo, new DatabaseUtils(), new Admin());
-=======
         messagingTemplate = (SimpMessagingTemplate) new TestSimpMessagingTemplate();
-        controller = new BoardController(boardRepo, new DatabaseUtils(), messagingTemplate);
->>>>>>> secondary_branch
+        controller = new BoardController(boardRepo, new DatabaseUtils(),
+                messagingTemplate, new Admin());
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");

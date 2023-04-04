@@ -9,7 +9,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class SomeControllerTest {
     @Test
     public void talioPresentCheck() {
-        SomeController sc = new SomeController();
+        SomeController sc = new SomeController(new Admin());
         var ret = sc.talioPresenceCheck();
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals("Welcome to Talio!", ret.getBody());
