@@ -22,9 +22,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @SpringBootApplication
 @EntityScan(basePackages = { "commons", "server" })
 public class Main {
@@ -33,12 +30,7 @@ public class Main {
         // SpringApplication.run(Main.class, args);
         SpringApplication app = new SpringApplication(Main.class);
 
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("spring.datasource.password", "test123");
-
-        app.setDefaultProperties(properties);
         ConfigurableApplicationContext context = app.run();
-
 
         Logger logger = LoggerFactory.getLogger(Main.class);
 

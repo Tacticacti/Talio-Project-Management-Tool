@@ -47,8 +47,6 @@ public class BoardController {
     public ResponseEntity<Board> addTagToId(@PathVariable("id") long listId,
                                                  @RequestBody Tag tag) {
 
-        System.out.println("add tag: " + listId + " " + tag);
-
         var board = repo.findById(listId);
 
         if (!repo.existsById(listId)) {
@@ -99,9 +97,6 @@ public class BoardController {
     public ResponseEntity<Long> addListToBoard(@PathVariable("id") long boardId,
         @RequestBody String listName) {
 
-        System.out.println("addListToBoard: ");
-        System.out.println(boardId + " " + listName);
-
         if (!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
@@ -123,8 +118,6 @@ public class BoardController {
         if (!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
-
-        System.out.println("deleting " + boardId + " " + listId);
 
         Board board = repo.findById(boardId).get();
         board.getLists().removeIf(x -> Objects.equals(x.getId(), listId));
