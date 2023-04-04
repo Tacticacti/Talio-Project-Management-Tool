@@ -2,7 +2,6 @@ package server.services;
 
 import commons.Board;
 import commons.BoardList;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,8 @@ public class BoardServiceImpl implements BoardService {
 
     SimpMessagingTemplate simpMessagingTemplate;
 
-    public BoardServiceImpl(BoardRepository boardRepository, SimpMessagingTemplate simpMessagingTemplate){
+    public BoardServiceImpl(BoardRepository boardRepository
+            , SimpMessagingTemplate simpMessagingTemplate){
         this.boardRepository = boardRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }

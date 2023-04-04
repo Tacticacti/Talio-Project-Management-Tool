@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import commons.Board;
-import commons.BoardList;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+
 import server.Admin;
 import commons.Tag;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -44,7 +42,7 @@ public class BoardController {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
         this.messagingTemplate = messagingTemplate;
-        this.boardService = new BoardServiceImpl(repo,messagingTemplate);
+        this.boardService = new BoardServiceImpl(repo, messagingTemplate);
         this.admin = admin;
 
         // TODO uncomment **ONLY** for debug!!
@@ -99,7 +97,7 @@ public class BoardController {
     public ResponseEntity<Long> addListToBoard(@PathVariable("id") long boardId,
                                                @RequestBody String listName) {
 
-        return boardService.addListToBoard(boardId,listName);
+        return boardService.addListToBoard(boardId, listName);
     }
 
 
@@ -107,7 +105,7 @@ public class BoardController {
     public ResponseEntity<Board> deleteList(@PathVariable("id") long boardId,
                                             @RequestBody long listId) {
 
-        return boardService.deleteList(boardId,listId);
+        return boardService.deleteList(boardId, listId);
     }
 
 

@@ -1,6 +1,5 @@
 package server.services;
 
-import commons.Board;
 import commons.BoardList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,14 +9,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.database.BoardListRepository;
-import server.database.BoardRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,15 +27,13 @@ class BoardListServiceImplTest {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     private BoardListRepository boardListRepository;
-
     private BoardListServiceImpl boardListService;
 
     @BeforeEach
     void setUp(){
-         boardListRepository = mock(BoardListRepository.class);
-         simpMessagingTemplate = mock(SimpMessagingTemplate.class);
-         boardListService = new BoardListServiceImpl(boardListRepository, simpMessagingTemplate);
-
+        boardListRepository = mock(BoardListRepository.class);
+        simpMessagingTemplate = mock(SimpMessagingTemplate.class);
+        boardListService = new BoardListServiceImpl(boardListRepository, simpMessagingTemplate);
     }
 
     @Test
@@ -53,7 +52,7 @@ class BoardListServiceImplTest {
 
         verify(boardListRepository).findAll();
 
-        assertEquals(boardLists,actualBoards);
+        assertEquals(boardLists, actualBoards);
     }
 
     @Test
@@ -69,7 +68,7 @@ class BoardListServiceImplTest {
         verify(boardListRepository).existsById(1L);
         verify(boardListRepository).findById(1L);
 
-        assertEquals(bl,actBl);
+        assertEquals(bl, actBl);
 
     }
 
@@ -82,9 +81,9 @@ class BoardListServiceImplTest {
         BoardList result = boardListService.addList(bl).getBody();
 
         verify(boardListRepository).save(bl);
-        verify(simpMessagingTemplate).convertAndSend("/topic/lists",bl);
+        verify(simpMessagingTemplate).convertAndSend("/topic/lists", bl);
 
-        assertEquals(result,bl);
+        assertEquals(result, bl);
 
 
     }
@@ -98,9 +97,9 @@ class BoardListServiceImplTest {
         var result = boardListService.addList(null);
 
         verify(boardListRepository, never()).save(bl);
-        verify(simpMessagingTemplate,never()).convertAndSend("/topic/lists",bl);
+        verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists", bl);
 
-        assertEquals(HttpStatus.BAD_REQUEST,result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test

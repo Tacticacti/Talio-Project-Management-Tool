@@ -15,7 +15,8 @@ public class BoardListServiceImpl implements BoardListServices {
     SimpMessagingTemplate simpMessagingTemplate;
     BoardListRepository boardListRepository;
 
-    public BoardListServiceImpl(BoardListRepository boardListRepository, SimpMessagingTemplate simpMessagingTemplate){
+    public BoardListServiceImpl(BoardListRepository boardListRepository
+            , SimpMessagingTemplate simpMessagingTemplate){
         this.boardListRepository = boardListRepository;
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
@@ -43,7 +44,7 @@ public class BoardListServiceImpl implements BoardListServices {
         return ResponseEntity.ok(saved);
     }
 
-    public ResponseEntity<BoardList> changeName(long listId,String listName){
+    public ResponseEntity<BoardList> changeName(long listId, String listName){
         var result = boardListRepository.findById(listId);
 
         if(result.isEmpty()) {
@@ -102,7 +103,7 @@ public class BoardListServiceImpl implements BoardListServices {
         simpMessagingTemplate.convertAndSend("/topic/lists", saved);
         return ResponseEntity.ok(saved);
     }
-    public ResponseEntity<BoardList> insertAt(long listId, Pair<Long,Card> req){
+    public ResponseEntity<BoardList> insertAt(long listId, Pair<Long, Card> req){
         var list = boardListRepository.findById(listId);
 
         if(list.isEmpty()) {

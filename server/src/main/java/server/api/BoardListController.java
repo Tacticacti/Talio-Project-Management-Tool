@@ -3,7 +3,6 @@ package server.api;
 import commons.BoardList;
 import commons.Card;
 import commons.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +40,7 @@ public class BoardListController {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
         this.messagingTemplate = messagingTemplate;
-        this.boardListService = new BoardListServiceImpl(repo,messagingTemplate);
+        this.boardListService = new BoardListServiceImpl(repo, messagingTemplate);
     }
 
     @GetMapping(path = {"", "/"})
@@ -65,7 +64,7 @@ public class BoardListController {
     public ResponseEntity<BoardList> changeListsName(@PathVariable("id") long listId,
                                                      @RequestBody String listName) {
 
-        return boardListService.changeName(listId,listName);
+        return boardListService.changeName(listId, listName);
     }
 
     @PostMapping(path = "/delete/{id}")
@@ -78,7 +77,7 @@ public class BoardListController {
     public ResponseEntity<BoardList> addCardToId(@PathVariable("id") long listId,
                                                  @RequestBody Card card) {
 
-        return boardListService.addCard(listId,card);
+        return boardListService.addCard(listId, card);
     }
 
     @PostMapping(path = "/addTag/{id}")
@@ -106,7 +105,7 @@ public class BoardListController {
         listeners.forEach((k, l)->{
             l.accept(card);
         });
-        return boardListService.deleteCard(listId,card);
+        return boardListService.deleteCard(listId, card);
     }
 
     @PostMapping(path="/update/{id}")
@@ -146,7 +145,7 @@ public class BoardListController {
     public ResponseEntity<BoardList> insertAt(@PathVariable("id") long listId,
                                               @RequestBody Pair<Long, Card> req) {
 
-        return boardListService.insertAt(listId,req);
+        return boardListService.insertAt(listId, req);
     }
 
 
