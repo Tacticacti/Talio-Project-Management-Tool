@@ -135,7 +135,8 @@ public class CardCtrl {
         }
     }
 
-    private void setShortcuts(VBox parent, Node cardNode, ScaleTransition scaleTransition, KeyEvent event) {
+    private void setShortcuts(VBox parent, Node cardNode, ScaleTransition scaleTransition,
+                              KeyEvent event) {
         if (target instanceof AnchorPane) {
             switch (event.getCode()) {
                 case E: editTaskTitleShortcut(parent, scaleTransition);
