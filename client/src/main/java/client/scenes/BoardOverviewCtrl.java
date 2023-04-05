@@ -44,7 +44,7 @@ import static com.google.inject.Guice.createInjector;
 
 public class BoardOverviewCtrl implements Initializable {
     private ServerUtils server;
-    private LocalUtils localUtils;
+    static LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
     private static final Injector INJECTOR = createInjector(new MyModule());

@@ -12,6 +12,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
+import static client.scenes.BoardOverviewCtrl.localUtils;
+import static client.scenes.MainCtrl.boverview;
+import static client.scenes.MainCtrl.primaryStage;
+
 public class BoardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
 
@@ -33,7 +37,7 @@ public class BoardCtrl {
         }
     }
 
-    public void openBoardSettings() throws IOException {
+    public void openBoardSettings(long BoardID, ConnectHomeCtrl connectHomeCtrl) throws IOException {
         System.out.println("running!" + singleBoardCtrl.server.getBoards());
         FXMLLoader loader = new FXMLLoader(
                 singleBoardCtrl.getClass().getResource("customizationPage.fxml"));
@@ -47,8 +51,19 @@ public class BoardCtrl {
             // remove this specific board
             Node source = (Node) event.getSource();
             Stage stage = (Stage) source.getScene().getWindow();
+
+            // remove board with this id from Board Overview
+            System.out.println("remove: " + BoardID);
+            try {
+                localUtils.remove(BoardID);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
             stage.close();
-            //mainCtrl.showBoardOverview();
+
+            connectHomeCtrl.showBoardOverview();
+
         });
         Scene scene = new Scene(customization);
         Stage popUpStage = new Stage();

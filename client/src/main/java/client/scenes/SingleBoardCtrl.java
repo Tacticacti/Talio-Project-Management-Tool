@@ -117,7 +117,7 @@ public class SingleBoardCtrl implements Initializable {
                 if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                     return;
                 }
-                boardCtrl.openBoardSettings();
+                boardCtrl.openBoardSettings(BoardID, new ConnectHomeCtrl(server, mainCtrl));
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -270,7 +270,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void openBoardSettings() throws IOException {
-        boardCtrl.openBoardSettings();
+        boardCtrl.openBoardSettings(BoardID, new ConnectHomeCtrl(server, mainCtrl));
     }
 
     public void setBoard(Board board) {
