@@ -46,9 +46,10 @@
             <Button layoutX="74.0" layoutY="360.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
             <TableView fx:id="boards" prefHeight="353.0" prefWidth="640.0">
               <columns>
-                <TableColumn fx:id="boardKey" prefWidth="150.0" text="board_key" />
-                  <TableColumn fx:id="boardName" prefWidth="278.0" text="board_name" />
-                  <TableColumn fx:id="resetPassword" prefWidth="120.0" text="reset password" />
+                <TableColumn fx:id="boardKey" prefWidth="127.0" text="board_key" />
+                  <TableColumn fx:id="boardName" prefWidth="243.0" text="board_name" />
+                  <TableColumn fx:id="isProtected" prefWidth="72.0" text="protected" />
+                  <TableColumn fx:id="resetPassword" prefWidth="106.0" text="reset password" />
                   <TableColumn fx:id="delete" prefWidth="91.0" text="delete" />
               </columns>
             </TableView>

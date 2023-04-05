@@ -31,6 +31,9 @@ public class DashboardCtrl implements Initializable {
     private TableColumn<Board, String> boardName;
 
     @FXML
+    private TableColumn<Board, String> isProtected;
+
+    @FXML
     private TableColumn<Board, Button> resetPassword;
 
     @FXML
@@ -50,8 +53,14 @@ public class DashboardCtrl implements Initializable {
         boardKey.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getId().toString())
         );
+
         boardName.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getName())
+        );
+
+        isProtected.setCellValueFactory(c ->
+                new SimpleStringProperty(c.getValue().getPassword() == null ?
+                        "No" : "Yes")
         );
 
         Callback<TableColumn<Board, Button>, TableCell<Board, Button>> deleteFactory =
