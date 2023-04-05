@@ -25,8 +25,7 @@ public class ListCtrl {
     }
 
     public void createNewList() {
-        if (singleBoardCtrl.checkReadOnlyMode(
-                singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+        if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
             return;
         }
         ObservableList<Node> board_lists = singleBoardCtrl.hbox_lists.getChildren();
@@ -93,8 +92,7 @@ public class ListCtrl {
             singleBoardCtrl.placeCard(parentList, card);
         }
         newCardButton.setOnAction(event -> {
-            if (singleBoardCtrl.checkReadOnlyMode(
-                    singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+            if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
             singleBoardCtrl.addNewCard(parentList);
@@ -120,8 +118,7 @@ public class ListCtrl {
         TextField title = (TextField) list.lookup("#list_title");
         title.setText(boardList.getName());
         title.setOnAction(event -> {
-            if (singleBoardCtrl.checkReadOnlyMode(
-                    singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+            if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
             try {
@@ -137,8 +134,7 @@ public class ListCtrl {
         });
         title.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
-                if (singleBoardCtrl.checkReadOnlyMode(
-                        singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+                if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                     return;
                 }
                 try {
@@ -159,8 +155,7 @@ public class ListCtrl {
                             Node list) {
         Button deleteBoardList = (Button) list.lookup("#deleteBtn");
         deleteBoardList.setOnAction(event -> {
-            if (singleBoardCtrl.checkReadOnlyMode(
-                    singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+            if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
             // deleting on client(GUI) side

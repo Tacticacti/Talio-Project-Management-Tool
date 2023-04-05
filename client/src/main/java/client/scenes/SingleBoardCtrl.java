@@ -46,6 +46,7 @@ public class SingleBoardCtrl implements Initializable {
     final CardCtrl cardCtrl = new CardCtrl(this);
     final TagCtrl tagCtrl = new TagCtrl(this);
     final BoardCtrl boardCtrl = new BoardCtrl(this);
+    private final SecurityCtrl securityCtrl = new SecurityCtrl(this);
     ServerUtils server;
     final MainCtrl mainCtrl;
     Long BoardID = 1L;
@@ -93,26 +94,6 @@ public class SingleBoardCtrl implements Initializable {
         boardCtrl.requestBoardName(text, id);
     }
 
-    public void requestPasswordChange() {
-        boardCtrl.requestPasswordChange();
-    }
-
-    String promptForPassword(String title, String contentText) {
-        return boardCtrl.promptForPassword(title, contentText);
-    }
-
-    void showAlert(Alert.AlertType alertType, String title, String contentText) {
-        boardCtrl.showAlert(alertType, title, contentText);
-    }
-
-    boolean setIsUnlocked(boolean newIsUnlocked) {
-        return boardCtrl.setIsUnlocked(newIsUnlocked);
-    }
-
-    void updatePasswordButtonImage() {
-        boardCtrl.updatePasswordButtonImage();
-    }
-
     @Override
     public void initialize (URL location, ResourceBundle resources){
         ImageView imageView = new ImageView(getClass()
@@ -122,18 +103,18 @@ public class SingleBoardCtrl implements Initializable {
         imageView.setFitHeight(settingsBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
         settingsBtn.setGraphic(imageView);
-        boardCtrl.updatePasswordButtonImage();
+        securityCtrl.updatePasswordButtonImage();
 
         newCardBtn = hbox_lists.getChildren().get(0);
         copyInvite.setOnAction(e->{
             copyInvite();
         });
         passwordBtn.setOnAction(e -> {
-            boardCtrl.requestPasswordChange();
+            securityCtrl.requestPasswordChange();
         });
         settingsBtn.setOnAction(e->{
             try {
-                if (boardCtrl.checkReadOnlyMode(current_board, isUnlocked)) {
+                if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                     return;
                 }
                 boardCtrl.openBoardSettings();
@@ -145,7 +126,7 @@ public class SingleBoardCtrl implements Initializable {
             refresh();
         });
         newListBtn.setOnAction(e->{
-            if (boardCtrl.checkReadOnlyMode(current_board, isUnlocked)) {
+            if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                 return;
             }
             listCtrl.createNewList();
@@ -170,7 +151,7 @@ public class SingleBoardCtrl implements Initializable {
             }
         });
         newTagBtn.setOnAction(event ->{
-            if (boardCtrl.checkReadOnlyMode(current_board, isUnlocked)) {
+            if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                 return;
             }
             tagCtrl.addNewTag(tagHbox);
@@ -194,8 +175,8 @@ public class SingleBoardCtrl implements Initializable {
         connectHomeCtrl.showBoardOverview();
     }
 
-    boolean checkReadOnlyMode(Board board, boolean isUnlocked) {
-        return boardCtrl.checkReadOnlyMode(board, isUnlocked);
+    boolean checkReadOnlyMode(boolean isUnlocked) {
+        return securityCtrl.checkReadOnlyMode(isUnlocked);
     }
 
     void createNewList() {

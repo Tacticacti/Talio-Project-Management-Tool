@@ -46,8 +46,7 @@ public class TagCtrl {
 
     public void setUpNewTag(BoardList boardList)
             throws IOException {
-        if (singleBoardCtrl.checkReadOnlyMode(
-                singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+        if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
             return;
         }
         FXMLLoader loader = new FXMLLoader(

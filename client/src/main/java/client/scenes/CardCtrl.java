@@ -140,8 +140,7 @@ public class CardCtrl {
         // sets up done card button
         Button doneButton = (Button) root.lookup("#doneTaskButton");
         doneButton.setOnAction(event -> {
-            if (singleBoardCtrl.checkReadOnlyMode(
-                    singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+            if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
             setDone(listId, card, event);
@@ -149,8 +148,7 @@ public class CardCtrl {
         //sets up delete card button
         Button deleteButton = (Button) root.lookup("#deleteTaskButton");
         deleteButton.setOnAction(event -> {
-            if (singleBoardCtrl.checkReadOnlyMode(
-                    singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+            if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
             singleBoardCtrl.setDelete(event, cardNode, card, listId);
@@ -211,20 +209,12 @@ public class CardCtrl {
                 System.out.println("Text of cur subtask processed: " + cb.getText());
                 if (!current.getSubtasks().contains(cb.getText()))
                     current.addSubTask(cb.getText());
-                if (i < current.getSubtasks().size()) {
-                    if (!current.getSubtasks().get(i).equals(cb.getText())
-                            && current.getSubtasks().contains(cb.getText())) {
-                        current.removeSubTask(cb.getText());
-                        current.addSubtaskAtIndex(cb.getText(), i);
-                        if (cb.isSelected()) {
-                            current.completeSubTask(cb.getText());
-                        } else {
-                            current.removeSubTask(cb.getText());
-                            current.addSubtaskAtIndex(cb.getText(), i);
-                            if (cb.isSelected()) {
-                                current.completeSubTask(cb.getText());
-                            }
-                        }
+                if (!current.getSubtasks().get(i).equals(cb.getText())
+                        && current.getSubtasks().contains(cb.getText())) {
+                    current.removeSubTask(cb.getText());
+                    current.addSubtaskAtIndex(cb.getText(), i);
+                    if (cb.isSelected()) {
+                        current.completeSubTask(cb.getText());
                     }
                 }
             }
@@ -299,8 +289,7 @@ public class CardCtrl {
     void setDragAndDrop(VBox parent, Node cardNode) {
         Long listId = ((BoardList) parent.getUserData()).getId();
         cardNode.setOnDragDetected(event -> {
-            if (singleBoardCtrl.checkReadOnlyMode(
-                    singleBoardCtrl.current_board, singleBoardCtrl.isUnlocked)) {
+            if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
             SingleBoardCtrl.dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
