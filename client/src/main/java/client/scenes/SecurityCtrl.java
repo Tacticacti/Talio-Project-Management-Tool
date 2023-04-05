@@ -34,7 +34,6 @@ public class SecurityCtrl {
             if (currentPassword == null) {
                 return;
             }
-            // if (!singleBoardCtrl.current_board.getPassword().equals(currentPassword)) {
             if(!verifyPassword(singleBoardCtrl.current_board, currentPassword)) {
                 showAlert(Alert.AlertType.ERROR,
                         "Incorrect Password", "The current password entered is incorrect.");
@@ -50,7 +49,6 @@ public class SecurityCtrl {
             if (currentPassword == null) {
                 return;
             }
-            // if (!singleBoardCtrl.current_board.getPassword().equals(currentPassword)) {
             if(!verifyPassword(singleBoardCtrl.current_board, currentPassword)) {
                 showAlert(Alert.AlertType.ERROR,
                         "Incorrect Password", "The password entered is incorrect.");
@@ -73,8 +71,6 @@ public class SecurityCtrl {
                     "Password Mismatch", "The new password and confirmation do not match.");
             return;
         }
-        // singleBoardCtrl.current_board.setPassword(newPassword);
-        // singleBoardCtrl.server.addBoard(singleBoardCtrl.current_board);
         setPassword(singleBoardCtrl.current_board, newPassword);
         showAlert(Alert.AlertType.INFORMATION,
                 "Password Updated", "The board password has been updated.");
