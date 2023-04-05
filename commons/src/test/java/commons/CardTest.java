@@ -74,11 +74,11 @@ class CardTest {
         assertEquals(0, c1.getCompletedSubs());
         c1.completeSubTask("research otters");
         assertEquals(1, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
+        c1.completeSubTask("research monkeys");
         assertEquals(2, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
-        assertEquals(3, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
+        c1.completeSubTask("research monkeys");
+        assertEquals(2, c1.getCompletedSubs());
+        c1.completeSubTask("research donkeys");
         assertEquals(3, c1.getCompletedSubs());
     }
 
