@@ -22,6 +22,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -195,7 +197,7 @@ public class BoardOverviewCtrl implements Initializable {
                     !drawnBoards.contains(board.getId())) {
                 boardFound = true;
                 // check if board is password protected
-                if (board.getPassword() != null) {
+                if (board.getPassword() != null || !board.getPassword().isEmpty() ) {
                     // prompt user for password
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setTitle("Enter Board Password");
@@ -272,6 +274,18 @@ public class BoardOverviewCtrl implements Initializable {
         name.setText(board2.getName());
     }
 
+    private void updateBoardImage(Board board, ImageView imageView) {
+        if (board.getPassword() == null || board.getPassword().isEmpty()) {
+            imageView.setImage(
+                    new Image(getClass().getResource(
+                            "../images/unlocked.png").toExternalForm()));
+        } else {
+            imageView.setImage(
+                    new Image(getClass().getResource(
+                            "../images/locked.png").toExternalForm()));
+        }
+    }
+
     public void addJoinedBoard(Board board2) throws IOException {
 
 
@@ -287,6 +301,8 @@ public class BoardOverviewCtrl implements Initializable {
 
             board.setUserData(board2);
             boardsNodes.add(board);
+            ImageView boardImage = (ImageView) board.lookup("#boardImage");
+            updateBoardImage(board2, boardImage);
             correctText(board);
 
             last_row.getChildren().add(board);

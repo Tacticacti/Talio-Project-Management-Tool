@@ -33,10 +33,7 @@
             </Text>
          </bottom>
          <center>
-            <ImageView fitHeight="193.0" fitWidth="195.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-               <image>
-                  <Image url="@../images/placeholder.png" />
-               </image>
+            <ImageView fx:id="boardImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="2.0" right="2.0" />
                </BorderPane.margin>
