@@ -213,7 +213,6 @@ public class Card implements Serializable {
     }
 
     public void setCompletedTasks(List<String> complete){
-        //this.completedTasks = complete;
-        complete.forEach(c -> completeSubTask(c));
+        this.completedTasks = complete;
     }
 }

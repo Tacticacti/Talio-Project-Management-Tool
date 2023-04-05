@@ -258,6 +258,7 @@ class CardTest {
         completed.add(sub1);
         completed.add(sub2);
         c1.setCompletedTasks(completed);
+        c1.setSubtasks(completed);
 
         assertEquals(completed, c1.getCompletedTasks());
         c1.removeSubTask("Subtask 1");
