@@ -279,6 +279,31 @@ class CardTest {
     }
 
     @Test
+    public void testRemoveSub() {
+        Card card = new Card("Card title", "Card description");
+        String sub1 = "Subtask 1";
+        String sub2 = "Subtask 2";
+        String sub3 = "Subtask 3";
+        card.addSubTask(sub1);
+        card.addSubTask(sub2);
+
+        assertTrue(card.getSubtasks().contains(sub1));
+        assertTrue(card.getSubtasks().contains(sub2));
+
+        card.completeSubTask(sub3);
+        assertTrue(card.getSubtasks().contains(sub3));
+        assertTrue(card.getCompletedTasks().contains(sub3));
+
+        card.removeSubTask(sub1);
+        card.removeSubTask(sub3);
+        assertFalse(card.getSubtasks().contains(sub1));
+        assertTrue(card.getSubtasks().contains(sub2));
+        assertFalse(card.getSubtasks().contains(sub3));
+        assertFalse(card.getCompletedTasks().contains(sub3));
+        assertDoesNotThrow(() -> card.removeSubTask("random task"));
+    }
+
+    @Test
     void testToString(){
         Card card = new Card("Card title", "Card description");
         Tag tag=new Tag("tag");
