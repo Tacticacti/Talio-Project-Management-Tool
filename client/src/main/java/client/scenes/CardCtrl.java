@@ -94,7 +94,8 @@ public class CardCtrl {
                         currentCard.setTitle(newTitle.get());
                         BoardList boardList = (BoardList) parent.getUserData();
                         Board current_board = singleBoardCtrl.getCurrent_board();
-                        singleBoardCtrl.updateCardFromList(current_board.getId(), boardList.getId(), currentCard);
+                        singleBoardCtrl.updateCardFromList(current_board.getId(), boardList.getId(),
+                                currentCard);
                     }
                     singleBoardCtrl.refresh();
                 }
