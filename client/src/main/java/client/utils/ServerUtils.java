@@ -149,7 +149,7 @@ public class ServerUtils {
 
     }
 
-    public void setPassword(String psswd) {
+    public void setAdminPassword(String psswd) {
         this.psswd = psswd;
         System.out.println("setting psswd: " + this.psswd);
     }
@@ -324,7 +324,7 @@ public class ServerUtils {
                 );
     }
 
-    public boolean checkPsswd(String psswd) {
+    public boolean checkAdminPassword(String psswd) {
         if (psswd == null || psswd.equals("")) {
             return false;
         }
@@ -335,6 +335,24 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(psswd, APPLICATION_JSON),
                         boolean.class);
+    }
+
+    public boolean verifyBoardPassword(Long boardId, String psswd) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/boards/verifyPassword/"+boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(psswd, APPLICATION_JSON),
+                        boolean.class);
+    }
+
+    public Board setBoardPassword(Long boardId, String psswd) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/boards/changePassword/"+boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(psswd, APPLICATION_JSON),
+                        Board.class);
     }
 
     private static ExecutorService EXEC = Executors.newSingleThreadExecutor();

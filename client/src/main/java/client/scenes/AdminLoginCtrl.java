@@ -29,7 +29,7 @@ public class AdminLoginCtrl {
         boolean res = false;
         try {
             psswd = psswdField.getText();
-            res = server.checkPsswd(psswd);
+            res = server.checkAdminPassword(psswd);
         }
         catch(Exception e) {
             var alert = new Alert(Alert.AlertType.ERROR);
@@ -40,7 +40,7 @@ public class AdminLoginCtrl {
 
         if(res) {
             System.out.println("psswd ok");
-            server.setPassword(psswd);
+            server.setAdminPassword(psswd);
             mainCtrl.showDashboard();
         }
         else {

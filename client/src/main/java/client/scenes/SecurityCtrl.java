@@ -1,5 +1,6 @@
 package client.scenes;
 
+import commons.Board;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import javafx.scene.control.Dialog;
@@ -17,32 +18,40 @@ public class SecurityCtrl {
         this.singleBoardCtrl = singleBoardCtrl;
     }
 
+    private boolean verifyPassword(Board board, String psswd) {
+        return singleBoardCtrl.server.verifyBoardPassword(board.getId(), psswd);
+    }
+
+    private void setPassword(Board board, String psswd) {
+        singleBoardCtrl.server.setBoardPassword(board.getId(), psswd);
+    }
+
     public void requestPasswordChange() {
         String currentPassword, newPassword, confirmPassword;
         // If the board has a password and is unlocked
-        if (singleBoardCtrl.current_board.getPassword() != null
-                && !singleBoardCtrl.current_board.getPassword().isEmpty()
-                && singleBoardCtrl.isUnlocked) {
+        if (singleBoardCtrl.current_board.getPassword() != null && singleBoardCtrl.isUnlocked) {
             currentPassword = promptForPassword("Enter Current Password", "Current Password:");
             if (currentPassword == null) {
                 return;
             }
-            if (!singleBoardCtrl.current_board.getPassword().equals(currentPassword)) {
+            // if (!singleBoardCtrl.current_board.getPassword().equals(currentPassword)) {
+            if(!verifyPassword(singleBoardCtrl.current_board, currentPassword)) {
                 showAlert(Alert.AlertType.ERROR,
                         "Incorrect Password", "The current password entered is incorrect.");
                 return;
             }
         }
+
         // If the board has a password and is locked
         if (singleBoardCtrl.current_board.getPassword() != null
-                && !singleBoardCtrl.current_board.getPassword().isEmpty()
                 && !singleBoardCtrl.isUnlocked) {
             currentPassword =
                     promptForPassword("Unlock Board", "Enter password to unlock the board:");
             if (currentPassword == null) {
                 return;
             }
-            if (!singleBoardCtrl.current_board.getPassword().equals(currentPassword)) {
+            // if (!singleBoardCtrl.current_board.getPassword().equals(currentPassword)) {
+            if(!verifyPassword(singleBoardCtrl.current_board, currentPassword)) {
                 showAlert(Alert.AlertType.ERROR,
                         "Incorrect Password", "The password entered is incorrect.");
                 return;
@@ -64,8 +73,9 @@ public class SecurityCtrl {
                     "Password Mismatch", "The new password and confirmation do not match.");
             return;
         }
-        singleBoardCtrl.current_board.setPassword(newPassword);
-        singleBoardCtrl.server.addBoard(singleBoardCtrl.current_board);
+        // singleBoardCtrl.current_board.setPassword(newPassword);
+        // singleBoardCtrl.server.addBoard(singleBoardCtrl.current_board);
+        setPassword(singleBoardCtrl.current_board, newPassword);
         showAlert(Alert.AlertType.INFORMATION,
                 "Password Updated", "The board password has been updated.");
         updatePasswordButtonImage();
@@ -102,8 +112,7 @@ public class SecurityCtrl {
     }
 
     void updatePasswordButtonImage() {
-        if (singleBoardCtrl.current_board.getPassword() == null
-                || singleBoardCtrl.current_board.getPassword().isEmpty()) {
+        if (singleBoardCtrl.current_board.getPassword() == null) {
             ImageView imageUnlocked = new ImageView(singleBoardCtrl.getClass()
                     .getResource("../images/unlocked.png")
                     .toExternalForm());
