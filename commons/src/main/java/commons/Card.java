@@ -143,10 +143,11 @@ public class Card implements Serializable {
     }
     //complete a subtask
     public void completeSubTask(String text)  {
-        if(completedSubs!=subtasks.size())
-            completedSubs++;
         if(!completedTasks.contains(text))
             completedTasks.add(text);
+        if(completedSubs!=subtasks.size())
+            completedSubs++;
+
     }
 
     public void uncompleteSubTask(String text){

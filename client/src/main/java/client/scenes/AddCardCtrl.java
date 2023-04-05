@@ -34,6 +34,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -74,11 +76,13 @@ public class AddCardCtrl implements Initializable {
     public AddCardCtrl(ServerUtils server, MainCtrl mainCtrl){
         this.server = server;
         this.mainCtrl = mainCtrl;
+        checksubs = new ArrayList<>();
 
     }
     public AddCardCtrl(){
         this.server =new ServerUtils();
         this.mainCtrl = new MainCtrl();
+        checksubs = new ArrayList<>();
     }
     private Node node;
 
@@ -101,6 +105,7 @@ public class AddCardCtrl implements Initializable {
                 if(checkIfValid(current, sub.getText().trim())) {
                     subtaskVbox.getChildren().remove(sub);
                     displaySubs(sub.getText().trim(), current);
+                    checksubs.add(sub.getText().trim());
                 }
                 else {
                     displayAlert("Invalid subtask name!");
@@ -113,9 +118,13 @@ public class AddCardCtrl implements Initializable {
     public void displaySubs(String text, Card current){
         HBox sub = new HBox();
         CheckBox cb = createCheckbox(text, current);
-        sub.getChildren().add(cb);
-        createSubtask(sub, current);
+        if(!checksubs.contains(text)){
+            sub.getChildren().add(cb);
+            createSubtask(sub, current);
+        }
     }
+
+    private List<String> checksubs;
 
     public CheckBox createCheckbox(String text, Card current){
         CheckBox cb = new CheckBox();
@@ -179,6 +188,7 @@ public class AddCardCtrl implements Initializable {
         subtaskVbox.getChildren().remove(delBtn.getParent());
         HBox parent = (HBox) delBtn.getParent();
         CheckBox cb = (CheckBox) parent.getChildren().get(0);
+        checksubs.remove(cb.getText());
         current.removeSubTask(cb.getText());
     }
 
@@ -246,23 +256,6 @@ public class AddCardCtrl implements Initializable {
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setContentText(text);
         alert.showAndWait();
-    }
-
-    public void refresh(){
-        if(!current.getTitle().equals(taskTitle.getText())){
-            taskTitle.setText(current.getTitle());
-        }
-        if(!current.getDescription().equals(taskDescription.getText()))
-            taskDescription.setText(current.getDescription());
-        for (String s: current.getSubtasks()){
-            if(current.getCompletedTasks().contains(s)){
-                displayCompletedSubs(s, current);
-            }else{
-                displaySubs(s, current);
-            }
-        }
-
-
     }
     public void setCard(Card card){
         this.current = card;
