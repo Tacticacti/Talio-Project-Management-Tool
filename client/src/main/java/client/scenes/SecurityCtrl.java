@@ -1,6 +1,5 @@
 package client.scenes;
 
-import commons.Board;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import javafx.scene.control.Dialog;
