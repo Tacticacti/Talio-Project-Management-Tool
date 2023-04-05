@@ -335,4 +335,8 @@ public class SingleBoardCtrl implements Initializable {
     public Board getCurrent_board() {
         return current_board;
     }
+
+    public HBox getHbox_lists() {
+        return hbox_lists;
+    }
 }
