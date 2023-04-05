@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class BoardListTest {
 
     private BoardList boardList;
@@ -63,7 +65,7 @@ public class BoardListTest {
     @Test
     public void testAddCard() {
         boardList.addCard(card1);
-        Assertions.assertTrue(boardList.getCards().contains(card1), 
+        assertTrue(boardList.getCards().contains(card1),
 			"addCard() should add a card to the list");
         Assertions.assertEquals(1, boardList.getCards().size(), 
 			"addCard() should increase the size of the cards variable by 1");
@@ -91,5 +93,14 @@ public class BoardListTest {
         expectedCards.add(card2);
         Assertions.assertEquals(expectedCards, boardList.getCards(),
 			"getCards() should return the list of cards");
+    }
+    @Test
+    public void equalsTest(){
+        BoardList bl = new BoardList("Blah");
+        Card card = new Card();
+        bl.addCard(card);
+        BoardList bl1 = new BoardList("Blah");
+        bl1.addCard(card);
+        assertTrue(bl.equals(bl1));
     }
 }

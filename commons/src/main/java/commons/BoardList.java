@@ -79,7 +79,16 @@ public class BoardList {
     }
 
 
-    public List<Tag> getTags() {
-        return tags;
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof BoardList){
+            BoardList bl = (BoardList) obj;
+
+            if(bl.cards.equals(this.cards) && bl.name.equals(this.name)){
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }

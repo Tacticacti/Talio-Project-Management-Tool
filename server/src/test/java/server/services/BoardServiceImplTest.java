@@ -59,6 +59,28 @@ class BoardServiceImplTest {
     }
 
     @Test
+    void deleteListInvalidId(){
+        BoardRepository boardRepository = mock(BoardRepository.class);
+        BoardServiceImpl boardService = new BoardServiceImpl(boardRepository, messagingTemplate);
+
+        Board expectedBoard = new Board("John", "Doe");
+        BoardList bl = new BoardList();
+        bl.setId(2L);
+        expectedBoard.addList(bl);
+
+        when(boardRepository.existsById(1L)).thenReturn(false);
+
+        var result = boardService.deleteList(1L,2L);
+        verify(boardRepository, never()).save(expectedBoard);
+        verify(boardRepository).existsById(1L);
+        verify(boardRepository, never()).findById(1L);
+        verify(messagingTemplate, never()).convertAndSend("/topic/boards", expectedBoard);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+
+    }
+
+    @Test
     void getAll() {
         BoardRepository boardRepository = mock(BoardRepository.class);
         BoardServiceImpl boardService = new BoardServiceImpl(boardRepository, messagingTemplate);

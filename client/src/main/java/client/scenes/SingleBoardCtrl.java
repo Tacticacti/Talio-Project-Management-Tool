@@ -1028,9 +1028,9 @@ public class SingleBoardCtrl implements Initializable {
         HBox parentList = (HBox) newTagBtn.getParent();
         parentList.setUserData(boardList);
         parentList.setSpacing(5);
-        for(Tag tag: boardList.getTags()){
-            placeTag(parentList, tag);
-        }
+//        for(Tag tag: boardList.getTags()){
+//            placeTag(parentList, tag);
+//        }
 
     }
 
