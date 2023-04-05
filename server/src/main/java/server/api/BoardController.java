@@ -191,6 +191,7 @@ public class BoardController {
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }
+
     @PostMapping(path = "/verifyPassword/{id}")
     public ResponseEntity<Boolean> verifyPassword(@PathVariable("id") long boardId,
                                                 @RequestBody String psswd) {

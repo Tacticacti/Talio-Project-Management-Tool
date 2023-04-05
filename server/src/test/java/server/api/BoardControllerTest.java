@@ -207,4 +207,17 @@ public class BoardControllerTest {
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertTrue(ret.getBody());
     }
+
+    @Test
+    public void removePassword() {
+        controller.add(b1);
+        controller.setBoardPassword(0L, "admin");
+
+        var ret = controller.resetBoardPassword(99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.resetBoardPassword(0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(null, ret.getBody().getPassword());
+    }
 }
