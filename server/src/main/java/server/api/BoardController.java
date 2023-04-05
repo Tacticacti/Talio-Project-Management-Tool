@@ -149,7 +149,7 @@ public class BoardController {
         return ResponseEntity.ok(board);
 
     }
-    
+
     @PostMapping(path = "/delete/{id}")
     public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
             @RequestBody String psswd) {
@@ -172,19 +172,25 @@ public class BoardController {
 
         Board board = repo.findById(boardId).get();
 
-        // resets password
-        if(psswd == null)  {
-            board.setPassword(null);
-            Board saved = repo.save(board);
-            return ResponseEntity.ok(saved);
-        }
-
         String hashed = encryption.getHash(psswd);
         board.setPassword(hashed);
         Board saved = repo.save(board);
         return ResponseEntity.ok(saved);
     }
 
+    @GetMapping(path = "/removePassword/{id}")
+    public ResponseEntity<Board> resetBoardPassword(@PathVariable("id") long boardId) {
+
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Board board = repo.findById(boardId).get();
+
+        board.setPassword(null);
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
+    }
     @PostMapping(path = "/verifyPassword/{id}")
     public ResponseEntity<Boolean> verifyPassword(@PathVariable("id") long boardId,
                                                 @RequestBody String psswd) {

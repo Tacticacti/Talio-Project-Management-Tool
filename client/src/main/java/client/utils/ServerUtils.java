@@ -355,6 +355,14 @@ public class ServerUtils {
                         Board.class);
     }
 
+    public Board removeBoardPassword(Long boardId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/boards/removePassword/"+boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Board.class);
+    }
+
     private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
     public void registerForCardUpdate(Consumer<Card> cardConsumer){
         EXEC = Executors.newSingleThreadExecutor();

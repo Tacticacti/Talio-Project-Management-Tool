@@ -47,8 +47,9 @@
             <TableView fx:id="boards" prefHeight="353.0" prefWidth="640.0">
               <columns>
                 <TableColumn fx:id="boardKey" prefWidth="150.0" text="board_key" />
-                  <TableColumn fx:id="boardName" prefWidth="357.0" text="board_name" />
-                  <TableColumn fx:id="delete" prefWidth="132.0" text="delete" />
+                  <TableColumn fx:id="boardName" prefWidth="278.0" text="board_name" />
+                  <TableColumn fx:id="resetPassword" prefWidth="120.0" text="reset password" />
+                  <TableColumn fx:id="delete" prefWidth="91.0" text="delete" />
               </columns>
             </TableView>
       </children>

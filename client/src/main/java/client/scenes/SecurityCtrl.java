@@ -11,6 +11,8 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.util.Objects;
+
 public class SecurityCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
 
@@ -71,7 +73,10 @@ public class SecurityCtrl {
                     "Password Mismatch", "The new password and confirmation do not match.");
             return;
         }
-        setPassword(singleBoardCtrl.current_board, newPassword);
+        if(Objects.equals("", newPassword))
+            singleBoardCtrl.server.removeBoardPassword(singleBoardCtrl.current_board.getId());
+        else
+            setPassword(singleBoardCtrl.current_board, newPassword);
         showAlert(Alert.AlertType.INFORMATION,
                 "Password Updated", "The board password has been updated.");
         updatePasswordButtonImage();

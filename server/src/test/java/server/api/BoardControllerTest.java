@@ -175,10 +175,6 @@ public class BoardControllerTest {
         var ret = controller.setBoardPassword(99L, psswd);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
-        ret = controller.setBoardPassword(0L, null);
-        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertEquals(null, ret.getBody().getPassword());
-
         ret = controller.setBoardPassword(0L, psswd);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals(hash, ret.getBody().getPassword());
