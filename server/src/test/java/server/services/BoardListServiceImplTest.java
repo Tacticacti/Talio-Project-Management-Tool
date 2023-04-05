@@ -18,7 +18,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -123,7 +127,7 @@ class BoardListServiceImplTest {
         when(boardListRepository.save(bl)).thenReturn(bl);
         when(boardListRepository.findById(1L)).thenReturn(Optional.of(bl));
 
-        BoardList result = boardListService.changeName(1L,"blah").getBody();
+        BoardList result = boardListService.changeName(1L, "blah").getBody();
 
         verify(boardListRepository).findById(1L);
         verify(boardListRepository).save(bl);
@@ -138,13 +142,13 @@ class BoardListServiceImplTest {
 
         when(boardListRepository.findById(1L)).thenReturn(Optional.empty());
 
-        var result = boardListService.changeName(1L,"blah");
+        var result = boardListService.changeName(1L, "blah");
 
         verify(boardListRepository).findById(1L);
-        verify(boardListRepository,never()).save(bl);
+        verify(boardListRepository, never()).save(bl);
         verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists", bl);
 
-        assertEquals(HttpStatus.BAD_REQUEST,result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 
     }
 
@@ -163,7 +167,7 @@ class BoardListServiceImplTest {
         verify(boardListRepository).deleteById(1L);
         verify(simpMessagingTemplate).convertAndSend("/topic/lists", bl);
 
-        assertEquals(HttpStatus.OK,result.getStatusCode());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
 
     }
 
@@ -180,7 +184,7 @@ class BoardListServiceImplTest {
         verify(boardListRepository, never()).deleteById(1L);
         verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists", bl);
 
-        assertEquals(HttpStatus.BAD_REQUEST,result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 
     }
 
@@ -190,13 +194,13 @@ class BoardListServiceImplTest {
         when(boardListRepository.findById(1L)).thenReturn(Optional.of(bl));
         when(boardListRepository.save(bl)).thenReturn(bl);
         Card card = new Card();
-        var result = boardListService.addCard(1L,card);
+        var result = boardListService.addCard(1L, card);
 
         verify(boardListRepository).findById(1L);
         verify(boardListRepository).save(bl);
-        verify(simpMessagingTemplate).convertAndSend("/topic/lists",bl);
+        verify(simpMessagingTemplate).convertAndSend("/topic/lists", bl);
 
-        assertEquals(bl,result.getBody());
+        assertEquals(bl, result.getBody());
     }
     @Test
     void addCardInvalidId(){
@@ -204,13 +208,13 @@ class BoardListServiceImplTest {
         when(boardListRepository.findById(1L)).thenReturn(Optional.empty());
         when(boardListRepository.save(bl)).thenReturn(bl);
         Card card = new Card();
-        var result = boardListService.addCard(1L,card);
+        var result = boardListService.addCard(1L, card);
 
         verify(boardListRepository).findById(1L);
         verify(boardListRepository, never()).save(bl);
-        verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists",bl);
+        verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists", bl);
 
-        assertEquals(HttpStatus.BAD_REQUEST,result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -221,13 +225,13 @@ class BoardListServiceImplTest {
         when(boardListRepository.save(bl1)).thenReturn(bl1);
         Card card = new Card();
         bl1.addCard(card);
-        var result = boardListService.deleteCard(1L,card);
+        var result = boardListService.deleteCard(1L, card);
 
         verify(boardListRepository).findById(1L);
         verify(boardListRepository).save(bl1);
-        verify(simpMessagingTemplate).convertAndSend("/topic/lists",bl1);
+        verify(simpMessagingTemplate).convertAndSend("/topic/lists", bl1);
 
-        assertEquals(bl,result.getBody());
+        assertEquals(bl, result.getBody());
     }
 
     @Test
@@ -236,13 +240,13 @@ class BoardListServiceImplTest {
         when(boardListRepository.findById(1L)).thenReturn(Optional.empty());
         Card card = new Card();
         bl.addCard(card);
-        var result = boardListService.deleteCard(1L,card);
+        var result = boardListService.deleteCard(1L, card);
 
         verify(boardListRepository).findById(1L);
         verify(boardListRepository, never()).save(bl);
-        verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists",bl);
+        verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists", bl);
 
-        assertEquals(HttpStatus.BAD_REQUEST,result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
@@ -260,12 +264,12 @@ class BoardListServiceImplTest {
         bl1.addCard(card1);
         bl1.addCard(card);
         bl1.addCard(card2);
-        Pair<Long, Card> req = Pair.of(1L,card);
-        var result = boardListService.insertAt(1L,req);
+        Pair<Long, Card> req = Pair.of(1L, card);
+        var result = boardListService.insertAt(1L, req);
 
         verify(boardListRepository).findById(1L);
         verify(boardListRepository).save(bl);
-        verify(simpMessagingTemplate).convertAndSend("/topic/lists",bl);
+        verify(simpMessagingTemplate).convertAndSend("/topic/lists", bl);
         assertTrue(bl1.equals(result.getBody()));
     }
 
@@ -274,13 +278,13 @@ class BoardListServiceImplTest {
         BoardList bl = new BoardList();
         when(boardListRepository.findById(1L)).thenReturn(Optional.empty());
         Card card = new Card();
-        Pair<Long, Card> req = Pair.of(1L,card);
-        var result = boardListService.insertAt(1L,req);
+        Pair<Long, Card> req = Pair.of(1L, card);
+        var result = boardListService.insertAt(1L, req);
 
         verify(boardListRepository).findById(1L);
         verify(boardListRepository, never()).save(bl);
-        verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists",bl);
+        verify(simpMessagingTemplate, never()).convertAndSend("/topic/lists", bl);
 
-        assertEquals(HttpStatus.BAD_REQUEST,result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 }

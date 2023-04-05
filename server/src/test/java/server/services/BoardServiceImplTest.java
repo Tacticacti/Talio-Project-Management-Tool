@@ -70,7 +70,7 @@ class BoardServiceImplTest {
 
         when(boardRepository.existsById(1L)).thenReturn(false);
 
-        var result = boardService.deleteList(1L,2L);
+        var result = boardService.deleteList(1L, 2L);
         verify(boardRepository, never()).save(expectedBoard);
         verify(boardRepository).existsById(1L);
         verify(boardRepository, never()).findById(1L);
