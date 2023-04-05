@@ -175,6 +175,8 @@ public class BoardController {
         // resets password
         if(psswd == null)  {
             board.setPassword(null);
+            Board saved = repo.save(board);
+            return ResponseEntity.ok(saved);
         }
 
         String hashed = encryption.getHash(psswd);
@@ -187,7 +189,7 @@ public class BoardController {
     public ResponseEntity<Boolean> verifyPassword(@PathVariable("id") long boardId,
                                                 @RequestBody String psswd) {
 
-        if(psswd == null || !repo.existsById(boardId)) {
+        if(!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -196,6 +198,10 @@ public class BoardController {
         // if board has no password
         if(board.getPassword() == null) {
             return ResponseEntity.ok(true);
+        }
+
+        if(psswd == null) {
+            return ResponseEntity.ok(false);
         }
 
         String hashed = encryption.getHash(psswd);

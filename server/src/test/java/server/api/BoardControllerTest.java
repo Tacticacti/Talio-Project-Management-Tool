@@ -1,6 +1,7 @@
 package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -170,7 +171,44 @@ public class BoardControllerTest {
 
         String psswd = "test123";
         String hash = encryption.getHash(psswd);
-        var ret = controller.setBoardPassword(0L, psswd);
+
+        var ret = controller.setBoardPassword(99L, psswd);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.setBoardPassword(0L, null);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(null, ret.getBody().getPassword());
+
+        ret = controller.setBoardPassword(0L, psswd);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals(hash, ret.getBody().getPassword());
+    }
+
+    @Test
+    public void verifyPassword() {
+        controller.add(b1);
+
+        var ret = controller.verifyPassword(0L, null);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody());
+
+        String psswd = "test123";
+        var ret2 = controller.setBoardPassword(0L, psswd);
+        assertNotEquals(BAD_REQUEST, ret2.getStatusCode());
+
+        ret = controller.verifyPassword(99L, null);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.verifyPassword(0L, null);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody());
+
+        ret = controller.verifyPassword(0L, "admin");
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody());
+
+        ret = controller.verifyPassword(0L, psswd);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody());
     }
 }
