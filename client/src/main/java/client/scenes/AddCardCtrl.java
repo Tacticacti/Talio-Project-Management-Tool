@@ -146,6 +146,9 @@ public class AddCardCtrl implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 if(cb.isSelected()){
+                    if(!current.getSubtasks().contains(cb.getText())){
+                        current.addSubTask(cb.getText());
+                    }
                     current.completeSubTask(cb.getText());
                     cb.setOpacity(0.5);
                 }else{

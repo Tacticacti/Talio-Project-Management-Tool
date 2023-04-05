@@ -143,18 +143,22 @@ public class Card implements Serializable {
     }
     //complete a subtask
     public void completeSubTask(String text)  {
-        if(!completedTasks.contains(text))
+        if(!completedTasks.contains(text)){
             completedTasks.add(text);
-        if(completedSubs!=subtasks.size())
-            completedSubs++;
+            if(completedSubs!=subtasks.size())
+                completedSubs++;
+        }
+
 
     }
 
     public void uncompleteSubTask(String text){
-        if(completedSubs!=0)
-            completedSubs--;
-        if(completedTasks.contains(text))
+
+        if(completedTasks.contains(text)){
             completedTasks.remove(text);
+            if(completedSubs!=0)
+                completedSubs--;
+        }
 
     }
     //add a tag to card
