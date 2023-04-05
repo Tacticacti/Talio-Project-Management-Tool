@@ -95,38 +95,7 @@ public class CardCtrl {
                 event.consume();
             });
             cardNode.setOnKeyPressed((KeyEvent event) -> {
-                if (target instanceof AnchorPane) {
-                    switch (event.getCode()) {
-                        case E: editTaskTitleShortcut(parent, scaleTransition);
-                        break;
-                        case BACK_SPACE:
-                        case DELETE:
-                            deleteCardShortcut(parent);
-                            break;
-                        case ENTER:setCardDetail(cardNode, parent);
-                        break;
-                        case UP: moveUpShortcut(parent, cardNode, scaleTransition);
-                        break;
-                        case DOWN: moveDownShortcut(parent, cardNode, scaleTransition);
-                        break;
-                        case LEFT: moveLeftShortcut(parent, cardNode, scaleTransition);
-                        break;
-                        case RIGHT: moveRightShortcut(parent, cardNode, scaleTransition);
-                    }
-                    MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
-                    if (event.isShiftDown()) {
-                        switch (event.getCode()) {
-                            //slash should give question mark but it doesnt work for me. Does it
-                            // work for anyone else?
-                            case SLASH:
-                            case H:
-                                mainCtrl.showHelpPage(event);
-                                break;
-                        }
-                    }
-                    ((AnchorPane) target).requestFocus();
-                    event.consume();
-                }
+                setShortcuts(parent, cardNode, scaleTransition, event);
             });
             cardNode.setOnMouseClicked(event -> {
                 cardNode.requestFocus();
@@ -163,6 +132,41 @@ public class CardCtrl {
             parent.getChildren().add(index, cardNode);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void setShortcuts(VBox parent, Node cardNode, ScaleTransition scaleTransition, KeyEvent event) {
+        if (target instanceof AnchorPane) {
+            switch (event.getCode()) {
+                case E: editTaskTitleShortcut(parent, scaleTransition);
+                break;
+                case BACK_SPACE:
+                case DELETE:
+                    deleteCardShortcut(parent);
+                    break;
+                case ENTER:setCardDetail(cardNode, parent);
+                break;
+                case UP: moveUpShortcut(parent, cardNode, scaleTransition);
+                break;
+                case DOWN: moveDownShortcut(parent, cardNode, scaleTransition);
+                break;
+                case LEFT: moveLeftShortcut(parent, cardNode, scaleTransition);
+                break;
+                case RIGHT: moveRightShortcut(parent, cardNode, scaleTransition);
+            }
+            MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
+            if (event.isShiftDown()) {
+                switch (event.getCode()) {
+                    //slash should give question mark but it doesnt work for me. Does it
+                    // work for anyone else?
+                    case SLASH:
+                    case H:
+                        mainCtrl.showHelpPage(event);
+                        break;
+                }
+            }
+            ((AnchorPane) target).requestFocus();
+            event.consume();
         }
     }
 
