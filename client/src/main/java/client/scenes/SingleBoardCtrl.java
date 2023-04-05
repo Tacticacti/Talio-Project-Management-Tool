@@ -159,14 +159,10 @@ public class SingleBoardCtrl implements Initializable {
         refresh();
         System.out.println(server);
         server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList->{
-            Platform.runLater(()->{
-                refresh();
-            });
+            Platform.runLater(this::refresh);
         });
         server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
-            Platform.runLater(()->{
-                refresh();
-            });
+            Platform.runLater(this::refresh);
         });
     }
 
@@ -326,5 +322,17 @@ public class SingleBoardCtrl implements Initializable {
 
     public void setServer(ServerUtils server){
         this.server = server;
+    }
+
+    public MainCtrl getMainCtrl() {
+        return mainCtrl;
+    }
+
+    public Map<Node, Card> getNodeCardMap() {
+        return nodeCardMap;
+    }
+
+    public Board getCurrent_board() {
+        return current_board;
     }
 }

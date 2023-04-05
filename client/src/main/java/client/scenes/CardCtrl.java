@@ -1,11 +1,13 @@
 package client.scenes;
 
+import commons.Board;
 import commons.BoardList;
 import commons.Card;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.ScaleTransition;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventTarget;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -24,6 +26,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
@@ -40,11 +44,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 public class CardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
+    private EventTarget target;
 
     public CardCtrl(SingleBoardCtrl singleBoardCtrl) {
         this.singleBoardCtrl = singleBoardCtrl;
@@ -56,6 +62,7 @@ public class CardCtrl {
                 singleBoardCtrl.getClass().getResource("cardGUI.fxml"));
         try {
             Node cardNode = fxmlLoader.load();
+            cardNode.setId(UUID.randomUUID().toString());
             Border border = new Border(new BorderStroke(Paint.valueOf("black")
                     , BorderStrokeStyle.DASHED
                     , new CornerRadii(10), BorderWidths.DEFAULT));
@@ -72,19 +79,39 @@ public class CardCtrl {
             scaleTransition.setToX(1.1);
             scaleTransition.setToY(1.1);
             cardNode.setOnMouseEntered(event -> {
+                cardNode.requestFocus();
                 scaleTransition.play();
+                target = event.getTarget();
+            });
+            cardNode.setOnKeyPressed((KeyEvent event) -> {
+                cardNode.requestFocus();
+                if (event.getCode() == KeyCode.E && target != null) {
+                    Node selectedCardNode = (AnchorPane) target;
+                    Optional<String> newTitle = showTitleDialog();
+                    Map<Node, Card> nodeCardMap = singleBoardCtrl.getNodeCardMap();
+                    Card currentCard = nodeCardMap.get(selectedCardNode);
+                    if (currentCard != null && newTitle.isPresent()) {
+                        currentCard.setTitle(newTitle.get());
+                        BoardList boardList = (BoardList) parent.getUserData();
+                        Board current_board = singleBoardCtrl.getCurrent_board();
+                        singleBoardCtrl.updateCardFromList(current_board.getId(), boardList.getId(), currentCard);
+                    }
+                    singleBoardCtrl.refresh();
+                }
             });
             cardNode.setOnMouseExited(event -> {
+                target = null;
                 scaleTransition.stop();
                 cardNode.setScaleX(1);
                 cardNode.setScaleY(1);
             });
             cardNode.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2) {
+                cardNode.requestFocus();
+                if(event.getClickCount()==2){
                     setCardDetail(cardNode, parent);
                 }
+
             });
-            cardNode.setId(UUID.randomUUID().toString());
             Button detail = (Button) cardNode.lookup("#details");
             detail.setOnMouseEntered(event -> {
                 DropShadow shadow = new DropShadow();
@@ -117,7 +144,6 @@ public class CardCtrl {
     }
 
     public void setCardDetail(Node cardNode, VBox parent) {
-//        AnchorPane list = (AnchorPane) parent.getParent(); unused variable
         if (!singleBoardCtrl.isUnlocked) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Read-only Mode");
@@ -179,6 +205,8 @@ public class CardCtrl {
                 }
             }
         }
+        MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
+        root.setOnKeyPressed(mainCtrl::showHelpPage);
         Scene scene = new Scene(root);
         Stage popUpStage = new Stage();
         popUpStage.setTitle("Card Details");

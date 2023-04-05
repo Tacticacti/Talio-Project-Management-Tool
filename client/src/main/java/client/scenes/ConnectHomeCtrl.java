@@ -96,6 +96,7 @@ public class ConnectHomeCtrl {
             throw new RuntimeException(e);
         }
         Scene boverview = new Scene(overview);
+        boverview.setOnKeyPressed(mainCtrl::showHelpPage);
         primaryStage.setTitle("Board overview");
         primaryStage.setScene(boverview);
         primaryStage.setOnCloseRequest(e->{

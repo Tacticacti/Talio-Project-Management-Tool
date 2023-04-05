@@ -18,12 +18,18 @@ package client.scenes;
 import client.MyFXML;
 import client.MyModule;
 import com.google.inject.Injector;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
+
+import java.io.IOException;
 
 import static com.google.inject.Guice.createInjector;
 
@@ -68,7 +74,7 @@ public class MainCtrl {
 
             this.connectHomeCtrl = homePair.getKey();
             this.home = new Scene(homePair.getValue());
-
+            home.setOnKeyPressed(this::showHelpPage);
 
             this.adminLoginCtrl = adminLoginPair.getKey();
             this.adminLogin = new Scene(adminLoginPair.getValue());
@@ -150,4 +156,25 @@ public class MainCtrl {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public void showHelpPage(KeyEvent event) {
+        if (event.getCode() == KeyCode.H && event.isShiftDown()) {
+            FXMLLoader helpPageLoader = new FXMLLoader(
+                    getClass().getResource("helpPage.fxml"));
+            Parent helpPageParent;
+            try {
+                helpPageParent = helpPageLoader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Scene helpPage = new Scene(helpPageParent);
+            Stage helpPageStage = new Stage();
+            helpPageStage.setTitle("Shortcut Help Page");
+            helpPageStage.setResizable(false);
+            helpPageStage.setScene(helpPage);
+            helpPageStage.initModality(Modality.APPLICATION_MODAL);
+            helpPageStage.showAndWait();
+        }
+    }
+
 }

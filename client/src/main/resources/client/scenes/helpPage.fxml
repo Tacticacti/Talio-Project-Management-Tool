@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="399.0" prefWidth="582.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="41.0" prefWidth="151.0" text="Shortcut" textAlignment="CENTER">
+            <font>
+                <Font size="24.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="165.0" layoutY="14.0" prefHeight="41.0" prefWidth="413.0" text="Description" textAlignment="CENTER">
+            <font>
+                <Font size="24.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="55.0" prefHeight="41.0" prefWidth="151.0" text="?" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="300.0" prefHeight="41.0" prefWidth="151.0" text="T" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="259.0" prefHeight="41.0" prefWidth="151.0" text="ESC" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="218.0" prefHeight="41.0" prefWidth="151.0" text="Enter" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="177.0" prefHeight="41.0" prefWidth="151.0" text="Del/Backspace" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="137.0" prefHeight="41.0" prefWidth="151.0" text="E" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="96.0" prefHeight="41.0" prefWidth="151.0" text="Shift + Up/Down" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="14.0" layoutY="338.0" prefHeight="41.0" prefWidth="151.0" text="C" textAlignment="CENTER">
+            <font>
+                <Font size="16.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="164.0" layoutY="341.0" prefHeight="41.0" prefWidth="413.0" text=" Press C for a popup for color preset selection" textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="164.0" layoutY="300.0" prefHeight="41.0" prefWidth="413.0" text="Press T for a popup for adding tags" textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="164.0" layoutY="259.0" prefHeight="41.0" prefWidth="413.0" text=" Press Esc to close the task details," textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="164.0" layoutY="218.0" prefHeight="41.0" prefWidth="413.0" text=" Press Enter to open the task details" textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="164.0" layoutY="179.0" prefHeight="41.0" prefWidth="413.0" text="Press Del or Backspace to delete a task" textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="164.0" layoutY="137.0" prefHeight="41.0" prefWidth="413.0" text="Press E to edit the task title directly in the overview" textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="164.0" layoutY="95.0" prefHeight="41.0" prefWidth="413.0" text="Press Shift + ↑ or Shift + ↓ to reorder tasks in the list" textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="163.0" layoutY="55.0" prefHeight="41.0" prefWidth="413.0" text="Press ? anywhere in the application to open this screen" textAlignment="CENTER">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+    </children>
+</AnchorPane>
