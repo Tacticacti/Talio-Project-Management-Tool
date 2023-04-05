@@ -211,13 +211,19 @@ public class CardCtrl {
                 System.out.println("Text of cur subtask processed: " + cb.getText());
                 if (!current.getSubtasks().contains(cb.getText()))
                     current.addSubTask(cb.getText());
-                if(i<current.getSubtasks().size()){
+                if (i < current.getSubtasks().size()) {
                     if (!current.getSubtasks().get(i).equals(cb.getText())
                             && current.getSubtasks().contains(cb.getText())) {
                         current.removeSubTask(cb.getText());
                         current.addSubtaskAtIndex(cb.getText(), i);
                         if (cb.isSelected()) {
                             current.completeSubTask(cb.getText());
+                        } else {
+                            current.removeSubTask(cb.getText());
+                            current.addSubtaskAtIndex(cb.getText(), i);
+                            if (cb.isSelected()) {
+                                current.completeSubTask(cb.getText());
+                            }
                         }
                     }
                 }

@@ -32,11 +32,12 @@ import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static client.scenes.MainCtrl.primaryStage;
 import static com.google.inject.Guice.createInjector;
@@ -81,8 +82,8 @@ public class BoardOverviewCtrl implements Initializable {
     public BoardOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
         this.server = server;
-        drawnBoards = new HashSet<>();
-        boardsNodes = new HashSet<>();
+        drawnBoards = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        boardsNodes = Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
     public void createBoard() throws IOException {
@@ -361,7 +362,8 @@ public class BoardOverviewCtrl implements Initializable {
         boardsNodes.forEach(x -> {
             correctText(x);
         });
-        localUtils.getBoards().forEach(x -> {
+        var tmp = localUtils.getBoards();
+        tmp.forEach(x -> {
             if(drawnBoards.contains(x))
                 return;
             try {
