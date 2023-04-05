@@ -33,7 +33,7 @@ public class Board {
         this.name = "";
         this.lists = new ArrayList<>();
         this.tagList=new ArrayList<>();
-
+        this.password = null;
     }
 
     // constructors
