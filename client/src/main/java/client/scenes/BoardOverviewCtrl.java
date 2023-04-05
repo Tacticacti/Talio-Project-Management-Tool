@@ -197,7 +197,7 @@ public class BoardOverviewCtrl implements Initializable {
                     !drawnBoards.contains(board.getId())) {
                 boardFound = true;
                 // check if board is password protected
-                if (board.getPassword() != null || !board.getPassword().isEmpty() ) {
+                if (board.getPassword() != null && !board.getPassword().isEmpty() ) {
                     // prompt user for password
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setTitle("Enter Board Password");
