@@ -299,9 +299,8 @@ public class ServerUtils {
                 .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
     }
 
-    public void deleteCardFromList(Long listId, Card card){
-        System.out.println(card);
-        ClientBuilder.newClient(new ClientConfig()) //
+    public BoardList deleteCardFromList(Long listId, Card card){
+        return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/lists/deleteCard/" + listId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //

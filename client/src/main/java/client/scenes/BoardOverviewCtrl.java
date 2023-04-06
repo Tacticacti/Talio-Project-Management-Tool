@@ -162,7 +162,8 @@ public class BoardOverviewCtrl implements Initializable {
         singleBoardCtrl.setBoard(new_board);
         loader.setController(singleBoardCtrl);
 
-        var singleBoard = (Parent) loader.load();
+        Parent singleBoard = loader.load();
+        singleBoard.setOnKeyPressed(mainCtrl::showHelpPage);
 
         Scene new_scene = new Scene(singleBoard);
         TextField board_name = (TextField) new_scene.lookup("#board_name");
