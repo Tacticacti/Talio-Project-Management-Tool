@@ -40,7 +40,30 @@ public class BoardTest {
 			"Constructor should initialize the lists variable");
         Assertions.assertEquals(0, newBoard.getLists().size(),
 			"Constructor should initialize an empty lists variable");
+        Assertions.assertNotNull(newBoard.getTagLists(),
+                "Constructor should initialize the tags variable");
+        Assertions.assertEquals(0, newBoard.getTagLists().size(),
+                "Constructor should initialize an empty tags variable");
+
     }
+
+    @Test
+    public void ConstructorWithPasswordTest() {
+        Board newBoard = new Board("New Board", "p455w0rd");
+        Assertions.assertEquals("New Board", newBoard.getName(),
+                "Constructor should set the board name");
+        Assertions.assertEquals("p455w0rd", newBoard.getPassword(),
+                "Constructor should set the board password");
+        Assertions.assertNotNull(newBoard.getLists(),
+                "Constructor should initialize the lists variable");
+        Assertions.assertEquals(0, newBoard.getLists().size(),
+                "Constructor should initialize an empty lists variable");
+        Assertions.assertNotNull(newBoard.getTagLists(),
+                "Constructor should initialize the tags variable");
+        Assertions.assertEquals(0, newBoard.getTagLists().size(),
+                "Constructor should initialize an empty tags variable");
+    }
+
     @Test
     public void emptyConstructorTest(){
         Board newBoard = new Board();
