@@ -133,21 +133,24 @@ public class CustomizationUtils {
                 .replace("]", "")
                 .replace(" ", ""));
 
-        //System.out.println(customizationData);
-
     }
 
 
     public static void addDefaultCustomization(Long boardID) {
-        // background, foreground, cardColour, text, accesibility, listcolor
-        customizationData.put(boardID, "white,#403e3e,white,black,false,white");
+        // background, foreground, cardColour, text, accesibility, listcolor, board_color
+        customizationData.put(boardID, "white,#403e3e,white,black,false,white, black");
         System.out.println(customizationData);
 
         // if there is already one in saved file
     }
 
     public static String getCustomizationField(Long board, int index) {
+        if(!customizationData.containsKey(board)) {
+            return null;
+        }
+
         String boardData = customizationData.get(board);
+
 
 
         return (boardData.split(",")[index]).toString().replace("0x", "#");
@@ -198,22 +201,7 @@ public class CustomizationUtils {
             }
         }
 
-
-
-      // save to file
     }
 
-
-
-    public static void loadCurrentOptions() {}
-
-
-
-
-
-
-
-
-    // make methods to load customization data
 
 }

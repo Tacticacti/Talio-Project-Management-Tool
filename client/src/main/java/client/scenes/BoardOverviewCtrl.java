@@ -43,6 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static client.scenes.MainCtrl.primaryStage;
 import static client.scenes.SingleBoardCtrl.BoardID;
 import static client.utils.CustomizationUtils.addDefaultCustomization;
+import static client.utils.CustomizationUtils.customizationData;
 import static client.utils.LocalUtils.writeCustomization;
 import static com.google.inject.Guice.createInjector;
 
@@ -100,6 +101,8 @@ public class BoardOverviewCtrl implements Initializable {
             // load board and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             AnchorPane board = loader.load();
+
+
             last_row.getChildren().add(board);
 
             Board new_board = server.addBoard(new Board());
@@ -138,6 +141,7 @@ public class BoardOverviewCtrl implements Initializable {
             HBox.setMargin(board, new Insets(0, 0, 0, 187.5));
 
             Board new_board = server.addBoard(new Board());
+
 
             // add it to board overview
             hbox.getChildren().add(board);
@@ -297,6 +301,18 @@ public class BoardOverviewCtrl implements Initializable {
 
         Text name = (Text) tmp.lookup("#boardName");
         name.setText(board2.getName());
+
+        // correct outline
+        //if (customizationData.containsKey(board.getId())) {
+
+        //    var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+        //    ((AnchorPane) board).getChildren().get(0).setStyle(
+        //            "-fx-background-color: grey;"
+        //                    + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+        //                    + "-fx-border-radius: 10;-fx-background-radius: 15"
+        //    );
+        //}
+
     }
 
     public void addJoinedBoard(Board board2) throws IOException {
@@ -329,6 +345,17 @@ public class BoardOverviewCtrl implements Initializable {
                     throw new RuntimeException(e);
                 }
             });
+
+            if (customizationData.containsKey(board2.getId())) {
+
+                var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+                ((AnchorPane) board).getChildren().get(0).setStyle(
+                        "-fx-background-color: grey;"
+                                + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+                                + "-fx-border-radius: 10;-fx-background-radius: 15"
+                );
+            }
+
 
 
         }
@@ -363,6 +390,15 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
 
+            if (customizationData.containsKey(board2.getId())) {
+                var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+                ((AnchorPane) board).getChildren().get(0).setStyle(
+                        "-fx-background-color: grey;"
+                                + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+                                + "-fx-border-radius: 10;-fx-background-radius: 15"
+                );
+            }
+
         }
 
     }
@@ -395,6 +431,10 @@ public class BoardOverviewCtrl implements Initializable {
                 return;
             try {
                 addJoinedBoard(server.getBoardById(x));
+
+
+
+
             } catch (IOException e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.initModality(Modality.APPLICATION_MODAL);

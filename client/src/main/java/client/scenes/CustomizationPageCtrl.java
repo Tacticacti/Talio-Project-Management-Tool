@@ -47,6 +47,9 @@ public class CustomizationPageCtrl implements Initializable {
     @FXML
     private ColorPicker list_colour;
 
+    @FXML
+    private ColorPicker bb_colour;
+
 
 
     @Inject
@@ -82,6 +85,10 @@ public class CustomizationPageCtrl implements Initializable {
 
         list_colour.setValue(Color.valueOf(CustomizationUtils
                 .getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
+
+        bb_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 6)));
+
     }
 
     public void setBackgroundColour() {
@@ -93,6 +100,8 @@ public class CustomizationPageCtrl implements Initializable {
         current_scene.lookup("#hbox_lists").setStyle("-fx-background-color: "+ cssColor +";");
 
         CustomizationUtils.setCustomizationField(SingleBoardCtrl.getBoardID(), cssColor, 0);
+
+
 
         // save to file
         writeCustomization();
@@ -215,6 +224,14 @@ public class CustomizationPageCtrl implements Initializable {
 
         writeCustomization();
 
+    }
+
+    public void setBoardBorderColour() {
+
+        String cssColor = bb_colour.getValue().toString().replace("0x", "#");
+        CustomizationUtils.setCustomizationField(SingleBoardCtrl.getBoardID(), cssColor, 6);
+
+        writeCustomization();
     }
 
 

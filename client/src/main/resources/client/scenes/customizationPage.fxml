@@ -32,6 +32,8 @@
                   <ColorPicker fx:id="b_fg" focusTraversable="false" layoutX="151.0" layoutY="68.0" onAction="#setForegroundColour" prefHeight="20.0" prefWidth="40.0" />
                   <Label layoutX="33.0" layoutY="119.0" prefHeight="17.0" prefWidth="116.0" text="Accessibility Mode" />
                   <CheckBox fx:id="accessibility_mode" focusTraversable="false" layoutX="193.0" layoutY="119.0" mnemonicParsing="false" onAction="#setAccessibilityMode" />
+                  <Label layoutX="17.0" layoutY="146.0" prefHeight="85.0" prefWidth="125.0" text="Board Border Colour" />
+                  <ColorPicker fx:id="bb_colour" focusTraversable="false" layoutX="151.0" layoutY="179.0" onAction="#setBoardBorderColour" prefHeight="20.0" prefWidth="40.0" />
                </children>
             </Group>
             <Group>
