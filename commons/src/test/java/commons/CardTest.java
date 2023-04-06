@@ -76,11 +76,11 @@ class CardTest {
         assertEquals(0, c1.getCompletedSubs());
         c1.completeSubTask("research otters");
         assertEquals(1, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
+        c1.completeSubTask("research monkeys");
         assertEquals(2, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
-        assertEquals(3, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
+        c1.completeSubTask("research monkeys");
+        assertEquals(2, c1.getCompletedSubs());
+        c1.completeSubTask("research donkeys");
         assertEquals(3, c1.getCompletedSubs());
     }
 
@@ -291,11 +291,12 @@ class CardTest {
         assertTrue(card.getSubtasks().contains(sub2));
 
         card.completeSubTask(sub3);
-        assertTrue(card.getSubtasks().contains(sub3));
+        assertTrue(!card.getSubtasks().contains(sub3));
         assertTrue(card.getCompletedTasks().contains(sub3));
 
         card.removeSubTask(sub1);
-        card.removeSubTask(sub3);
+        card.uncompleteSubTask(sub3);
+        //card.removeSubTask(sub3);
         assertFalse(card.getSubtasks().contains(sub1));
         assertTrue(card.getSubtasks().contains(sub2));
         assertFalse(card.getSubtasks().contains(sub3));

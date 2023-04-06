@@ -209,14 +209,21 @@ public class CardCtrl {
                 System.out.println("Text of cur subtask processed: " + cb.getText());
                 if (!current.getSubtasks().contains(cb.getText()))
                     current.addSubTask(cb.getText());
+
+                if(cb.isSelected()){
+                    current.completeSubTask(cb.getText());
+                }
+
                 if (!current.getSubtasks().get(i).equals(cb.getText())
-                        && current.getSubtasks().contains(cb.getText())) {
+                                && current.getSubtasks().contains(cb.getText())) {
                     current.removeSubTask(cb.getText());
                     current.addSubtaskAtIndex(cb.getText(), i);
                     if (cb.isSelected()) {
                         current.completeSubTask(cb.getText());
                     }
                 }
+
+
             }
         }
         singleBoardCtrl.server.addCard(current);
@@ -224,7 +231,7 @@ public class CardCtrl {
         //server.stopExec();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
-        singleBoardCtrl.refresh();
+        //singleBoardCtrl.refresh();
     }
 
     public void setDelete(ActionEvent event, Node hbox, Card current, long listId) {
