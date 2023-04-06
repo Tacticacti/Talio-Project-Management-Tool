@@ -3,31 +3,24 @@ package client.scenes;
 import client.utils.CustomizationUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
-import org.glassfish.jersey.internal.inject.Custom;
+
 
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static client.scenes.BoardOverviewCtrl.localUtils;
 import static client.scenes.MainCtrl.primaryStage;
 import static client.utils.LocalUtils.writeCustomization;
 
@@ -72,12 +65,23 @@ public class CustomizationPageCtrl implements Initializable {
 
         // background, foreground, cardColour, text, accesibility, listcolor
 
-        b_bg.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 0)));
-        b_fg.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 1)));
-        card_colour.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 2)));
-        text_colour.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 3)));
-        accessibility_mode.setSelected(Boolean.parseBoolean(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 4)));
-        list_colour.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
+        b_bg.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 0)));
+
+        b_fg.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 1)));
+
+        card_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 2)));
+
+        text_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 3)));
+
+        accessibility_mode.setSelected(Boolean.parseBoolean(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 4)));
+
+        list_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
     }
 
     public void setBackgroundColour() {
@@ -143,7 +147,8 @@ public class CustomizationPageCtrl implements Initializable {
         Scene current_scene =  primaryStage.getScene();
         AnchorPane anchor = (AnchorPane) current_scene.getRoot();
 
-        CustomizationUtils.setCustomizationField(SingleBoardCtrl.BoardID, String.valueOf(text_colour.getValue()), 3);
+        CustomizationUtils.setCustomizationField(SingleBoardCtrl.BoardID,
+                String.valueOf(text_colour.getValue()), 3);
 
         CustomizationUtils.updateTextColor(anchor, SingleBoardCtrl.getBoardID());
 

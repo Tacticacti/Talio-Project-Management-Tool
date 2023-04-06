@@ -3,25 +3,18 @@ package client.utils;
 import client.scenes.SingleBoardCtrl;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static client.scenes.MainCtrl.primaryStage;
 
@@ -30,7 +23,7 @@ public class CustomizationUtils {
     public static Color textColor = Color.BLACK;
     public static Color listColor = Color.WHITE;
 
-    public static Map<Long, String> customizationData = new HashMap<Long,String>();
+    public static Map<Long, String> customizationData = new HashMap<>();
 
 
 
@@ -45,11 +38,7 @@ public class CustomizationUtils {
             node.setStyle("-fx-text-fill:  "+ color + ";");
         } else if (!node.getStyle().contains("-fx-text-fill: " + color + ";")) {
             node.setStyle(node.getStyle() + "-fx-text-fill: "+ color + ";");
-        } else {
-            //System.out.println("appending it to the end of css, could be problematic if this happens 10's of times");
-            //System.out.println(node.getStyle());
         }
-
 
         if (node instanceof Parent) {
             ((Parent) node).getChildrenUnmodifiable().forEach(child -> {
@@ -83,7 +72,8 @@ public class CustomizationUtils {
 
 
         if (node instanceof Parent) {
-            ((Parent) node).getChildrenUnmodifiable().forEach(child -> updateTextColor(child, BoardID));
+            ((Parent) node).getChildrenUnmodifiable()
+                    .forEach(child -> updateTextColor(child, BoardID));
         }
 
     }
@@ -166,7 +156,9 @@ public class CustomizationUtils {
     // takes in main anchor-pane of single board
     public static void updateAccessibilityMode(Node node) {
 
-        var accessibility = Boolean.parseBoolean(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 4));
+        var accessibility = Boolean.parseBoolean(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 4));
+
         var current_scene = primaryStage.getScene();
         if (accessibility) {
 
@@ -199,7 +191,8 @@ public class CustomizationUtils {
                 if (node2.getId().equals("list_anchor")) {
                     var node_vbox = ((AnchorPane) node2).lookup("#card_list");
                     //var node_vbox = node2;
-                    node_vbox.setStyle("-fx-background-color: "+ colour +";" + "-fx-background-radius: 10;");
+                    node_vbox.setStyle("-fx-background-color: "+ colour +";"
+                            + "-fx-background-radius: 10;");
 
                 }
             }

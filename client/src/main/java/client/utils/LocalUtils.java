@@ -1,7 +1,17 @@
 package client.utils;
 
-import java.io.*;
-import java.util.*;
+
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.FileNotFoundException;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static client.utils.CustomizationUtils.customizationData;
 

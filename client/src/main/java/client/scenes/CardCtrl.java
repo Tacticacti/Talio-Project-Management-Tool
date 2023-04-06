@@ -43,8 +43,6 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
-
-import static client.scenes.MainCtrl.primaryStage;
 import static client.scenes.SingleBoardCtrl.BoardID;
 
 public class CardCtrl {
@@ -123,7 +121,6 @@ public class CardCtrl {
             CustomizationUtils.updateCardColour(cardNode, BoardID);
 
             parent.getChildren().add(index, cardNode);
-            //CustomizationUtils.setTextColor(SingleBoardCtrl.BoardID, CustomizationUtils.getBoardTextColor(SingleBoardCtrl.getBoardID()));
             //cardNode.getScene();
 
 

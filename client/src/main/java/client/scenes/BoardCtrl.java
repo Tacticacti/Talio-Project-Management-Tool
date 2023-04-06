@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static client.scenes.BoardOverviewCtrl.localUtils;
-import static client.scenes.MainCtrl.boverview;
-import static client.scenes.MainCtrl.primaryStage;
 import static client.utils.CustomizationUtils.customizationData;
 import static client.utils.LocalUtils.writeCustomization;
 
@@ -39,7 +37,9 @@ public class BoardCtrl {
         }
     }
 
-    public void openBoardSettings(long BoardID, ConnectHomeCtrl connectHomeCtrl) throws IOException {
+    public void openBoardSettings(long BoardID,
+                                  ConnectHomeCtrl connectHomeCtrl) throws IOException {
+
         System.out.println("running!" + singleBoardCtrl.server.getBoards());
         FXMLLoader loader = new FXMLLoader(
                 singleBoardCtrl.getClass().getResource("customizationPage.fxml"));

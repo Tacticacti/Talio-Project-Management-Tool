@@ -42,8 +42,6 @@ import java.util.ResourceBundle;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static client.scenes.MainCtrl.primaryStage;
-import static client.utils.CustomizationUtils.customizationData;
 
 public class SingleBoardCtrl implements Initializable {
     final ListCtrl listCtrl = new ListCtrl(this);

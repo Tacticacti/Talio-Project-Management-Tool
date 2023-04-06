@@ -13,13 +13,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-
 import java.io.IOException;
 import java.util.Objects;
 
-import static client.scenes.SingleBoardCtrl.BoardID;
 
 
 public class ListCtrl {

@@ -23,7 +23,6 @@ import client.scenes.DashboardCtrl;
 import client.scenes.MainCtrl;
 import client.scenes.BoardOverviewCtrl;
 import client.scenes.ConnectHomeCtrl;
-import client.utils.LocalUtils;
 import com.google.inject.Injector;
 
 import javafx.application.Application;
