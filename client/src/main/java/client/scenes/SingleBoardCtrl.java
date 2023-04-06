@@ -42,9 +42,9 @@ public class SingleBoardCtrl implements Initializable {
     final CardCtrl cardCtrl = new CardCtrl(this);
     final TagCtrl tagCtrl = new TagCtrl(this);
     final BoardCtrl boardCtrl = new BoardCtrl(this);
-    private final SecurityCtrl securityCtrl;
+    final SecurityCtrl securityCtrl = new SecurityCtrl(this);
     ServerUtils server;
-    private final BoardOverviewCtrl boardOverviewCtrl;
+    final BoardOverviewCtrl boardOverviewCtrl;
     final MainCtrl mainCtrl;
     Long BoardID = 1L;
     Node newCardBtn;
@@ -87,7 +87,6 @@ public class SingleBoardCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.isUnlocked = isUnlocked;
-        this.securityCtrl = new SecurityCtrl(this, boardOverviewCtrl);
     }
 
     @Override

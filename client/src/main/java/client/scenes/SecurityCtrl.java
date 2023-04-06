@@ -15,11 +15,9 @@ import java.util.Objects;
 
 public class SecurityCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
-    private final BoardOverviewCtrl boardOverviewCtrl;
 
-    public SecurityCtrl(SingleBoardCtrl singleBoardCtrl, BoardOverviewCtrl boardOverviewCtrl) {
+    public SecurityCtrl(SingleBoardCtrl singleBoardCtrl) {
         this.singleBoardCtrl = singleBoardCtrl;
-        this.boardOverviewCtrl = boardOverviewCtrl;
     }
 
     public void requestPasswordChange() {
@@ -54,12 +52,14 @@ public class SecurityCtrl {
             }
             setIsUnlocked(true);
             try {
-                boardOverviewCtrl.addJoinedBoard(singleBoardCtrl.current_board);
+                singleBoardCtrl.boardOverviewCtrl.
+                        addJoinedBoard(singleBoardCtrl.current_board);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             try {
-                boardOverviewCtrl.localUtils.add(singleBoardCtrl.current_board.getId());
+                singleBoardCtrl.boardOverviewCtrl.localUtils.
+                        add(singleBoardCtrl.current_board.getId());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
