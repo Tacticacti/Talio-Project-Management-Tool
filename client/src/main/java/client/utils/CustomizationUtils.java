@@ -150,7 +150,7 @@ public class CustomizationUtils {
 
     public static void addDefaultCustomization(Long boardID) {
         // background, foreground, cardColour, text, accesibility, listcolor
-        customizationData.put(boardID, "white,#403e3e,white,black,false,red");
+        customizationData.put(boardID, "white,#403e3e,white,black,false,white");
         System.out.println(customizationData);
 
         // if there is already one in saved file
@@ -193,34 +193,26 @@ public class CustomizationUtils {
 
         System.out.println("updating list colour!");
 
-        for (Node node2 : h_boxlist.getChildren()) {
-            if (node2.getId().equals("list_anchor")) {
-                var node_vbox = ((AnchorPane) node2).lookup("#card_list");
-                //var node_vbox = node2;
-                node_vbox.setStyle("-fx-background-color: "+ colour +";" + "-fx-background-radius: 10;");
 
+        if (h_boxlist != null) {
+            for (Node node2 : h_boxlist.getChildren()) {
+                if (node2.getId().equals("list_anchor")) {
+                    var node_vbox = ((AnchorPane) node2).lookup("#card_list");
+                    //var node_vbox = node2;
+                    node_vbox.setStyle("-fx-background-color: "+ colour +";" + "-fx-background-radius: 10;");
+
+                }
             }
         }
 
-        //if (node.getStyle().isEmpty()) {
-        //    node.setStyle("-fx-background-color: "+ colour +";");
-        //} else if (!node.getStyle().contains("-fx-background-color: "+ colour +";")) {
-        //    node.setStyle(node.getStyle() + "-fx-background-color: "+ colour +";");
-        //}
-        // every card
-        //if (node instanceof Parent) {
-        //    ((Parent) node).getChildrenUnmodifiable().forEach(child -> {
-          //      if ("card".equals(child.getId())) {
-            //        updateCardColour(child, BoardID);
-              //      System.out.println("this is running - updating card colour!");
-                //}
-            //});
-        //}
 
-        // save to file
+
+      // save to file
     }
 
 
+
+    public static void loadCurrentOptions() {}
 
 
 

@@ -27,7 +27,9 @@ import org.glassfish.jersey.internal.inject.Custom;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static client.scenes.BoardOverviewCtrl.localUtils;
 import static client.scenes.MainCtrl.primaryStage;
+import static client.utils.LocalUtils.writeCustomization;
 
 public class CustomizationPageCtrl implements Initializable {
 
@@ -68,6 +70,14 @@ public class CustomizationPageCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        // background, foreground, cardColour, text, accesibility, listcolor
+
+        b_bg.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 0)));
+        b_fg.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 1)));
+        card_colour.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 2)));
+        text_colour.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 3)));
+        accessibility_mode.setSelected(Boolean.parseBoolean(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 4)));
+        list_colour.setValue(Color.valueOf(CustomizationUtils.getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
     }
 
     public void setBackgroundColour() {
@@ -81,6 +91,7 @@ public class CustomizationPageCtrl implements Initializable {
         CustomizationUtils.setCustomizationField(SingleBoardCtrl.getBoardID(), cssColor, 0);
 
         // save to file
+        writeCustomization();
     }
 
     public void setForegroundColour() {
@@ -97,6 +108,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
         // save to file
+        writeCustomization();
     }
 
     public void setDefaultCardColour() {
@@ -122,6 +134,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
         // save tof file
+        writeCustomization();
     }
 
     public void setTextColour() {
@@ -140,6 +153,7 @@ public class CustomizationPageCtrl implements Initializable {
         // change default text color when added
 
         // save to file
+        writeCustomization();
     }
 
 
@@ -175,7 +189,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
 
-
+        writeCustomization();
 
         // save to file
     }
@@ -193,6 +207,9 @@ public class CustomizationPageCtrl implements Initializable {
         CustomizationUtils.updateListColour(SingleBoardCtrl.getBoardID());
 
         // save to file
+
+        writeCustomization();
+
     }
 
 

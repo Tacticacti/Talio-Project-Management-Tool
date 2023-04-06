@@ -14,6 +14,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -85,7 +86,7 @@ public class DashboardCtrl implements Initializable {
         boards.setItems(boardsList);
     }
 
-    public void back() {
+    public void back() throws IOException {
         ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
         connectHomeCtrl.showBoardOverview();
         //mainCtrl.showBoardOverview();

@@ -15,6 +15,8 @@ import java.util.Objects;
 import static client.scenes.BoardOverviewCtrl.localUtils;
 import static client.scenes.MainCtrl.boverview;
 import static client.scenes.MainCtrl.primaryStage;
+import static client.utils.CustomizationUtils.customizationData;
+import static client.utils.LocalUtils.writeCustomization;
 
 public class BoardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
@@ -61,8 +63,15 @@ public class BoardCtrl {
             }
 
             stage.close();
+            customizationData.remove(BoardID);
+            writeCustomization();
 
-            connectHomeCtrl.showBoardOverview();
+
+            try {
+                connectHomeCtrl.showBoardOverview();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
         });
         Scene scene = new Scene(customization);

@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 
+import java.io.IOException;
+
 public class AdminLoginCtrl {
     @FXML
     private TextField psswdField;
@@ -51,7 +53,7 @@ public class AdminLoginCtrl {
         }
     }
 
-    public void back() {
+    public void back() throws IOException {
         ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
         connectHomeCtrl.showBoardOverview();
         //mainCtrl.showBoardOverview();

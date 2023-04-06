@@ -136,7 +136,11 @@ public class SingleBoardCtrl implements Initializable {
             listCtrl.createNewList();
         });
         backBtn.setOnAction(e->{
-            back();
+            try {
+                back();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         nodeCardMap = new HashMap<>();
         current_board = new Board();
@@ -174,7 +178,7 @@ public class SingleBoardCtrl implements Initializable {
         });
     }
 
-    public void back(){
+    public void back() throws IOException {
         ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
         connectHomeCtrl.showBoardOverview();
     }
@@ -306,7 +310,7 @@ public class SingleBoardCtrl implements Initializable {
             System.out.println("Refreshes Single Board");
             drawLists();
 
-            //CustomizationUtils.updateListColour(BoardID);
+            CustomizationUtils.updateListColour(BoardID);
 
 
         }

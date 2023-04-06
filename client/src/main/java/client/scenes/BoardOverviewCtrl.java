@@ -44,6 +44,7 @@ import static client.scenes.MainCtrl.primaryStage;
 import static client.scenes.SingleBoardCtrl.BoardID;
 import static client.utils.CustomizationUtils.addDefaultCustomization;
 import static client.utils.CustomizationUtils.customizationData;
+import static client.utils.LocalUtils.writeCustomization;
 import static com.google.inject.Guice.createInjector;
 
 public class BoardOverviewCtrl implements Initializable {
@@ -121,6 +122,7 @@ public class BoardOverviewCtrl implements Initializable {
             localUtils.add(new_board.getId());
 
             addDefaultCustomization(new_board.getId());
+            writeCustomization();
 
             enterBoard(new_board);
         }
@@ -199,8 +201,7 @@ public class BoardOverviewCtrl implements Initializable {
         CustomizationUtils.updateBackgroundColour(primaryStage.getScene().lookup("#hbox_lists"), new_board.getId());
         CustomizationUtils.updateForegroundColour(primaryStage.getScene().getRoot(), new_board.getId());
         CustomizationUtils.updateAccessibilityMode(primaryStage.getScene().getRoot());
-
-        //CustomizationUtils.updateListColour(BoardID);
+        CustomizationUtils.updateListColour(BoardID);
 
 
         System.out.println(new_scene);
@@ -264,11 +265,18 @@ public class BoardOverviewCtrl implements Initializable {
                         alert.setContentText("You are now entering the board in Read-Only mode.");
                         alert.showAndWait();
 
+                        addDefaultCustomization(board.getId());
+                        writeCustomization();
+
                         enterBoard(board);
                     }
                 } else {
                     addJoinedBoard(board);
                     localUtils.add(board.getId());
+
+                    addDefaultCustomization(board.getId());
+                    writeCustomization();
+
                     enterBoard(board);
                 }
                 System.out.println("hello!");
@@ -364,7 +372,7 @@ public class BoardOverviewCtrl implements Initializable {
 
     }
 
-    public void refresh() {
+    public void refresh() throws IOException {
         if(localUtils == null)
             localUtils = new LocalUtils();
         if(!Objects.equals(localUtils.getPath(), server.getPath())) {
@@ -407,6 +415,7 @@ public class BoardOverviewCtrl implements Initializable {
 
             if (!(savedCustomizationBoard.containsKey(currentBoard))) {
                 addDefaultCustomization(currentBoard);
+                writeCustomization();
             }
         }
 
@@ -417,7 +426,7 @@ public class BoardOverviewCtrl implements Initializable {
         server.disconnect();
     }
 
-    public void resetFile() {
+    public void resetFile() throws IOException {
         try {
             localUtils.reset();
         }
@@ -461,7 +470,11 @@ public class BoardOverviewCtrl implements Initializable {
             }
         });
         reset.setOnAction(e->{
-            resetFile();
+            try {
+                resetFile();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         search_box.setOnAction(e->{
             try {
@@ -471,7 +484,11 @@ public class BoardOverviewCtrl implements Initializable {
             }
         });
         server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
-            refresh();
+            try {
+                refresh();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }
