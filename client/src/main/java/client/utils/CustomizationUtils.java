@@ -138,7 +138,7 @@ public class CustomizationUtils {
 
     public static void addDefaultCustomization(Long boardID) {
         // background, foreground, cardColour, text, accesibility, listcolor, board_color
-        customizationData.put(boardID, "white,#403e3e,white,black,false,white, black");
+        customizationData.put(boardID, "white,#403e3e,white,black,false,white,black");
         System.out.println(customizationData);
 
         // if there is already one in saved file
@@ -146,7 +146,7 @@ public class CustomizationUtils {
 
     public static String getCustomizationField(Long board, int index) {
         if(!customizationData.containsKey(board)) {
-            return null;
+            return "";
         }
 
         String boardData = customizationData.get(board);
