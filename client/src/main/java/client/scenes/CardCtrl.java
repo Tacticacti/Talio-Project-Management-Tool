@@ -389,6 +389,7 @@ public class CardCtrl {
             mainCtrl.showHelpPage(event);
             if (event.getCode() == KeyCode.ESCAPE) {
                 popUpStage.close();
+                singleBoardCtrl.server.stopExec();
                 event.consume();
             }
         });
@@ -435,8 +436,6 @@ public class CardCtrl {
                         current.completeSubTask(cb.getText());
                     }
                 }
-
-
             }
         }
         singleBoardCtrl.server.addCard(current);

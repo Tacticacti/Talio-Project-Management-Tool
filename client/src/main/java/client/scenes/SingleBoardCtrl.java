@@ -154,7 +154,7 @@ public class SingleBoardCtrl implements Initializable {
             if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                 return;
             }
-            tagCtrl.addNewTag(tagHbox);
+            addNewTag();
         });
         refresh();
         System.out.println(server);
@@ -299,6 +299,11 @@ public class SingleBoardCtrl implements Initializable {
         catch(Exception e) {
             e.printStackTrace();
         }
+        ObservableList<Node> tags = tagHbox.getChildren();
+        tags.clear();
+        for(Tag t: current_board.getTagLists()){
+            placeTag(tagHbox,t);
+        }
     }
 
     public void copyInvite() {
@@ -307,14 +312,10 @@ public class SingleBoardCtrl implements Initializable {
         Clipboard.getSystemClipboard().setContent(content);
     }
 
-    public void addNewTag(HBox parent){
-        tagCtrl.addNewTag(parent);
+    public void addNewTag(){
+        tagCtrl.enterTagName();
     }
 
-    public void setUpNewTag(BoardList boardList)
-            throws IOException {
-        tagCtrl.setUpNewTag(boardList);
-    }
 
     public void placeTag(HBox parent, Tag tag){
         tagCtrl.placeTag(parent, tag);

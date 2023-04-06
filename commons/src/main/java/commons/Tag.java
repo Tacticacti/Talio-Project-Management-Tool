@@ -31,12 +31,20 @@ public class Tag {
 
     public String title;
 
-    public Tag(String title) {
+    public String color;
+
+    public Tag(String title, String color) {
+        this.color = color;
         this.title = title;
     }
 
-    public Tag() {
+    public Tag(String title) {
+        this.color = "#ffffff";
+        this.title = title;
+    }
+    public Tag(){
         this.title = "";
+        this.color = "#ffffff";
     }
 
     public long getId(){
@@ -60,6 +68,14 @@ public class Tag {
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
         return Objects.equals(title, tag.title);
+    }
+
+    public void setColor(String color){
+
+        this.color = color;
+    }
+    public String getColor(){
+        return color;
     }
 
     @Override

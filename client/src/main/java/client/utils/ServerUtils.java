@@ -340,8 +340,8 @@ public class ServerUtils {
     public void registerForCardUpdate(Consumer<Card> cardConsumer){
         EXEC = Executors.newSingleThreadExecutor();
         EXEC.submit(()->{
-            System.out.println("running");
             while(!Thread.interrupted()) {
+                System.out.println("running");
                 var result = ClientBuilder.newClient(new ClientConfig())
                         .target(server).path("api/lists/deletedtask")
                         .request(APPLICATION_JSON)

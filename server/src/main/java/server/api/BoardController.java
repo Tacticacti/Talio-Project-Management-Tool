@@ -65,7 +65,6 @@ public class BoardController {
 
         Board saved = repo.save(board.get());
         messagingTemplate.convertAndSend("/topic/boards", saved);
-
         return ResponseEntity.ok(saved);
     }
 
