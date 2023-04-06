@@ -60,8 +60,21 @@ public class BoardController {
         if (!repo.existsById(listId)) {
             return ResponseEntity.badRequest().build();
         }
+        boolean check = false;
+        Tag toUpdate = null;
+        for(Tag t: board.get().getTagLists()){
+            if(t.getId()==tag.getId()){
+                check = true;
+                toUpdate = t;
+            }
 
-        board.get().addBoardTag(tag);
+        }
+        if(!check)
+            board.get().addBoardTag(tag);
+        else{
+            toUpdate.setColor(tag.getColor());
+            toUpdate.setTitle(tag.getTitle());
+        }
 
         Board saved = repo.save(board.get());
         messagingTemplate.convertAndSend("/topic/boards", saved);

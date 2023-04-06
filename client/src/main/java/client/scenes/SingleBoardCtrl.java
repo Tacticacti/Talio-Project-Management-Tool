@@ -316,6 +316,14 @@ public class SingleBoardCtrl implements Initializable {
         tagCtrl.enterTagName();
     }
 
+    public void addCustomTag(Card current){
+        tagCtrl.loadTagCard(current);
+    }
+
+    public void openBoardTags(Card current){
+        tagCtrl.openBoardTags(current);
+    }
+
 
     public void placeTag(HBox parent, Tag tag){
         tagCtrl.placeTag(parent, tag);
