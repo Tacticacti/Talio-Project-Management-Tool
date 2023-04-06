@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static client.scenes.MainCtrl.primaryStage;
+import static client.scenes.SingleBoardCtrl.BoardID;
 import static client.utils.CustomizationUtils.addDefaultCustomization;
 import static client.utils.CustomizationUtils.customizationData;
 import static com.google.inject.Guice.createInjector;
@@ -188,12 +189,18 @@ public class BoardOverviewCtrl implements Initializable {
 
 
         //CustomizationUtils.updateTextColor(new_scene.getRoot(), new_board.getId());
-        System.out.println("ENTERED TEXT COLOR:" + CustomizationUtils.getBoardTextColor(new_board.getId()));
+        System.out.println("ENTERED TEXT COLOR:" + CustomizationUtils.getCustomizationField(new_board.getId(), 3));
         System.out.println(customizationData);
-        System.out.println("thanks");
+
         primaryStage.setScene(new_scene);
         primaryStage.getScene().getRoot().getChildrenUnmodifiable()
                 .forEach(child -> CustomizationUtils.updateTextColor(child, new_board.getId()));
+
+        CustomizationUtils.updateBackgroundColour(primaryStage.getScene().lookup("#hbox_lists"), new_board.getId());
+        CustomizationUtils.updateForegroundColour(primaryStage.getScene().getRoot(), new_board.getId());
+        CustomizationUtils.updateAccessibilityMode(primaryStage.getScene().getRoot());
+
+        //CustomizationUtils.updateListColour(BoardID);
 
 
         System.out.println(new_scene);

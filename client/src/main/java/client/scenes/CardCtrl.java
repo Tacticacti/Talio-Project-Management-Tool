@@ -120,6 +120,7 @@ public class CardCtrl {
 
 
             CustomizationUtils.updateTextColor(cardNode, BoardID);
+            CustomizationUtils.updateCardColour(cardNode, BoardID);
 
             parent.getChildren().add(index, cardNode);
             //CustomizationUtils.setTextColor(SingleBoardCtrl.BoardID, CustomizationUtils.getBoardTextColor(SingleBoardCtrl.getBoardID()));

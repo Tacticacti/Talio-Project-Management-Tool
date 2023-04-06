@@ -19,6 +19,8 @@ import javafx.stage.Modality;
 import java.io.IOException;
 import java.util.Objects;
 
+import static client.scenes.SingleBoardCtrl.BoardID;
+
 
 public class ListCtrl {
     private final SingleBoardCtrl singleBoardCtrl;

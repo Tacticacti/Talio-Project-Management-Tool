@@ -72,7 +72,7 @@ public class SingleBoardCtrl implements Initializable {
     Board current_board;
     @FXML
     TextField board_name;
-    Map<Node, Card> nodeCardMap;
+    static Map<Node, Card> nodeCardMap;
     ClipboardContent content;
     static Dragboard dragboard;
     @FXML
@@ -305,6 +305,8 @@ public class SingleBoardCtrl implements Initializable {
         try {
             System.out.println("Refreshes Single Board");
             drawLists();
+
+            //CustomizationUtils.updateListColour(BoardID);
 
 
         }
