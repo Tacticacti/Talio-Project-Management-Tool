@@ -75,10 +75,10 @@ public class BoardController {
     @GetMapping(path = "/debug")
     public String getAllDebug() {
         List<Board> list = repo.findAll();
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for(Board b : list)
-            res += b + "<br> \n";
-        return res;
+            res.append(b).append("<br> \n");
+        return res.toString();
     }
 
     @GetMapping(path = "/{id}")

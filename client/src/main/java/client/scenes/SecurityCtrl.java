@@ -1,6 +1,5 @@
 package client.scenes;
 
-import commons.Board;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
 import javafx.scene.control.Dialog;
@@ -11,21 +10,16 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class SecurityCtrl {
-    private static SingleBoardCtrl singleBoardCtrl;
+    private final SingleBoardCtrl singleBoardCtrl;
+    private final BoardOverviewCtrl boardOverviewCtrl;
 
-    public SecurityCtrl(SingleBoardCtrl singleBoardCtrl) {
+    public SecurityCtrl(SingleBoardCtrl singleBoardCtrl, BoardOverviewCtrl boardOverviewCtrl) {
         this.singleBoardCtrl = singleBoardCtrl;
-    }
-
-    static boolean verifyPassword(Board board, String psswd) {
-        return singleBoardCtrl.server.verifyBoardPassword(board.getId(), psswd);
-    }
-
-    private void setPassword(Board board, String psswd) {
-        singleBoardCtrl.server.setBoardPassword(board.getId(), psswd);
+        this.boardOverviewCtrl = boardOverviewCtrl;
     }
 
     public void requestPasswordChange() {
@@ -36,7 +30,8 @@ public class SecurityCtrl {
             if (currentPassword == null) {
                 return;
             }
-            if(!verifyPassword(singleBoardCtrl.current_board, currentPassword)) {
+            if(!singleBoardCtrl.server.verifyBoardPassword(
+                    singleBoardCtrl.current_board.getId(), currentPassword)) {
                 showAlert(Alert.AlertType.ERROR,
                         "Incorrect Password", "The current password entered is incorrect.");
                 return;
@@ -51,13 +46,25 @@ public class SecurityCtrl {
             if (currentPassword == null) {
                 return;
             }
-            if(!verifyPassword(singleBoardCtrl.current_board, currentPassword)) {
+            if(!singleBoardCtrl.server.verifyBoardPassword(
+                    singleBoardCtrl.current_board.getId(), currentPassword)) {
                 showAlert(Alert.AlertType.ERROR,
                         "Incorrect Password", "The password entered is incorrect.");
                 return;
             }
             setIsUnlocked(true);
-            showAlert(Alert.AlertType.INFORMATION, "Board Unlocked", "The board is now unlocked.");
+            try {
+                boardOverviewCtrl.addJoinedBoard(singleBoardCtrl.current_board);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                boardOverviewCtrl.localUtils.add(singleBoardCtrl.current_board.getId());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            showAlert(Alert.AlertType.INFORMATION,
+                    "Board Unlocked", "You successfully joined the board!");
             return;
         }
         newPassword = promptForPassword("Enter New Password", "New Password:");
@@ -91,7 +98,7 @@ public class SecurityCtrl {
     }
 
     String promptForPassword(String title, String contentText) {
-        Dialog<String> dialog = new Dialog<String>();
+        Dialog<String> dialog = new Dialog<>();
         dialog.setTitle(title);
         Label promptLabel = new Label(contentText);
         PasswordField passwordField = new PasswordField();
@@ -115,9 +122,8 @@ public class SecurityCtrl {
         alert.showAndWait();
     }
 
-    public boolean setIsUnlocked(boolean newIsUnlocked) {
+    public void setIsUnlocked(boolean newIsUnlocked) {
         singleBoardCtrl.isUnlocked = newIsUnlocked;
-        return singleBoardCtrl.isUnlocked;
     }
 
     void updatePasswordButtonImage() {

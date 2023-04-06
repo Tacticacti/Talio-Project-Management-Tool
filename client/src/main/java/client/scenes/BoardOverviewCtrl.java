@@ -1,11 +1,8 @@
 package client.scenes;
 
-import client.MyFXML;
-import client.MyModule;
 import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import commons.Board;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +28,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
@@ -41,17 +37,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static client.scenes.MainCtrl.primaryStage;
-import static com.google.inject.Guice.createInjector;
 
 public class BoardOverviewCtrl implements Initializable {
     private ServerUtils server;
-    private LocalUtils localUtils;
+    LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
-    private static final Injector INJECTOR = createInjector(new MyModule());
-    private static final MyFXML FXML = new MyFXML(INJECTOR);
-
-    private Set<Long> drawnBoards;
+    private final Set<Long> drawnBoards;
     static Set<Node> boardsNodes;
 
     @FXML
@@ -166,7 +158,7 @@ public class BoardOverviewCtrl implements Initializable {
         // Check if the board is already joined
         boolean isUnlocked = drawnBoards.contains(new_board.getId());
 
-        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl, isUnlocked);
+        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, this, mainCtrl, isUnlocked);
         singleBoardCtrl.setBoard(new_board);
         loader.setController(singleBoardCtrl);
 
@@ -186,7 +178,7 @@ public class BoardOverviewCtrl implements Initializable {
 
     public void onJoinBoard() throws IOException {
         String text = search_box.getText();
-        Boolean boardFound = false;
+        boolean boardFound = false;
 
         // debug
         System.out.println(server.getBoards());
@@ -226,7 +218,7 @@ public class BoardOverviewCtrl implements Initializable {
 
                     if (password != null) {
                         if (!password.isEmpty()) {
-                            if (SecurityCtrl.verifyPassword(board, password)) {
+                            if (server.verifyBoardPassword(board.getId(), password)) {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setHeaderText("Success!");
                                 alert.setContentText("You are now joining the board.");
@@ -383,9 +375,7 @@ public class BoardOverviewCtrl implements Initializable {
             alert.setContentText("Error fetching boards from file!\n" + e.getMessage());
             alert.showAndWait();
         }
-        boardsNodes.forEach(x -> {
-            correctText(x);
-        });
+        boardsNodes.forEach(this::correctText);
         var tmp = localUtils.getBoards();
         tmp.forEach(x -> {
             if(drawnBoards.contains(x))
@@ -408,16 +398,25 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void resetFile() {
-        try {
-            localUtils.reset();
-        }
-        catch(Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Error: " + e.getMessage());
-            alert.showAndWait();
-        }
-        refresh();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("Reset storage");
+        alert.setContentText("Are you sure you want to reset storage? (Irreversible)");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    localUtils.reset();
+                }
+                catch(Exception e) {
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.initModality(Modality.APPLICATION_MODAL);
+                    error.setContentText("Error: " + e.getMessage());
+                    error.showAndWait();
+                }
+                refresh();
+            }
+        });
+        disconnect();
     }
 
     public void adminLogin() {
@@ -432,9 +431,7 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        disconnect.setOnAction(e->{
-            disconnect();
-        });
+        disconnect.setOnAction(e-> disconnect());
         adminLogin.setOnAction(e -> adminLogin());
         createBoard.setOnAction(e->{
             try {
@@ -450,9 +447,7 @@ public class BoardOverviewCtrl implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
-        reset.setOnAction(e->{
-            resetFile();
-        });
+        reset.setOnAction(e-> resetFile());
         search_box.setOnAction(e->{
             try {
                 onJoinBoard();
@@ -460,8 +455,6 @@ public class BoardOverviewCtrl implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
-        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
-            refresh();
-        });
+        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board-> refresh());
     }
 }

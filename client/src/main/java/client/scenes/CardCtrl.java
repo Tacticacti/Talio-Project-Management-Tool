@@ -71,9 +71,7 @@ public class CardCtrl {
             ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), cardNode);
             scaleTransition.setToX(1.1);
             scaleTransition.setToY(1.1);
-            cardNode.setOnMouseEntered(event -> {
-                scaleTransition.play();
-            });
+            cardNode.setOnMouseEntered(event -> scaleTransition.play());
             cardNode.setOnMouseExited(event -> {
                 scaleTransition.stop();
                 cardNode.setScaleX(1);
@@ -155,9 +153,7 @@ public class CardCtrl {
         });
         //sets up cancel card button
         Button cancelButton = (Button) root.lookup("#cancelTaskButton");
-        cancelButton.setOnAction(event -> {
-            singleBoardCtrl.setCancel(event, cardNode);
-        });
+        cancelButton.setOnAction(event -> singleBoardCtrl.setCancel(event, cardNode));
         //sets up card title
         TextField title = (TextField) root.lookup("#taskTitle");
         title.setText(card.getTitle());
