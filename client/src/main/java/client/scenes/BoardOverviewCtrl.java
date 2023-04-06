@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.MyFXML;
 import client.MyModule;
+import client.utils.CustomizationUtils;
 import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -40,6 +41,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static client.scenes.MainCtrl.primaryStage;
+import static client.utils.CustomizationUtils.addDefaultCustomization;
+import static client.utils.CustomizationUtils.customizationData;
 import static com.google.inject.Guice.createInjector;
 
 public class BoardOverviewCtrl implements Initializable {
@@ -115,6 +118,9 @@ public class BoardOverviewCtrl implements Initializable {
             // enter board after creating it by default
             addJoinedBoard(new_board);
             localUtils.add(new_board.getId());
+
+            addDefaultCustomization(new_board.getId());
+
             enterBoard(new_board);
         }
         // create a new row in vbox
@@ -177,7 +183,18 @@ public class BoardOverviewCtrl implements Initializable {
         board_name.setText(new_board.getName());
         System.out.println(new_board.getName());
 
+
+
+
+
+        //CustomizationUtils.updateTextColor(new_scene.getRoot(), new_board.getId());
+        System.out.println("ENTERED TEXT COLOR:" + CustomizationUtils.getBoardTextColor(new_board.getId()));
+        System.out.println(customizationData);
+        System.out.println("thanks");
         primaryStage.setScene(new_scene);
+        primaryStage.getScene().getRoot().getChildrenUnmodifiable()
+                .forEach(child -> CustomizationUtils.updateTextColor(child, new_board.getId()));
+
 
         System.out.println(new_scene);
     }
@@ -376,6 +393,16 @@ public class BoardOverviewCtrl implements Initializable {
                 alert.showAndWait();
             }
         });
+
+        var savedCustomizationBoard = CustomizationUtils.customizationData;
+
+        for (Long currentBoard : tmp) {
+
+            if (!(savedCustomizationBoard.containsKey(currentBoard))) {
+                addDefaultCustomization(currentBoard);
+            }
+        }
+
     }
 
     public void disconnect() {

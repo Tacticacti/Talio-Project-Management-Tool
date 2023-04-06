@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.CustomizationUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -41,6 +42,9 @@ import java.util.ResourceBundle;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static client.scenes.MainCtrl.primaryStage;
+import static client.utils.CustomizationUtils.customizationData;
+
 public class SingleBoardCtrl implements Initializable {
     final ListCtrl listCtrl = new ListCtrl(this);
     final CardCtrl cardCtrl = new CardCtrl(this);
@@ -49,7 +53,7 @@ public class SingleBoardCtrl implements Initializable {
     private final SecurityCtrl securityCtrl = new SecurityCtrl(this);
     ServerUtils server;
     final MainCtrl mainCtrl;
-    Long BoardID = 1L;
+    static Long BoardID = 1L;
     Node newCardBtn;
 
     @FXML
@@ -289,6 +293,7 @@ public class SingleBoardCtrl implements Initializable {
         board_lists.clear();
         for(BoardList boardList : lists) {
             listCtrl.wrapList(boardList, board_lists);
+
         }
         board_lists.add(newCardBtn);
     }
@@ -298,11 +303,17 @@ public class SingleBoardCtrl implements Initializable {
         if(!name.equals(board_name.getText()))
             board_name.setText(name);
         try {
+            System.out.println("Refreshes Single Board");
             drawLists();
+
+
         }
         catch(Exception e) {
             e.printStackTrace();
         }
+
+        //CustomizationUtils.updateTextColor((Node) primaryStage.getScene().getRoot(), BoardID);
+
     }
 
     public void copyInvite() {
@@ -327,4 +338,10 @@ public class SingleBoardCtrl implements Initializable {
     public void setServer(ServerUtils server){
         this.server = server;
     }
+
+    public static Long getBoardID() {
+        return BoardID;
+    }
+
+
 }

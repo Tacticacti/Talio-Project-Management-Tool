@@ -67,10 +67,15 @@ public class BoardCtrl {
         });
         Scene scene = new Scene(customization);
         Stage popUpStage = new Stage();
+
         popUpStage.setTitle("Customization Details");
         popUpStage.setResizable(false);
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
     }
+
+
+
+
 }
