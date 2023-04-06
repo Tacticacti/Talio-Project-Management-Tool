@@ -3,10 +3,12 @@ package client.scenes;
 import commons.BoardList;
 import commons.Card;
 import commons.Tag;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -63,14 +65,13 @@ public class TagCtrl {
         }
         newTag.setTitle(textField.getText());
         newTag.setColor(colorPicker.getValue().toString());
-
         singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, newTag);
         Stage popUp = (Stage) textField.getScene().getWindow();
         popUp.close();
 
     }
 
-    public void loadTagCard(Card current){
+    public void loadTagCard(VBox root, Card current){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("TagPopUp.fxml"));
         AnchorPane addTag;
         try {
@@ -82,7 +83,7 @@ public class TagCtrl {
         ColorPicker tagColor = (ColorPicker) addTag.lookup("#tagColor");
         Button add = (Button) addTag.lookup("#addTag");
         add.setOnAction(event -> {
-            addCustomTagToCard(current,textField,tagColor);
+            addCustomTagToCard(root,current,textField,tagColor);
         });
         Scene tagScene = new Scene(addTag);
         Stage popUpStage = new Stage();
@@ -92,7 +93,7 @@ public class TagCtrl {
         popUpStage.showAndWait();
     }
 
-    public void addCustomTagToCard(Card current, TextField textField, ColorPicker colorPicker){
+    public void addCustomTagToCard(VBox root, Card current, TextField textField, ColorPicker colorPicker){
         Tag newTag = new Tag();
         if(textField.getText().equals("")){
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -102,14 +103,49 @@ public class TagCtrl {
         }
         newTag.setTitle(textField.getText());
         newTag.setColor(colorPicker.getValue().toString());
-        singleBoardCtrl.server.addTagToCard(current.getId(), newTag);
-        //singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, newTag);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Tag.fxml"));
+        AnchorPane tag;
+        try {
+            tag = loader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        tag.setUserData(newTag);
+        Label title = (Label) tag.lookup("#tagName");
+        title.setText(newTag.getTitle());
+        Button deleteBtn = (Button) tag.lookup("#delBtn");
+        deleteBtn.setOnAction(event -> {
+            deleteTagCard(root,tag);
+        });
+
+        ImageView imageView = new ImageView(getClass()
+                .getResource("../images/trash.png").toExternalForm());
+        imageView.setFitWidth(deleteBtn.getPrefWidth());
+        imageView.setFitHeight(deleteBtn.getPrefHeight());
+        imageView.setPreserveRatio(true);
+        deleteBtn.setGraphic(imageView);
+        deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
+        deleteBtn.setOnMouseEntered(event -> {
+            deleteBtn.setStyle("-fx-background-color: white");
+        });
+        deleteBtn.setOnMouseExited(event -> {
+            deleteBtn.setStyle("-fx-background-color: transparent");
+        });
+        BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(newTag.getColor())
+                , null, null);
+        Background background = new Background(backgroundFill);
+        tag.setBackground(background);
+        root.getChildren().add(tag);
         Stage popUp = (Stage) textField.getScene().getWindow();
         popUp.close();
 
     }
 
-    public void openBoardTags(Card current){
+    public void deleteTagCard( VBox root, AnchorPane tag){
+        root.getChildren().remove(tag);
+    }
+
+    public void openBoardTags(VBox tagsDetails, Card current){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("tagAdding.fxml"));
         AnchorPane root;
         try {
@@ -118,15 +154,21 @@ public class TagCtrl {
             throw new RuntimeException(e);
         }
         ScrollPane tagsroll =(ScrollPane) root.lookup("#scroll");
-        VBox tags = (VBox) tagsroll.lookup("#tagBox");
+        VBox tags = (VBox) tagsroll.getContent();
         tags.setSpacing(10);
         List<Tag> boardTags = singleBoardCtrl.current_board.getTagLists();
         for(Tag t: boardTags){
-            placeTagCard(tags,t);
+            placeTagCard(tags,t, current);
         }
         Button save = (Button) root.lookup("#saveBtn");
         save.setOnAction(event -> {
-            saveTags(tags, current);
+            saveTags(tagsDetails,tags, current);
+        });
+        Button back = (Button) root.lookup("#backBtn");
+        back.setOnAction(event -> {
+            Button source = (Button) event.getSource();
+            Stage popup = (Stage) source.getScene().getWindow();
+            popup.close();
         });
         Scene tagScene = new Scene(root);
         Stage popUpStage = new Stage();
@@ -135,15 +177,50 @@ public class TagCtrl {
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
 
+
     }
 
-    public void saveTags(VBox parent, Card current){
+    public void saveTags(VBox parendDetails, VBox parent, Card current){
         for(Node n: parent.getChildren()){
             if(n instanceof CheckBox)
             {
                 CheckBox cb = (CheckBox) n;
-                if(cb.isSelected()){
-                    singleBoardCtrl.server.addTagToCard(current.id, (Tag) cb.getUserData());
+                if(!cb.isSelected() && current.getTags().contains(cb.getUserData())){
+                    parendDetails.getChildren().removeIf(x->((Tag)x.getUserData()).equals((Tag)cb.getUserData()));
+                }
+                if(cb.isSelected() && !current.getTags().contains(cb.getUserData())){
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("Tag.fxml"));
+                    AnchorPane tag;
+                    try {
+                        tag = loader.load();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    tag.setUserData(cb.getUserData());
+                    Label title = (Label) tag.lookup("#tagName");
+                    title.setText(((Tag)cb.getUserData()).getTitle());
+                    Button deleteBtn = (Button) tag.lookup("#delBtn");
+                    deleteBtn.setOnAction(event -> {
+                        deleteTagCard((VBox) ((AnchorPane) event.getSource()).getParent(),tag);
+                    });
+                    ImageView imageView = new ImageView(getClass()
+                            .getResource("../images/trash.png").toExternalForm());
+                    imageView.setFitWidth(deleteBtn.getPrefWidth());
+                    imageView.setFitHeight(deleteBtn.getPrefHeight());
+                    imageView.setPreserveRatio(true);
+                    deleteBtn.setGraphic(imageView);
+                    deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
+                    deleteBtn.setOnMouseEntered(event -> {
+                        deleteBtn.setStyle("-fx-background-color: white");
+                    });
+                    deleteBtn.setOnMouseExited(event -> {
+                        deleteBtn.setStyle("-fx-background-color: transparent");
+                    });
+                    BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(((Tag) cb.getUserData()).getColor())
+                            , null, null);
+                    Background background = new Background(backgroundFill);
+                    tag.setBackground(background);
+                    parendDetails.getChildren().add(tag);
                 }
             }
         }
@@ -151,7 +228,7 @@ public class TagCtrl {
         popup.close();
     }
 
-    public void placeTagCard(VBox parent, Tag t){
+    public void placeTagCard(VBox parent, Tag t, Card current){
         CheckBox cb = new CheckBox();
         cb.setUserData(t);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Tag.fxml"));
@@ -170,10 +247,14 @@ public class TagCtrl {
         Background background = new Background(backgroundFill);
         tag.setBackground(background);
         cb.setGraphic(tag);
+        if(current.getTags().contains(t)){
+            cb.setSelected(true);
+        }
         parent.getChildren().add(cb);
 
     }
 
+    //boardpage tags
 
     public void placeTag(HBox parent, Tag tag) {
         parent.setSpacing(10);
@@ -282,6 +363,6 @@ public class TagCtrl {
     }
     public void deleteTag(Tag tag){
         singleBoardCtrl.server.deleteTagToBoard(singleBoardCtrl.BoardID, tag);
-        singleBoardCtrl.refresh();
+       // singleBoardCtrl.refresh();
     }
 }

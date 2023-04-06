@@ -1,5 +1,6 @@
 package server;
 
+import commons.Tag;
 import org.springframework.stereotype.Service;
 
 import commons.Board;
@@ -35,5 +36,9 @@ public class DatabaseUtils {
         card.setSubtasks(newCard.getSubtasks());
         card.setCompletedTasks(newCard.getCompletedTasks());
         card.setCompletedSubs(newCard.getCompletedSubs());
+        card.getTags().clear();
+        for(Tag t: newCard.getTags()){
+            card.addTag(t);
+        }
     }
 }

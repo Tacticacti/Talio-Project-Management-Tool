@@ -16,10 +16,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
 
+import java.awt.*;
 import java.net.URL;
 
 import javafx.scene.Node;
 
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ScrollPane;
@@ -316,12 +318,12 @@ public class SingleBoardCtrl implements Initializable {
         tagCtrl.enterTagName();
     }
 
-    public void addCustomTag(Card current){
-        tagCtrl.loadTagCard(current);
+    public void addCustomTag(VBox root, Card current){
+        tagCtrl.loadTagCard(root,current);
     }
 
-    public void openBoardTags(Card current){
-        tagCtrl.openBoardTags(current);
+    public void openBoardTags(VBox tags,Card current){
+        tagCtrl.openBoardTags(tags, current);
     }
 
 

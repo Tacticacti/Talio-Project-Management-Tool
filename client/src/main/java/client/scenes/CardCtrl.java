@@ -376,14 +376,16 @@ public class CardCtrl {
             }
         }
         Button custom = (Button) root.lookup("#CustomTag");
-        custom.setOnAction(event -> {
-            singleBoardCtrl.addCustomTag(card);
-        });
+
         Button board = (Button) root.lookup("#BoardTag");
-        board.setOnAction(event -> {
-            singleBoardCtrl.openBoardTags(card);
-        });
+
         VBox tags = (VBox) root.lookup("#tagVbox");
+        board.setOnAction(event -> {
+            singleBoardCtrl.openBoardTags(tags,card);
+        });
+        custom.setOnAction(event -> {
+            singleBoardCtrl.addCustomTag(tags,card);
+        });
         showTags(tags, card);
         MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
         Stage popUpStage = new Stage();
@@ -411,6 +413,7 @@ public class CardCtrl {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            tag.setUserData(t);
             Label title = (Label) tag.lookup("#tagName");
             title.setText(t.getTitle());
             Button deleteBtn = (Button) tag.lookup("#delBtn");
@@ -430,6 +433,10 @@ public class CardCtrl {
             deleteBtn.setOnMouseExited(event -> {
                 deleteBtn.setStyle("-fx-background-color: transparent");
             });
+            BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(t.getColor())
+                    , null, null);
+            Background background = new Background(backgroundFill);
+            tag.setBackground(background);
             parent.getChildren().add(tag);
         }
 
@@ -438,7 +445,7 @@ public class CardCtrl {
     public void deleteTag(ActionEvent event,VBox parent, Tag tag, Card card){
         Button source = (Button) event.getSource();
         parent.getChildren().remove(source.getParent());
-        singleBoardCtrl.server.deleteTagToCard(card.getId(), tag);
+        //singleBoardCtrl.server.deleteTagToCard(card.getId(), tag);
     }
 
     void setDone(long listId, Card current, ActionEvent event) {
@@ -478,9 +485,18 @@ public class CardCtrl {
                 }
             }
         }
-        singleBoardCtrl.server.addCard(current);
+        VBox tags = (VBox) ap.lookup("#tagVbox");
+        current.getTags().clear();
+        for(Node n: tags.getChildren()){
+            AnchorPane tagAp = (AnchorPane) n;
+            if(!current.getTags().contains(tagAp.getUserData()))
+                current.addTag((Tag)tagAp.getUserData());
+            if(!singleBoardCtrl.current_board.getTagLists().contains((Tag) tagAp.getUserData()))
+                singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID,(Tag) tagAp.getUserData());
+        }
+        //singleBoardCtrl.server.addCard(current);
         singleBoardCtrl.updateCardFromList(singleBoardCtrl.BoardID, listId, current);
-        //server.stopExec();
+        singleBoardCtrl.server.stopExec();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         //singleBoardCtrl.refresh();
@@ -496,9 +512,8 @@ public class CardCtrl {
                 VBox par = (VBox) hbox.getParent();
                 par.getChildren().remove(hbox);
                 singleBoardCtrl.nodeCardMap.remove(hbox, current);
-
                 singleBoardCtrl.server.deleteCardFromList(listId, current);
-                singleBoardCtrl.refresh();
+                //singleBoardCtrl.refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
                 System.out.println(popup);

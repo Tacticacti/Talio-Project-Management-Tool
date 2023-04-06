@@ -42,7 +42,6 @@ public class CardController {
         if(card == null) {
             return ResponseEntity.badRequest().build();
         }
-
         Card saved = repo.save(card);
         return ResponseEntity.ok(saved);
     }
@@ -59,6 +58,7 @@ public class CardController {
 
         Card update = card.get();
         update.addTag(tag);
+
         if(!update.board.getTagLists().contains(tag))
             update.board.addBoardTag(tag);
 

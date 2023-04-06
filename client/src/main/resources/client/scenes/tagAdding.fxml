@@ -16,9 +16,10 @@
       </Label>
       <ScrollPane fx:id="scroll" layoutX="17.0" layoutY="45.0" prefHeight="200.0" prefWidth="200.0">
          <content>
-            <VBox fx:id="tagBox" alignment="CENTER" prefHeight="196.0" prefWidth="199.0" />
+            <VBox fx:id="tagBox" alignment="CENTER" prefHeight="196.0" prefWidth="193.0" />
          </content>
       </ScrollPane>
       <Button fx:id="saveBtn" layoutX="179.0" layoutY="268.0" mnemonicParsing="false" text="Save" />
+      <Button fx:id="backBtn" layoutX="14.0" layoutY="268.0" mnemonicParsing="false" text="Back" />
    </children>
 </AnchorPane>

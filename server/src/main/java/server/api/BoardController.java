@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import commons.Board;
 
+import commons.BoardList;
+import commons.Card;
 import server.Admin;
 import commons.Tag;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -133,6 +135,12 @@ public class BoardController {
 
         Board board = repo.findById(boardId).get();
         board.getTagLists().removeIf(x -> Objects.equals(x.getId(), tag.getId()));
+        for(BoardList bl: board.getLists()){
+            for(Card c: bl.getCards()){
+                if(c.getTags().contains(tag))
+                    c.removeTag(tag);
+            }
+        }
         repo.save(board);
         messagingTemplate.convertAndSend("/topic/boards", board);
         return ResponseEntity.ok(board);
