@@ -298,10 +298,19 @@ public class CardCtrl {
     }
 
     private void deleteCardShortcut(VBox parent) {
-        Map<Node, Card> nodeCardMap = singleBoardCtrl.getNodeCardMap();
-        Card deleteCard = nodeCardMap.get((AnchorPane) target);
-        BoardList boardList = (BoardList) parent.getUserData();
-        singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID, boardList.getId(), deleteCard);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("Delete Task");
+        alert.setContentText("Are you sure you want to delete this task? (Irreversible)");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                Map<Node, Card> nodeCardMap = singleBoardCtrl.getNodeCardMap();
+                Card deleteCard = nodeCardMap.remove((AnchorPane) target);
+                BoardList boardList = (BoardList) parent.getUserData();
+                singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID,
+                        boardList.getId(), deleteCard);
+            }
+        });
     }
 
     private void editTaskTitleShortcut(VBox parent, ScaleTransition transition) {
