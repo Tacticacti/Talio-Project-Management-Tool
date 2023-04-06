@@ -147,6 +147,8 @@ public class Card implements Serializable {
             completedSubs++;
         if(!completedTasks.contains(text))
             completedTasks.add(text);
+        if(!subtasks.contains(text))
+            subtasks.add(text);
     }
 
     public void uncompleteSubTask(String text){

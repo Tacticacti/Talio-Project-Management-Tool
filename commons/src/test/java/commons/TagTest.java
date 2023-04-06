@@ -3,6 +3,7 @@ package commons;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
 class TagTest {
@@ -38,6 +39,7 @@ class TagTest {
         Tag t1= new Tag("tag");
         Tag t2= new Tag("tag");
         assertEquals(t1, t2);
+        assertNotEquals(t1, new String("tag"));
     }
 
     @Test

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,6 +18,7 @@ public class BoardTest {
     private Board board;
     private BoardList list1, list2;
     private Card card1;
+    private Tag t1;
 
     // initialize the Board object before each test
     @BeforeEach
@@ -24,6 +27,7 @@ public class BoardTest {
         list1 = new BoardList("List 1");
         list2 = new BoardList("List 2");
         card1 = new Card("card 1");
+        t1 = new Tag("tag 1");
     }
 
     // test the constructor
@@ -80,7 +84,7 @@ public class BoardTest {
         board.addList(list1);
         board.addList(list2);
         board.removeList(list1);
-        Assertions.assertFalse(board.getLists().contains(list1),
+        assertFalse(board.getLists().contains(list1),
 			"removeList() should remove a list from the board");
         Assertions.assertEquals(1, board.getLists().size(),
 			"removeList() should decrease the size of the lists variable by 1");
@@ -107,8 +111,29 @@ public class BoardTest {
 
     @Test
     public void testAddToList() {
+        list1.addCard(card1);
         board.addList(list1);
         board.addToList(0, card1);
         assertTrue(board.getLists().get(0).getCards().contains(card1));
+        assertEquals(board, card1.board);
+    }
+
+    @Test
+    public void passwordTests() {
+        Board b1 = new Board("name", "password");
+        assertEquals("password", b1.getPassword());
+        assertEquals("name", b1.getName());
+
+        b1.setPassword("admin123");
+        assertNotEquals("password", b1.getPassword());
+        assertEquals("admin123", b1.getPassword());
+    }
+
+    @Test
+    public void addTag() {
+        board.addBoardTag(t1);
+        assertTrue(board.getTagLists().contains(t1));
+        board.removeBoardTag(t1);
+        assertFalse(board.getTagLists().contains(t1));
     }
 }

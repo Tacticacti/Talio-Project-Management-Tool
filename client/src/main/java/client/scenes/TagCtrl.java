@@ -57,9 +57,9 @@ public class TagCtrl {
         HBox parentList = (HBox) newTagBtn.getParent();
         parentList.setUserData(boardList);
         parentList.setSpacing(5);
-        for (Tag tag : boardList.getTags()) {
-            placeTag(parentList, tag);
-        }
+        // for (Tag tag : boardList.getTags()) {
+        //     placeTag(parentList, tag);
+        // }
     }
 
     public void placeTag(HBox parent, Tag tag) {
