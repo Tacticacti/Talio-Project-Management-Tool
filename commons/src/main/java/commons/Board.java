@@ -31,8 +31,9 @@ public class Board {
     // added to fix repo.findAll()
     public Board() {
         this.name = "";
+        this.password = null;
         this.lists = new ArrayList<>();
-        this.tagList=new ArrayList<>();
+        this.tagList = new ArrayList<>();
 
     }
 
@@ -41,13 +42,14 @@ public class Board {
         this.name = name;
         this.password = null;
         this.lists = new ArrayList<>();
+        this.tagList = new ArrayList<>();
     }
 
     public Board(String name, String password) {
         this.name = name;
         this.password = password;
         this.lists = new ArrayList<>();
-        this.tagList=new ArrayList<>();
+        this.tagList = new ArrayList<>();
     }
 
     // getters and setters

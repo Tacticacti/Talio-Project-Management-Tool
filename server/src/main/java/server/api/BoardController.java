@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Objects;
 
 import commons.Board;
-import commons.BoardList;
+
 import server.Admin;
 import commons.Tag;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
+import server.services.BoardServiceImpl;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,12 @@ public class BoardController {
     private final DatabaseUtils databaseUtils;
     private final Admin admin;
 
+
+
+    private BoardServiceImpl boardService;
+
+
+
     private final SimpMessagingTemplate messagingTemplate;
 
     public BoardController(BoardRepository repo, 
@@ -35,6 +42,7 @@ public class BoardController {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
         this.messagingTemplate = messagingTemplate;
+        this.boardService = new BoardServiceImpl(repo, messagingTemplate);
         this.admin = admin;
 
         // TODO uncomment **ONLY** for debug!!
@@ -63,7 +71,7 @@ public class BoardController {
 
     @GetMapping(path = {"", "/"})
     public List<Board> getAll() {
-        return repo.findAll();
+        return boardService.getAll();
     }
 
     @GetMapping(path = "/debug")
@@ -77,37 +85,19 @@ public class BoardController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Board> getById(@PathVariable("id") long id) {
-        if(!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return boardService.getbyId(id);
     }
 
     @PostMapping(path = "/add")
     public ResponseEntity<Board> add(@RequestBody Board board) {
-        if(board == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        Board saved = repo.save(board);
-        messagingTemplate.convertAndSend("/topic/boards", saved);
-        return ResponseEntity.ok(saved);
+        return boardService.addBoard(board);
     }
 
     @PostMapping(path = "/add/list/{id}")
     public ResponseEntity<Long> addListToBoard(@PathVariable("id") long boardId,
-        @RequestBody String listName) {
+                                               @RequestBody String listName) {
 
-        if (!repo.existsById(boardId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Board board = repo.findById(boardId).get();
-        board.addList(new BoardList(listName));
-        Board saved = repo.save(board);
-        messagingTemplate.convertAndSend("/topic/boards", saved);
-        int index = saved.getLists().size()-1;
-        Long listId = saved.getLists().get(index).getId();
-        return ResponseEntity.ok(listId);
+        return boardService.addListToBoard(boardId, listName);
     }
 
 
@@ -115,16 +105,9 @@ public class BoardController {
     public ResponseEntity<Board> deleteList(@PathVariable("id") long boardId,
                                             @RequestBody long listId) {
 
-        if (!repo.existsById(boardId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Board board = repo.findById(boardId).get();
-        board.getLists().removeIf(x -> Objects.equals(x.getId(), listId));
-        repo.save(board);
-        messagingTemplate.convertAndSend("/topic/boards", board);
-        return ResponseEntity.ok(board);
+        return boardService.deleteList(boardId, listId);
     }
+
 
     @PostMapping(path = "/tag/delete/{id}")
     public ResponseEntity<Board> deleteTag(@PathVariable("id") long boardId,

@@ -35,7 +35,7 @@ public class CardController {
         return repo.findAll();
     }
 
-    @PostMapping(path={"", "/add"})
+    @PostMapping(path="/add")
     public ResponseEntity<Card> add(@RequestBody Card card){
         if(card == null) {
             return ResponseEntity.badRequest().build();
@@ -45,7 +45,7 @@ public class CardController {
         return ResponseEntity.ok(saved);
     }
 
-    @PostMapping(path={"", "/addTag/{id}"})
+    @PostMapping(path="/addTag/{id}")
     public ResponseEntity<Card> addTag(@RequestBody Tag tag, @PathVariable("id") long cardId){
         if(tag == null) {
             return ResponseEntity.badRequest().build();
@@ -62,7 +62,7 @@ public class CardController {
         return ResponseEntity.ok(cardSaved);
     }
 
-    @PostMapping(path={"", "/deleteTag/{id}"})
+    @PostMapping(path="/deleteTag/{id}")
     public ResponseEntity<Card> deleteTag(@RequestBody Tag tag, @PathVariable("id") long cardId){
         if(tag == null) {
             return ResponseEntity.badRequest().build();
@@ -88,7 +88,7 @@ public class CardController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(path={"", "/{id}"})
+    @GetMapping(path="/{id}")
     public ResponseEntity<Card> getCardById(@PathVariable ("id") long cardId){
         if(!repo.existsById(cardId)){
             return ResponseEntity.badRequest().build();

@@ -148,8 +148,6 @@ public class Card implements Serializable {
             if(completedSubs!=subtasks.size())
                 completedSubs++;
         }
-
-
     }
 
     public void uncompleteSubTask(String text){

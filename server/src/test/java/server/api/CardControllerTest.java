@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.Card;
+import commons.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 public class CardControllerTest {
@@ -17,6 +20,7 @@ public class CardControllerTest {
     private CardController controller;
 
     Card c1, c2;
+    Tag t1, t2;
 
     @BeforeEach
     public void setup() {
@@ -27,6 +31,9 @@ public class CardControllerTest {
 
         c1.id = 0L;
         c2.id = 1L;
+
+        t1 = new Tag("tag 1");
+        t2 = new Tag("tag 2");
     }
 
     @Test
@@ -81,5 +88,43 @@ public class CardControllerTest {
         var ret2 = controller.getCardById(1L);
         assertNotEquals(BAD_REQUEST, ret2.getStatusCode());
         assertEquals(c2, ret2.getBody());
+    }
+
+    @Test
+    public void addTag() {
+        var ret = controller.add(c1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTag(null, 99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTag(t1, 99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTag(t1, 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody().getTags().contains(t1));
+    }
+
+    @Test
+    public void deleteTag() {
+        var ret = controller.add(c1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.addTag(t1, 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteTag(null, 0L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteTag(t1, 99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteTag(t2, 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody().getTags().contains(t1));
+
+        ret = controller.deleteTag(t1, 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody().getTags().contains(t1));
     }
 }
