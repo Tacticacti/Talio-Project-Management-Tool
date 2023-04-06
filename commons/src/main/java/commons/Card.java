@@ -1,15 +1,7 @@
 package commons;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -17,7 +9,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -47,8 +41,8 @@ public class Card implements Serializable {
     @ElementCollection
     public List<String> subtasks;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Tag> tags;
+    @ManyToMany(mappedBy = "cards", cascade = CascadeType.ALL)
+    public Set<Tag> tags;
     private int completedSubs;
 
     @ElementCollection
@@ -60,7 +54,7 @@ public class Card implements Serializable {
         this.title = title;
         this.description = description;
         subtasks = new ArrayList<>();
-        tags = new ArrayList<>();
+        tags = new HashSet<>();
         completedSubs = 0;
         completedTasks=new ArrayList<>();
     }
@@ -68,14 +62,14 @@ public class Card implements Serializable {
     public Card(String title){
         this.title = title;
         subtasks = new ArrayList<>();
-        tags = new ArrayList<>();
+        tags = new HashSet<>();
         completedSubs = 0;
         completedTasks = new ArrayList<>();
     }
 
     public Card() {
         subtasks = new ArrayList<>();
-        tags = new ArrayList<>();
+        tags = new HashSet<>();
         completedSubs = 0;
         completedTasks = new ArrayList<>();
     }
@@ -107,7 +101,7 @@ public class Card implements Serializable {
         return subtasks;
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
@@ -162,12 +156,14 @@ public class Card implements Serializable {
     //add a tag to card
     public void addTag(Tag tag){
         tags.add(tag);
-        tag.card=this;
+
     }
 
     //remove a tag from card
     public void removeTag(Tag tag){
+
         tags.remove(tag);
+
     }
      //equals method
     @Override

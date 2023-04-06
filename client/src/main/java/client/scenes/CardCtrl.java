@@ -486,11 +486,16 @@ public class CardCtrl {
             }
         }
         VBox tags = (VBox) ap.lookup("#tagVbox");
+        for(Tag t: current.getTags()){
+            t.removeCard(current);
+        }
         current.getTags().clear();
         for(Node n: tags.getChildren()){
             AnchorPane tagAp = (AnchorPane) n;
-            if(!current.getTags().contains(tagAp.getUserData()))
+            if(!current.getTags().contains(tagAp.getUserData())){
                 current.addTag((Tag)tagAp.getUserData());
+                ((Tag)tagAp.getUserData()).addCard(current);
+            }
             if(!singleBoardCtrl.current_board.getTagLists().contains((Tag) tagAp.getUserData()))
                 singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID,(Tag) tagAp.getUserData());
         }

@@ -37,8 +37,13 @@ public class DatabaseUtils {
         card.setCompletedTasks(newCard.getCompletedTasks());
         card.setCompletedSubs(newCard.getCompletedSubs());
         card.getTags().clear();
+        for(Tag t1: card.getTags()){
+            t1.removeCard(card);
+            card.removeTag(t1);
+        }
         for(Tag t: newCard.getTags()){
             card.addTag(t);
+            t.addCard(card);
         }
     }
 }

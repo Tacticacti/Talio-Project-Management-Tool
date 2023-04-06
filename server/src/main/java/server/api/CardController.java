@@ -58,6 +58,7 @@ public class CardController {
 
         Card update = card.get();
         update.addTag(tag);
+        tag.addCard(update);
 
         if(!update.board.getTagLists().contains(tag))
             update.board.addBoardTag(tag);
