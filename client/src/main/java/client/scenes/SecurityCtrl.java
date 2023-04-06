@@ -14,13 +14,13 @@ import javafx.scene.layout.VBox;
 import java.util.Objects;
 
 public class SecurityCtrl {
-    private final SingleBoardCtrl singleBoardCtrl;
+    private static SingleBoardCtrl singleBoardCtrl;
 
     public SecurityCtrl(SingleBoardCtrl singleBoardCtrl) {
         this.singleBoardCtrl = singleBoardCtrl;
     }
 
-    private boolean verifyPassword(Board board, String psswd) {
+    static boolean verifyPassword(Board board, String psswd) {
         return singleBoardCtrl.server.verifyBoardPassword(board.getId(), psswd);
     }
 
@@ -73,13 +73,21 @@ public class SecurityCtrl {
                     "Password Mismatch", "The new password and confirmation do not match.");
             return;
         }
-        if(Objects.equals("", newPassword))
+        if (Objects.equals("", newPassword)) {
             singleBoardCtrl.server.removeBoardPassword(singleBoardCtrl.current_board.getId());
-        else
-            setPassword(singleBoardCtrl.current_board, newPassword);
-        showAlert(Alert.AlertType.INFORMATION,
-                "Password Updated", "The board password has been updated.");
-        updatePasswordButtonImage();
+            showAlert(Alert.AlertType.INFORMATION,
+                    "Password removed", "The board password has been deleted.");
+            singleBoardCtrl.refresh();
+            updatePasswordButtonImage();
+        }
+        else {
+            singleBoardCtrl.server.setBoardPassword(
+                    singleBoardCtrl.current_board.getId(), newPassword);
+            showAlert(Alert.AlertType.INFORMATION,
+                    "Password Updated", "The board password has been updated.");
+            singleBoardCtrl.refresh();
+            updatePasswordButtonImage();
+        }
     }
 
     String promptForPassword(String title, String contentText) {
