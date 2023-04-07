@@ -199,9 +199,6 @@ public class SingleBoardCtrl implements Initializable {
     public void placeCard(VBox parent, Card card){
         cardCtrl.placeCard(parent, card);
     }
-    public void setCardDetail(Node cardNode, VBox parent){
-        cardCtrl.setCardDetail(cardNode, parent);
-    }
 
     void setDone(long listId, Card current, ActionEvent event) {
         cardCtrl.setDone(listId, current, event);
