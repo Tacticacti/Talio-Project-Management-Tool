@@ -156,16 +156,6 @@ public class CardCtrl {
                 break;
             }
             MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
-            if (event.isShiftDown()) {
-                switch (event.getCode()) {
-                    //slash should give question mark but it doesnt work for me.
-                    // Does it work for anyone else?
-                    case SLASH:
-                    case H:
-                        mainCtrl.showHelpPage(event);
-                        break;
-                }
-            }
             if (target != null && target instanceof AnchorPane) {
                 ((AnchorPane) target).requestFocus();
                 scaleTransition.setNode((AnchorPane) target);
