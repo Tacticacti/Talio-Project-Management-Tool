@@ -1,5 +1,7 @@
 package client.scenes;
 
+import client.utils.CustomizationUtils;
+import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -21,11 +23,9 @@ import javafx.scene.Node;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Alert;
 
 import javafx.scene.input.Clipboard;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -36,9 +36,10 @@ import javafx.stage.Modality;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.HashMap;
-import java.util.Optional;
+
 
 @SuppressWarnings("checkstyle:Indentation")
 
@@ -46,11 +47,12 @@ public class SingleBoardCtrl implements Initializable {
     final ListCtrl listCtrl = new ListCtrl(this);
     final CardCtrl cardCtrl = new CardCtrl(this);
     final TagCtrl tagCtrl = new TagCtrl(this);
-    final BoardCtrl boardCtrl = new BoardCtrl(this);
-    private final SecurityCtrl securityCtrl = new SecurityCtrl(this);
+    private BoardCtrl boardCtrl;
+    final SecurityCtrl securityCtrl = new SecurityCtrl(this);
     ServerUtils server;
+    final BoardOverviewCtrl boardOverviewCtrl;
     final MainCtrl mainCtrl;
-    Long BoardID = 1L;
+    static Long BoardID = 1L;
     Node newCardBtn;
 
     @FXML
@@ -59,8 +61,7 @@ public class SingleBoardCtrl implements Initializable {
     Button newTagBtn;
     @FXML
     HBox hbox_lists;
-    @FXML
-    AnchorPane sb_anchor;
+
     @FXML
     Button passwordBtn;
     @FXML
@@ -69,13 +70,11 @@ public class SingleBoardCtrl implements Initializable {
     Board current_board;
     @FXML
     TextField board_name;
-    Map<Node, Card> nodeCardMap;
+    static Map<Node, Card> nodeCardMap;
     ClipboardContent content;
     static Dragboard dragboard;
     @FXML
     Button backBtn;
-    @FXML
-    ScrollPane main_pane;
     @FXML
     Button newListBtn;
     @FXML
@@ -84,15 +83,21 @@ public class SingleBoardCtrl implements Initializable {
     Button copyInvite;
     boolean isUnlocked;
 
+    private LocalUtils localUtils;
+
     @Inject
-    public SingleBoardCtrl(ServerUtils server, MainCtrl mainCtrl, Boolean isUnlocked) {
+    public SingleBoardCtrl(
+            ServerUtils server,
+            BoardOverviewCtrl boardOverviewCtrl,
+            MainCtrl mainCtrl,
+            Boolean isUnlocked,
+            LocalUtils localUtils) {
+        this.boardOverviewCtrl = boardOverviewCtrl;
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.isUnlocked = isUnlocked;
-    }
-
-    public void requestBoardName(TextField text, Long id) throws Exception {
-        boardCtrl.requestBoardName(text, id);
+        this.localUtils = localUtils;
+        this.boardCtrl = new BoardCtrl(this, localUtils);
     }
 
     @Override
@@ -107,33 +112,34 @@ public class SingleBoardCtrl implements Initializable {
         securityCtrl.updatePasswordButtonImage();
 
         newCardBtn = hbox_lists.getChildren().get(0);
-        copyInvite.setOnAction(e -> {
-            copyInvite();
-        });
-        passwordBtn.setOnAction(e -> {
-            securityCtrl.requestPasswordChange();
-        });
-        settingsBtn.setOnAction(e -> {
+
+        copyInvite.setOnAction(e-> copyInvite());
+        passwordBtn.setOnAction(e -> securityCtrl.requestPasswordChange());
+        settingsBtn.setOnAction(e->{
             try {
                 if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                     return;
                 }
-                boardCtrl.openBoardSettings();
+                boardCtrl.openBoardSettings(BoardID, new ConnectHomeCtrl(server, mainCtrl));
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
-        refreshBtn.setOnAction(e -> {
-            refresh();
-        });
-        newListBtn.setOnAction(e -> {
+
+        refreshBtn.setOnAction(e-> refresh());
+        newListBtn.setOnAction(e->{
             if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                 return;
             }
             listCtrl.createNewList();
         });
-        backBtn.setOnAction(e -> {
-            back();
+
+        backBtn.setOnAction(e->{
+            try {
+                back();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         nodeCardMap = new HashMap<>();
         current_board = new Board();
@@ -167,7 +173,8 @@ public class SingleBoardCtrl implements Initializable {
         });
     }
 
-    public void back() {
+
+    public void back() throws IOException {
         ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
         connectHomeCtrl.showBoardOverview();
     }
@@ -201,9 +208,9 @@ public class SingleBoardCtrl implements Initializable {
         cardCtrl.placeCard(parent, card);
     }
 
-    public void setCardDetail(Node cardNode, VBox parent) {
-        cardCtrl.setCardDetail(cardNode, parent);
-    }
+//    public void setCardDetail(Node cardNode, VBox parent) {
+//        cardCtrl.setCardDetail(cardNode, parent);
+//    }
 
     void setDone(long listId, Card current, ActionEvent event) {
         cardCtrl.setDone(listId, current, event);
@@ -212,6 +219,7 @@ public class SingleBoardCtrl implements Initializable {
     public void addNewCard(VBox parent) {
         cardCtrl.addNewCard(parent);
     }
+
 
     public Optional<String> showTitleDialog() {
         return cardCtrl.showTitleDialog();
@@ -225,12 +233,14 @@ public class SingleBoardCtrl implements Initializable {
         cardCtrl.addCardAtIndex(sourceListId, dropIndex, draggedCard);
     }
 
+
     static void alertError(WebApplicationException e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setContentText(e.getMessage());
         alert.showAndWait();
     }
+
 
     public long getListIndex(Long boardId, Long listId) {
         return listCtrl.getListIndex(boardId, listId);
@@ -269,7 +279,7 @@ public class SingleBoardCtrl implements Initializable {
     }
 
     public void openBoardSettings() throws IOException {
-        boardCtrl.openBoardSettings();
+        boardCtrl.openBoardSettings(BoardID, new ConnectHomeCtrl(server, mainCtrl));
     }
 
     public void setBoard(Board board) {
@@ -288,6 +298,7 @@ public class SingleBoardCtrl implements Initializable {
         board_lists.clear();
         for (BoardList boardList : lists) {
             listCtrl.wrapList(boardList, board_lists);
+
         }
         board_lists.add(newCardBtn);
     }
@@ -297,7 +308,9 @@ public class SingleBoardCtrl implements Initializable {
         if (!name.equals(board_name.getText()))
             board_name.setText(name);
         try {
+            System.out.println("Refreshes Single Board");
             drawLists();
+            CustomizationUtils.updateListColour(BoardID);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -313,6 +326,7 @@ public class SingleBoardCtrl implements Initializable {
         content.putString(BoardID.toString());
         Clipboard.getSystemClipboard().setContent(content);
     }
+
 
     public void addNewTag() {
         tagCtrl.enterTagName();
@@ -333,6 +347,10 @@ public class SingleBoardCtrl implements Initializable {
 
     public void setServer(ServerUtils server) {
         this.server = server;
+    }
+
+    public static Long getBoardID() {
+        return BoardID;
     }
 
     public MainCtrl getMainCtrl() {

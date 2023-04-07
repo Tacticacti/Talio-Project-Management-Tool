@@ -1,6 +1,7 @@
 package server.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import server.DatabaseUtils;
+import server.Encryption;
 
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class BoardControllerTest {
     private BoardList bl1;
     private Card c1, c2;
     private Admin admin;
+    private Encryption encryption;
 
     @BeforeEach
     public void setup() {
@@ -44,8 +47,9 @@ public class BoardControllerTest {
         messagingTemplate = (SimpMessagingTemplate) new TestSimpMessagingTemplate();
 
         admin = new Admin();
+        encryption = new Encryption();
         controller = new BoardController(boardRepo, new DatabaseUtils(),
-                messagingTemplate, admin);
+                messagingTemplate, admin, encryption);
         b1 = new Board("b1");
         b2 = new Board("b2");
         bl1 = new BoardList("bl1");
@@ -158,5 +162,61 @@ public class BoardControllerTest {
 
         var ret2 = controller.getById(0L);
         assertEquals(BAD_REQUEST, ret2.getStatusCode());
+    }
+
+    @Test
+    public void setBoardPassword() {
+        controller.add(b1);
+
+        String psswd = "test123";
+        String hash = encryption.getHash(psswd);
+
+        var ret = controller.setBoardPassword(99L, psswd);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.setBoardPassword(0L, psswd);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(hash, ret.getBody().getPassword());
+    }
+
+    @Test
+    public void verifyPassword() {
+        controller.add(b1);
+
+        var ret = controller.verifyPassword(0L, null);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody());
+
+        String psswd = "test123";
+        var ret2 = controller.setBoardPassword(0L, psswd);
+        assertNotEquals(BAD_REQUEST, ret2.getStatusCode());
+
+        ret = controller.verifyPassword(99L, null);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.verifyPassword(0L, null);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody());
+
+        ret = controller.verifyPassword(0L, "admin");
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody());
+
+        ret = controller.verifyPassword(0L, psswd);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody());
+    }
+
+    @Test
+    public void removePassword() {
+        controller.add(b1);
+        controller.setBoardPassword(0L, "admin");
+
+        var ret = controller.resetBoardPassword(99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.resetBoardPassword(0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertEquals(null, ret.getBody().getPassword());
     }
 }

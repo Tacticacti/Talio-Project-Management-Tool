@@ -78,14 +78,15 @@ public class ServerUtils {
 
     // private static String server = "http://localhost:8080/";
     private static String server = "";
-    private String psswd;
+    private String password;
     public LocalUtils localUtils;
 
     StompSession stompSession;
 
 
-    // returns true if connection is succesful
-    // flase otherwise
+
+    // returns true if connection is successful
+    // false otherwise
     public boolean check(String addr) throws IOException {
 
         boolean res = false;
@@ -150,9 +151,9 @@ public class ServerUtils {
 
     }
 
-    public void setPassword(String psswd) {
-        this.psswd = psswd;
-        System.out.println("setting psswd: " + this.psswd);
+    public void setAdminPassword(String password) {
+        this.password = password;
+        System.out.println("setting password: " + this.password);
     }
 
     public Board getBoardById(Long id) {
@@ -168,12 +169,12 @@ public class ServerUtils {
                 .target(server).path("api/boards") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<List<Board>>() {
+                .get(new GenericType<>() {
                 });
     }
 
-    public BoardList addCardToList(Long boardListId, Card card) {
-        return ClientBuilder.newClient(new ClientConfig()) //
+    public void addCardToList(Long boardListId, Card card) {
+        ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/lists/add/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
@@ -230,11 +231,11 @@ public class ServerUtils {
                 .post(Entity.entity(name, APPLICATION_JSON), Long.class);
     }
 
+
     public BoardList changeListName(Long listId, String name) throws Exception {
         if (name.equals("")) {
             throw new Exception("cannot change name to empty name");
         }
-
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/lists/changeName/" + listId.toString())
                 .request(APPLICATION_JSON)
@@ -242,16 +243,16 @@ public class ServerUtils {
                 .post(Entity.entity(name, APPLICATION_JSON), BoardList.class);
     }
 
-    public Void removeBoardList(Long boardId, Long listId) {
-        return ClientBuilder.newClient(new ClientConfig())
+    public void removeBoardList(Long boardId, Long listId) {
+        ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/boards/list/delete/" + boardId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(listId, APPLICATION_JSON), Void.class);
     }
 
-    public BoardList updateCardFromList(Long boardListId, Card card) {
-        return ClientBuilder.newClient(new ClientConfig()) //
+    public void updateCardFromList(Long boardListId, Card card) {
+        ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/lists/update/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
@@ -271,7 +272,8 @@ public class ServerUtils {
                 .target(server).path("api/cards/" + id.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<Card>() {
+
+                .get(new GenericType<>() {
                 });
     }
 
@@ -291,13 +293,13 @@ public class ServerUtils {
         }
     }
 
-    public boolean deleteBoardById(Long id) {
-        System.out.println("sending delete by id: " + psswd + " " + id.toString());
-        return ClientBuilder.newClient(new ClientConfig())
+    public void deleteBoardById(Long id) {
+        System.out.println("sending delete by id: " + password + " " + id.toString());
+        ClientBuilder.newClient(new ClientConfig())
                 .target(server)
-                .path("api/boards/delete/" + id.toString())
+                .path("api/boards/delete/" + id)
                 .request()
-                .post(Entity.entity(psswd, APPLICATION_JSON), boolean.class);
+                .post(Entity.entity(password, APPLICATION_JSON), boolean.class);
     }
 
     public Card deleteCard(Long cardId) {
@@ -324,17 +326,17 @@ public class ServerUtils {
                 .get(BoardList.class);
     }
 
-    public BoardList addCardAtIndex(Long listId, long index, Card card) {
-        return ClientBuilder.newClient(new ClientConfig())
+    public void addCardAtIndex(Long listId, long index, Card card) {
+        ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/lists/insertAt/" + listId.toString())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(new CustomPair(index, card), APPLICATION_JSON), BoardList.class
-                );
+            );
     }
 
-    public boolean checkPsswd(String psswd) {
-        if (psswd == null || psswd.equals("")) {
+    public boolean checkAdminPassword(String password) {
+        if (password == null || password.equals("")) {
             return false;
         }
 
@@ -342,8 +344,34 @@ public class ServerUtils {
                 .target(server).path("adminLogin")
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(psswd, APPLICATION_JSON),
+                .post(Entity.entity(password, APPLICATION_JSON),
                         boolean.class);
+    }
+
+    public boolean verifyBoardPassword(Long boardId, String password) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/boards/verifyPassword/"+boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(password, APPLICATION_JSON),
+                        boolean.class);
+    }
+
+    public void setBoardPassword(Long boardId, String password) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/boards/changePassword/" + boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(password, APPLICATION_JSON),
+                        Board.class);
+    }
+
+    public void removeBoardPassword(Long boardId) {
+        ClientBuilder.newClient(new ClientConfig())
+                .target(server).path("api/boards/removePassword/" + boardId)
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .get(Board.class);
     }
 
     private static ExecutorService EXEC = Executors.newSingleThreadExecutor();

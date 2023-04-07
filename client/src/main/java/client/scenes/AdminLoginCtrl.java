@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 
+import java.io.IOException;
+
 public class AdminLoginCtrl {
     @FXML
     private TextField psswdField;
@@ -29,7 +31,7 @@ public class AdminLoginCtrl {
         boolean res = false;
         try {
             psswd = psswdField.getText();
-            res = server.checkPsswd(psswd);
+            res = server.checkAdminPassword(psswd);
         }
         catch(Exception e) {
             var alert = new Alert(Alert.AlertType.ERROR);
@@ -40,7 +42,7 @@ public class AdminLoginCtrl {
 
         if(res) {
             System.out.println("psswd ok");
-            server.setPassword(psswd);
+            server.setAdminPassword(psswd);
             mainCtrl.showDashboard();
         }
         else {
@@ -51,7 +53,7 @@ public class AdminLoginCtrl {
         }
     }
 
-    public void back() {
+    public void back() throws IOException {
         ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
         connectHomeCtrl.showBoardOverview();
         //mainCtrl.showBoardOverview();

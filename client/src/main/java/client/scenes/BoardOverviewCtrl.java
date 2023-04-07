@@ -1,11 +1,9 @@
 package client.scenes;
 
-import client.MyFXML;
-import client.MyModule;
+import client.utils.CustomizationUtils;
 import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import commons.Board;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,28 +29,27 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static client.scenes.MainCtrl.primaryStage;
-import static com.google.inject.Guice.createInjector;
+import static client.scenes.SingleBoardCtrl.BoardID;
+import static client.utils.CustomizationUtils.addDefaultCustomization;
+import static client.utils.CustomizationUtils.customizationData;
+import static client.utils.LocalUtils.writeCustomization;
 
 public class BoardOverviewCtrl implements Initializable {
     private ServerUtils server;
-    private LocalUtils localUtils;
+    public LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
-    private static final Injector INJECTOR = createInjector(new MyModule());
-    private static final MyFXML FXML = new MyFXML(INJECTOR);
-
-    private Set<Long> drawnBoards;
+    private final Set<Long> drawnBoards;
     static Set<Node> boardsNodes;
 
     @FXML
@@ -98,6 +95,8 @@ public class BoardOverviewCtrl implements Initializable {
             // load board and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             AnchorPane board = loader.load();
+
+
             last_row.getChildren().add(board);
 
             Board new_board = server.addBoard(new Board());
@@ -117,6 +116,10 @@ public class BoardOverviewCtrl implements Initializable {
             // enter board after creating it by default
             addJoinedBoard(new_board);
             localUtils.add(new_board.getId());
+
+            addDefaultCustomization(new_board.getId());
+            writeCustomization();
+
             enterBoard(new_board);
         }
         // create a new row in vbox
@@ -132,6 +135,7 @@ public class BoardOverviewCtrl implements Initializable {
             HBox.setMargin(board, new Insets(0, 0, 0, 187.5));
 
             Board new_board = server.addBoard(new Board());
+
 
             // add it to board overview
             hbox.getChildren().add(board);
@@ -167,7 +171,8 @@ public class BoardOverviewCtrl implements Initializable {
         // Check if the board is already joined
         boolean isUnlocked = drawnBoards.contains(new_board.getId());
 
-        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl, isUnlocked);
+        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, this,
+                mainCtrl, isUnlocked, localUtils);
         singleBoardCtrl.setBoard(new_board);
         loader.setController(singleBoardCtrl);
 
@@ -181,24 +186,39 @@ public class BoardOverviewCtrl implements Initializable {
         System.out.println(new_board.getName());
 
         primaryStage.setScene(new_scene);
+        primaryStage.getScene().getRoot().getChildrenUnmodifiable()
+                .forEach(child -> CustomizationUtils.updateTextColor(child, new_board.getId()));
 
+        CustomizationUtils.updateBackgroundColour(primaryStage.getScene()
+                .lookup("#hbox_lists"), new_board.getId());
+
+        CustomizationUtils.updateForegroundColour(primaryStage.getScene()
+                .getRoot(), new_board.getId());
+
+        CustomizationUtils.updateAccessibilityMode(primaryStage.getScene()
+                .getRoot());
+
+        CustomizationUtils.updateListColour(BoardID);
         System.out.println(new_scene);
     }
 
 
     public void onJoinBoard() throws IOException {
         String text = search_box.getText();
-        Boolean boardFound = false;
+        boolean boardFound = false;
 
         // debug
         System.out.println(server.getBoards());
 
         for (Board board : server.getBoards()) {
-            if (board.getId().toString().equals(text) &&
-                    !drawnBoards.contains(board.getId())) {
+            if (board.getId().toString().equals(text)) {
                 boardFound = true;
+                // check if board is already joined
+                if (drawnBoards.contains(board.getId())) {
+                    enterBoard(board);
+                }
                 // check if board is password protected
-                if (board.getPassword() != null && !board.getPassword().isEmpty() ) {
+                else if (board.getPassword() != null) {
                     // prompt user for password
                     Dialog<String> dialog = new Dialog<>();
                     dialog.setTitle("Enter Board Password");
@@ -221,9 +241,38 @@ public class BoardOverviewCtrl implements Initializable {
                     dialog.setResultConverter(button ->
                             button == okButtonType ? passwordField.getText() : null);
 
+                    String password = dialog.showAndWait().orElse(null);
+
+                    if (password != null) {
+                        if (!password.isEmpty()) {
+                            if (server.verifyBoardPassword(board.getId(), password)) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setHeaderText("Success!");
+                                alert.setContentText("You are now joining the board.");
+                                alert.showAndWait();
+                                addJoinedBoard(board);
+                                localUtils.add(board.getId());
+                                enterBoard(board);
+                            } else {
+                                Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.initModality(Modality.APPLICATION_MODAL);
+                                alert.setHeaderText("Failure!");
+                                alert.setContentText("The password is invalid.");
+                                alert.showAndWait();
+                            }
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.initModality(Modality.APPLICATION_MODAL);
+                            alert.setHeaderText("Read-Only Mode");
+                            alert.setContentText(
+                                    "You are now entering the board in Read-Only mode.");
+                            alert.showAndWait();
+
+                            enterBoard(board);
+                        }
+                    }
+
                     Optional<String> result = dialog.showAndWait();
-
-
                     if (result.isPresent() && result.get().equals(board.getPassword())) {
                         addJoinedBoard(board);
                         localUtils.add(board.getId());
@@ -243,11 +292,18 @@ public class BoardOverviewCtrl implements Initializable {
                         alert.setContentText("You are now entering the board in Read-Only mode.");
                         alert.showAndWait();
 
+                        addDefaultCustomization(board.getId());
+                        writeCustomization();
+
                         enterBoard(board);
                     }
                 } else {
                     addJoinedBoard(board);
                     localUtils.add(board.getId());
+
+                    addDefaultCustomization(board.getId());
+                    writeCustomization();
+
                     enterBoard(board);
                 }
                 System.out.println("hello!");
@@ -259,7 +315,7 @@ public class BoardOverviewCtrl implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setHeaderText("Error joining board!");
-            alert.setContentText("Invalid board ID or board is already joined.");
+            alert.setContentText("Invalid board ID.");
             alert.showAndWait();
         }
     }
@@ -273,6 +329,18 @@ public class BoardOverviewCtrl implements Initializable {
 
         Text name = (Text) tmp.lookup("#boardName");
         name.setText(board2.getName());
+
+        // correct outline
+        //if (customizationData.containsKey(board.getId())) {
+
+        //    var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+        //    ((AnchorPane) board).getChildren().get(0).setStyle(
+        //            "-fx-background-color: grey;"
+        //                    + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+        //                    + "-fx-border-radius: 10;-fx-background-radius: 15"
+        //    );
+        //}
+
     }
 
     private void updateBoardImage(Board board, ImageView imageView) {
@@ -320,6 +388,17 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
 
+            if (customizationData.containsKey(board2.getId())) {
+
+                var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+                ((AnchorPane) board).getChildren().get(0).setStyle(
+                        "-fx-background-color: grey;"
+                                + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+                                + "-fx-border-radius: 10;-fx-background-radius: 15"
+                );
+            }
+
+
 
         }
         // create a new row in vbox
@@ -353,11 +432,20 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
 
+            if (customizationData.containsKey(board2.getId())) {
+                var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+                ((AnchorPane) board).getChildren().get(0).setStyle(
+                        "-fx-background-color: grey;"
+                                + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+                                + "-fx-border-radius: 10;-fx-background-radius: 15"
+                );
+            }
+
         }
 
     }
 
-    public void refresh() {
+    public void refresh() throws IOException {
         if(localUtils == null)
             localUtils = new LocalUtils();
         if(!Objects.equals(localUtils.getPath(), server.getPath())) {
@@ -376,15 +464,17 @@ public class BoardOverviewCtrl implements Initializable {
             alert.setContentText("Error fetching boards from file!\n" + e.getMessage());
             alert.showAndWait();
         }
-        boardsNodes.forEach(x -> {
-            correctText(x);
-        });
+        boardsNodes.forEach(this::correctText);
         var tmp = localUtils.getBoards();
         tmp.forEach(x -> {
             if(drawnBoards.contains(x))
                 return;
             try {
                 addJoinedBoard(server.getBoardById(x));
+
+
+
+
             } catch (IOException e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.initModality(Modality.APPLICATION_MODAL);
@@ -393,6 +483,17 @@ public class BoardOverviewCtrl implements Initializable {
                 alert.showAndWait();
             }
         });
+
+        var savedCustomizationBoard = CustomizationUtils.customizationData;
+
+        for (Long currentBoard : tmp) {
+
+            if (!(savedCustomizationBoard.containsKey(currentBoard))) {
+                addDefaultCustomization(currentBoard);
+                writeCustomization();
+            }
+        }
+
     }
 
     public void disconnect() {
@@ -401,16 +502,29 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     public void resetFile() {
-        try {
-            localUtils.reset();
-        }
-        catch(Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText("Error: " + e.getMessage());
-            alert.showAndWait();
-        }
-        refresh();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText("Reset storage");
+        alert.setContentText("Are you sure you want to reset storage? (Irreversible)");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    localUtils.reset();
+                }
+                catch(Exception e) {
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.initModality(Modality.APPLICATION_MODAL);
+                    error.setContentText("Error: " + e.getMessage());
+                    error.showAndWait();
+                }
+                try {
+                    refresh();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        disconnect();
     }
 
     public void adminLogin() {
@@ -425,9 +539,7 @@ public class BoardOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        disconnect.setOnAction(e->{
-            disconnect();
-        });
+        disconnect.setOnAction(e-> disconnect());
         adminLogin.setOnAction(e -> adminLogin());
         createBoard.setOnAction(e->{
             try {
@@ -443,9 +555,7 @@ public class BoardOverviewCtrl implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
-        reset.setOnAction(e->{
-            resetFile();
-        });
+        reset.setOnAction(e-> resetFile());
         search_box.setOnAction(e->{
             try {
                 onJoinBoard();
@@ -454,7 +564,11 @@ public class BoardOverviewCtrl implements Initializable {
             }
         });
         server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
-            refresh();
+            try {
+                refresh();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }

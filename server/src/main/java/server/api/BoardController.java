@@ -1,6 +1,7 @@
 package server.api;
 
 import java.util.List;
+import java.util.Objects;
 
 import commons.Board;
 
@@ -11,6 +12,7 @@ import server.Admin;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
+import server.Encryption;
 import server.database.BoardRepository;
 import server.services.BoardServiceImpl;
 
@@ -30,6 +32,7 @@ public class BoardController {
 
     private final DatabaseUtils databaseUtils;
     private final Admin admin;
+    private final Encryption encryption;
 
 
     private BoardServiceImpl boardService;
@@ -38,13 +41,17 @@ public class BoardController {
     private final SimpMessagingTemplate messagingTemplate;
 
     public BoardController(BoardRepository repo,
-                           DatabaseUtils databaseUtils
-            , SimpMessagingTemplate messagingTemplate, Admin admin) {
+
+                           DatabaseUtils databaseUtils,
+                           SimpMessagingTemplate messagingTemplate,
+                           Admin admin,
+                           Encryption encryption) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
         this.messagingTemplate = messagingTemplate;
         this.boardService = new BoardServiceImpl(repo, messagingTemplate);
         this.admin = admin;
+        this.encryption = encryption;
 
         // TODO uncomment **ONLY** for debug!!
    /*
@@ -77,10 +84,11 @@ public class BoardController {
     @GetMapping(path = "/debug")
     public String getAllDebug() {
         List<Board> list = repo.findAll();
-        String res = "";
-        for (Board b : list)
-            res += b + "<br> \n";
-        return res;
+
+        StringBuilder res = new StringBuilder();
+        for(Board b : list)
+            res.append(b).append("<br> \n");
+        return res.toString();
     }
 
     @GetMapping(path = "/{id}")
@@ -160,10 +168,67 @@ public class BoardController {
     public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
                                                @RequestBody String psswd) {
 
-        if (psswd == null || !psswd.equals(admin.getPassword()))
+
+        if(psswd == null || !psswd.equals(admin.getPassword())) {
             return ResponseEntity.badRequest().build();
+        }
 
         repo.deleteById(boardId);
         return ResponseEntity.ok(true);
+    }
+
+    @PostMapping(path = "/changePassword/{id}")
+    public ResponseEntity<Board> setBoardPassword(@PathVariable("id") long boardId,
+                                               @RequestBody String psswd) {
+
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Board board = repo.findById(boardId).get();
+
+        String hashed = encryption.getHash(psswd);
+        board.setPassword(hashed);
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping(path = "/removePassword/{id}")
+    public ResponseEntity<Board> resetBoardPassword(@PathVariable("id") long boardId) {
+
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Board board = repo.findById(boardId).get();
+
+        board.setPassword(null);
+        Board saved = repo.save(board);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PostMapping(path = "/verifyPassword/{id}")
+    public ResponseEntity<Boolean> verifyPassword(@PathVariable("id") long boardId,
+                                                @RequestBody String psswd) {
+
+        if(!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Board board = repo.findById(boardId).get();
+
+        // if board has no password
+        if(board.getPassword() == null) {
+            return ResponseEntity.ok(true);
+        }
+
+        if(psswd == null) {
+            return ResponseEntity.ok(false);
+        }
+
+        String hashed = encryption.getHash(psswd);
+        if(Objects.equals(hashed, board.getPassword()))
+            return ResponseEntity.ok(true);
+        return ResponseEntity.ok(false);
     }
 }
