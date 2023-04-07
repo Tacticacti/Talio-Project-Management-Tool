@@ -3,22 +3,27 @@ package client.scenes;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
-import commons.Tag;
+
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.ScaleTransition;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
+
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -27,19 +32,29 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@SuppressWarnings("checkstyle:Indentation")
 public class CardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
     private EventTarget target;
@@ -91,7 +106,7 @@ public class CardCtrl {
             });
             cardNode.setOnMouseClicked(event -> {
                 cardNode.requestFocus();
-                if(event.getClickCount()==2){
+                if (event.getClickCount() == 2) {
                     setCardDetail(cardNode, parent);
                 }
 
@@ -131,21 +146,27 @@ public class CardCtrl {
                               KeyEvent event) {
         if (target instanceof AnchorPane) {
             switch (event.getCode()) {
-                case E: editTaskTitleShortcut(parent, scaleTransition);
-                break;
+                case E:
+                    editTaskTitleShortcut(parent, scaleTransition);
+                    break;
                 case BACK_SPACE:
                 case DELETE:
                     deleteCardShortcut(parent);
                     break;
-                case ENTER:setCardDetail(cardNode, parent);
-                break;
-                case UP: moveUpShortcut(parent, cardNode, scaleTransition, event);
-                break;
-                case DOWN: moveDownShortcut(parent, cardNode, scaleTransition, event);
-                break;
-                case LEFT: moveLeftShortcut(parent, cardNode, scaleTransition);
-                break;
-                case RIGHT: moveRightShortcut(parent, cardNode, scaleTransition);
+                case ENTER:
+                    setCardDetail(cardNode, parent);
+                    break;
+                case UP:
+                    moveUpShortcut(parent, cardNode, scaleTransition, event);
+                    break;
+                case DOWN:
+                    moveDownShortcut(parent, cardNode, scaleTransition, event);
+                    break;
+                case LEFT:
+                    moveLeftShortcut(parent, cardNode, scaleTransition);
+                    break;
+                case RIGHT:
+                    moveRightShortcut(parent, cardNode, scaleTransition);
             }
             MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
             if (event.isShiftDown()) {
@@ -243,8 +264,8 @@ public class CardCtrl {
             scaleTransition.stop();
             ObservableList<Node> children = parent.getChildren();
             int index = children.indexOf(cardNode);
-            if (index < children.size()-2) {
-                Node node = children.get(index+1);
+            if (index < children.size() - 2) {
+                Node node = children.get(index + 1);
                 cardNode.setScaleY(1);
                 cardNode.setScaleX(1);
                 node.requestFocus();
@@ -278,7 +299,7 @@ public class CardCtrl {
             ObservableList<Node> children = parent.getChildren();
             int index = children.indexOf(cardNode);
             if (index > 0) {
-                Node node = children.get(index-1);
+                Node node = children.get(index - 1);
                 cardNode.setScaleY(1);
                 cardNode.setScaleX(1);
                 node.requestFocus();
@@ -381,10 +402,10 @@ public class CardCtrl {
 
         VBox tags = (VBox) root.lookup("#tagVbox");
         board.setOnAction(event -> {
-            singleBoardCtrl.openBoardTags(tags,card);
+            singleBoardCtrl.openBoardTags(tags, card);
         });
         custom.setOnAction(event -> {
-            singleBoardCtrl.addCustomTag(tags,card);
+            singleBoardCtrl.addCustomTag(tags, card);
         });
         showTags(tags, card);
         MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
@@ -402,10 +423,14 @@ public class CardCtrl {
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
+        popUpStage.setOnCloseRequest(event -> {
+            singleBoardCtrl.server.stopExec();
+        });
         singleBoardCtrl.refresh();
     }
-    public void showTags(VBox parent, Card current){
-        for(Tag t: current.getTags()){
+
+    public void showTags(VBox parent, Card current) {
+        for (String t : current.getTags().keySet()) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Tag.fxml"));
             AnchorPane tag;
             try {
@@ -413,12 +438,13 @@ public class CardCtrl {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            tag.setUserData(t);
+            Pair<String, String> tagPair = Pair.of(t, current.getTags().get(t));
+            tag.setUserData(tagPair);
             Label title = (Label) tag.lookup("#tagName");
-            title.setText(t.getTitle());
+            title.setText(t);
             Button deleteBtn = (Button) tag.lookup("#delBtn");
             deleteBtn.setOnAction(event -> {
-                deleteTag(event, parent,t, current);
+                deleteTag(event, parent);
             });
             ImageView imageView = new ImageView(getClass()
                     .getResource("../images/trash.png").toExternalForm());
@@ -426,14 +452,16 @@ public class CardCtrl {
             imageView.setFitHeight(deleteBtn.getPrefHeight());
             imageView.setPreserveRatio(true);
             deleteBtn.setGraphic(imageView);
-            deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
+            deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
+                    , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
             deleteBtn.setOnMouseEntered(event -> {
                 deleteBtn.setStyle("-fx-background-color: white");
             });
             deleteBtn.setOnMouseExited(event -> {
                 deleteBtn.setStyle("-fx-background-color: transparent");
             });
-            BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(t.getColor())
+            BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(current.getTags()
+                    .get(t))
                     , null, null);
             Background background = new Background(backgroundFill);
             tag.setBackground(background);
@@ -442,7 +470,7 @@ public class CardCtrl {
 
     }
 
-    public void deleteTag(ActionEvent event,VBox parent, Tag tag, Card card){
+    public void deleteTag(ActionEvent event, VBox parent) {
         Button source = (Button) event.getSource();
         parent.getChildren().remove(source.getParent());
         //singleBoardCtrl.server.deleteTagToCard(card.getId(), tag);
@@ -471,12 +499,12 @@ public class CardCtrl {
                 if (!current.getSubtasks().contains(cb.getText()))
                     current.addSubTask(cb.getText());
 
-                if(cb.isSelected()){
+                if (cb.isSelected()) {
                     current.completeSubTask(cb.getText());
                 }
 
                 if (!current.getSubtasks().get(i).equals(cb.getText())
-                                && current.getSubtasks().contains(cb.getText())) {
+                        && current.getSubtasks().contains(cb.getText())) {
                     current.removeSubTask(cb.getText());
                     current.addSubtaskAtIndex(cb.getText(), i);
                     if (cb.isSelected()) {
@@ -486,20 +514,20 @@ public class CardCtrl {
             }
         }
         VBox tags = (VBox) ap.lookup("#tagVbox");
-        for(Tag t: current.getTags()){
-            t.removeCard(current);
-        }
+
         current.getTags().clear();
-        for(Node n: tags.getChildren()){
+        for (Node n : tags.getChildren()) {
             AnchorPane tagAp = (AnchorPane) n;
-            if(!current.getTags().contains(tagAp.getUserData())){
-                current.addTag((Tag)tagAp.getUserData());
-                ((Tag)tagAp.getUserData()).addCard(current);
+            Pair<String, String> tagPair = (Pair<String, String>) tagAp.getUserData();
+            if (!current.getTags().keySet().contains(((Pair<String, String>) tagAp.getUserData())
+                    .getLeft())) {
+                current.addTag(tagPair.getLeft(), tagPair.getRight());
             }
-            if(!singleBoardCtrl.current_board.getTagLists().contains((Tag) tagAp.getUserData()))
-                singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID,(Tag) tagAp.getUserData());
+            if (!singleBoardCtrl.current_board.getTagLists().keySet().contains(tagPair.getLeft()))
+                singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, tagPair.getLeft()
+                        , tagPair.getRight());
         }
-        //singleBoardCtrl.server.addCard(current);
+        singleBoardCtrl.server.addCard(current);
         singleBoardCtrl.updateCardFromList(singleBoardCtrl.BoardID, listId, current);
         singleBoardCtrl.server.stopExec();
         Stage popup = (Stage) source.getScene().getWindow();

@@ -1,13 +1,13 @@
 /*
  * Copyright 2021 Delft University of Technology
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License,  Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless required by applicable law or agreed to in writing,  software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import commons.Tag;
 import jakarta.ws.rs.core.Response;
 
 import commons.BoardList;
@@ -47,6 +46,7 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+@SuppressWarnings("checkstyle:Indentation")
 class CustomPair<S, T> {
     private S first;
     private T second;
@@ -73,6 +73,7 @@ class CustomPair<S, T> {
     }
 }
 
+@SuppressWarnings("checkstyle:Indentation")
 public class ServerUtils {
 
     // private static String server = "http://localhost:8080/";
@@ -83,7 +84,7 @@ public class ServerUtils {
     StompSession stompSession;
 
 
-    // returns true if connection is succesful 
+    // returns true if connection is succesful
     // flase otherwise
     public boolean check(String addr) throws IOException {
 
@@ -104,17 +105,17 @@ public class ServerUtils {
     public void setServer(String addr) {
         // TODO open socket connection here
         server = "http://" + addr;
-        stompSession = connectToSockets("ws://"+addr+"/websocket");
+        stompSession = connectToSockets("ws://" + addr + "/websocket");
     }
 
-    StompSession connectToSockets(String url){
+    StompSession connectToSockets(String url) {
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
         stomp.setMessageConverter(new MappingJackson2MessageConverter());
-        try{
-            return stomp.connect(url, new StompSessionHandlerAdapter(){}).get();
-        }
-        catch (ExecutionException e) {
+        try {
+            return stomp.connect(url, new StompSessionHandlerAdapter() {
+            }).get();
+        } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -122,7 +123,7 @@ public class ServerUtils {
         throw new IllegalStateException();
     }
 
-    public <T> void checkForUpdatesToRefresh(String update, Class<T> tClass, Consumer<T> consumer){
+    public <T> void checkForUpdatesToRefresh(String update, Class<T> tClass, Consumer<T> consumer) {
         stompSession.subscribe(update, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders headers) {
@@ -179,16 +180,16 @@ public class ServerUtils {
                 .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
     }
 
-    public Board addTagToBoard(Long boardListId, Tag tag) {
+    public Board addTagToBoard(Long boardListId, String tag, String color) {
         System.out.println("reached tag");
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/addTag/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
+                .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Board.class);
     }
 
-    public Board deleteTagToBoard(Long boardListId, Tag tag) {
+    public Board deleteTagToBoard(Long boardListId, String tag) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/tag/delete/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
@@ -196,15 +197,23 @@ public class ServerUtils {
                 .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
     }
 
-    public Card addTagToCard(Long cardId, Tag tag) {
+    public Card addTagToCard(Long cardId, String tag, String color) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/cards/addTag/" + cardId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(tag, APPLICATION_JSON), Card.class);
+                .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Card.class);
     }
 
-    public Card deleteTagToCard(Long cardId, Tag tag) {
+    public Board updateCardsTag(Long boardId, String tag, String color) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(server).path("api/boards/updateTags/" + boardId.toString()) //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Board.class);
+    }
+
+    public Card deleteTagToCard(Long cardId, String tag) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/cards/deleteTag/" + cardId.toString()) //
                 .request(APPLICATION_JSON) //
@@ -222,7 +231,7 @@ public class ServerUtils {
     }
 
     public BoardList changeListName(Long listId, String name) throws Exception {
-        if(name.equals("")) {
+        if (name.equals("")) {
             throw new Exception("cannot change name to empty name");
         }
 
@@ -259,10 +268,11 @@ public class ServerUtils {
 
     public Card getCardById(Long id) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/cards/"+id.toString()) //
+                .target(server).path("api/cards/" + id.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .get(new GenericType<Card>() {});
+                .get(new GenericType<Card>() {
+                });
     }
 
 
@@ -291,14 +301,14 @@ public class ServerUtils {
     }
 
     public Card deleteCard(Long cardId) {
-        return  ClientBuilder.newClient(new ClientConfig()) //
+        return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/cards/delete/" + cardId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
     }
 
-    public BoardList deleteCardFromList(Long listId, Card card){
+    public BoardList deleteCardFromList(Long listId, Card card) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/lists/deleteCard/" + listId.toString()) //
                 .request(APPLICATION_JSON) //
@@ -337,10 +347,11 @@ public class ServerUtils {
     }
 
     private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
-    public void registerForCardUpdate(Consumer<Card> cardConsumer){
+
+    public void registerForCardUpdate(Consumer<Card> cardConsumer) {
         EXEC = Executors.newSingleThreadExecutor();
-        EXEC.submit(()->{
-            while(!Thread.interrupted()) {
+        EXEC.submit(() -> {
+            while (!Thread.interrupted()) {
                 System.out.println("running");
                 var result = ClientBuilder.newClient(new ClientConfig())
                         .target(server).path("api/lists/deletedtask")
@@ -359,7 +370,7 @@ public class ServerUtils {
 
     }
 
-    public void stopExec(){
+    public void stopExec() {
         EXEC.shutdownNow();
     }
 }

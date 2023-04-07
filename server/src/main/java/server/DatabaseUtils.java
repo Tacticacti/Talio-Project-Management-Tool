@@ -1,11 +1,11 @@
 package server;
 
-import commons.Tag;
 import org.springframework.stereotype.Service;
 
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+
 
 @Service
 public class DatabaseUtils {
@@ -29,7 +29,7 @@ public class DatabaseUtils {
 
     public void updateCard(Card card, Card newCard) {
         System.out.println(newCard.getTitle());
-        if(!newCard.getTitle().trim().isEmpty())
+        if (!newCard.getTitle().trim().isEmpty())
             card.setTitle(newCard.getTitle());
 
         card.setDescription(newCard.getDescription());
@@ -37,13 +37,6 @@ public class DatabaseUtils {
         card.setCompletedTasks(newCard.getCompletedTasks());
         card.setCompletedSubs(newCard.getCompletedSubs());
         card.getTags().clear();
-        for(Tag t1: card.getTags()){
-            t1.removeCard(card);
-            card.removeTag(t1);
-        }
-        for(Tag t: newCard.getTags()){
-            card.addTag(t);
-            t.addCard(card);
-        }
+        card.setTagColors(newCard.getTags());
     }
 }

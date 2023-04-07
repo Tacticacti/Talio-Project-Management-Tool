@@ -2,7 +2,6 @@ package server.api;
 
 import commons.BoardList;
 import commons.Card;
-import commons.Tag;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

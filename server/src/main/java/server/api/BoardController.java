@@ -1,14 +1,14 @@
 package server.api;
 
 import java.util.List;
-import java.util.Objects;
 
 import commons.Board;
 
 import commons.BoardList;
 import commons.Card;
+import org.springframework.data.util.Pair;
 import server.Admin;
-import commons.Tag;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
 import server.database.BoardRepository;
@@ -32,15 +32,14 @@ public class BoardController {
     private final Admin admin;
 
 
-
     private BoardServiceImpl boardService;
-
 
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    public BoardController(BoardRepository repo, 
-        DatabaseUtils databaseUtils, SimpMessagingTemplate messagingTemplate, Admin admin) {
+    public BoardController(BoardRepository repo,
+                           DatabaseUtils databaseUtils
+            , SimpMessagingTemplate messagingTemplate, Admin admin) {
         this.repo = repo;
         this.databaseUtils = databaseUtils;
         this.messagingTemplate = messagingTemplate;
@@ -48,35 +47,22 @@ public class BoardController {
         this.admin = admin;
 
         // TODO uncomment **ONLY** for debug!!
-        /*
-        Board board = databaseUtils.mockSimpleBoard();
-        repo.save(board);
-        */
+   /*
+   Board board = databaseUtils.mockSimpleBoard();
+   repo.save(board);
+   */
     }
-    @PostMapping( "/addTag/{id}")
+
+    @PostMapping("/addTag/{id}")
     public ResponseEntity<Board> addTagToId(@PathVariable("id") long listId,
-                                                 @RequestBody Tag tag) {
+                                            @RequestBody Pair<String, String> tagEntry) {
 
         var board = repo.findById(listId);
 
         if (!repo.existsById(listId)) {
             return ResponseEntity.badRequest().build();
         }
-        boolean check = false;
-        Tag toUpdate = null;
-        for(Tag t: board.get().getTagLists()){
-            if(t.getId()==tag.getId()){
-                check = true;
-                toUpdate = t;
-            }
-
-        }
-        if(!check)
-            board.get().addBoardTag(tag);
-        else{
-            toUpdate.setColor(tag.getColor());
-            toUpdate.setTitle(tag.getTitle());
-        }
+        board.get().addBoardTag(tagEntry.getFirst(), tagEntry.getSecond());
 
         Board saved = repo.save(board.get());
         messagingTemplate.convertAndSend("/topic/boards", saved);
@@ -92,7 +78,7 @@ public class BoardController {
     public String getAllDebug() {
         List<Board> list = repo.findAll();
         String res = "";
-        for(Board b : list)
+        for (Board b : list)
             res += b + "<br> \n";
         return res;
     }
@@ -125,33 +111,56 @@ public class BoardController {
 
     @PostMapping(path = "/tag/delete/{id}")
     public ResponseEntity<Board> deleteTag(@PathVariable("id") long boardId,
-                                            @RequestBody Tag tag) {
+                                           @RequestBody String tagEntry) {
 
         if (!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
 
-        System.out.println("deleting " + boardId + " " + tag);
+        //System.out.println("deleting " + boardId + " " + tag);
 
         Board board = repo.findById(boardId).get();
-        board.getTagLists().removeIf(x -> Objects.equals(x.getId(), tag.getId()));
-        for(BoardList bl: board.getLists()){
-            for(Card c: bl.getCards()){
-                if(c.getTags().contains(tag))
-                    c.removeTag(tag);
+        board.removeBoardTag(tagEntry);
+
+        for (BoardList boardList : board.getLists()) {
+            for (Card card : boardList.getCards()) {
+                card.removeTag(tagEntry);
             }
         }
+
+
         repo.save(board);
         messagingTemplate.convertAndSend("/topic/boards", board);
         return ResponseEntity.ok(board);
 
     }
-    
+
+    @PostMapping("/updateTags/{id}")
+    public ResponseEntity<Board> updateTags(@PathVariable("id") long boardId,
+                                            @RequestBody Pair<String, String> tagEntry) {
+
+        var board = repo.findById(boardId);
+
+        if (!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        for (BoardList bl : board.get().getLists()) {
+            for (Card card : bl.getCards()) {
+                card.addTag(tagEntry.getFirst(), tagEntry.getSecond());
+            }
+        }
+
+        Board saved = repo.save(board.get());
+        messagingTemplate.convertAndSend("/topic/boards", saved);
+        return ResponseEntity.ok(saved);
+    }
+
+
     @PostMapping(path = "/delete/{id}")
     public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
-            @RequestBody String psswd) {
+                                               @RequestBody String psswd) {
 
-        if(psswd == null || !psswd.equals(admin.getPassword()))
+        if (psswd == null || !psswd.equals(admin.getPassword()))
             return ResponseEntity.badRequest().build();
 
         repo.deleteById(boardId);
