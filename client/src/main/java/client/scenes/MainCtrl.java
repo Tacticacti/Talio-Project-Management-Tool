@@ -158,7 +158,7 @@ public class MainCtrl {
     }
 
     public void showHelpPage(KeyEvent event) {
-        if (event.getCode() == KeyCode.H && event.isShiftDown()) {
+        if (event.getCode() == KeyCode.SLASH && event.isShiftDown()) {
             FXMLLoader helpPageLoader = new FXMLLoader(
                     getClass().getResource("helpPage.fxml"));
             Parent helpPageParent;
