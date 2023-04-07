@@ -39,8 +39,8 @@ public class BoardCtrl {
                 singleBoardCtrl.getClass().getResource("customizationPage.fxml"));
         AnchorPane customization = loader.load();
         // doesn't actually delete anything just goes back to board overview
-        Button delbtn = (Button) customization.lookup("#deleteBoard");
-        delbtn.setOnAction(event -> {
+        Button deletebtn = (Button) customization.lookup("#deleteBoard");
+        deletebtn.setOnAction(event -> {
             if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
