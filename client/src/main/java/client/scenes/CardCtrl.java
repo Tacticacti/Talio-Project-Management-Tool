@@ -45,6 +45,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -83,6 +85,24 @@ public class CardCtrl {
                 ((Label) cardNode.lookup("#progress"))
                         .setText(card.getCompletedSubs() + "/"
                                 + card.getSubtasks().size());
+            }
+            HBox tagDisplay = (HBox) cardNode.lookup("#tagDisplay");
+            tagDisplay.setSpacing(5);
+            if(card.getTags().size()>0){
+                for(String t: card.getTags().keySet()){
+                    String color = card.getTags().get(t);
+                    Line line = new Line();
+                    line.setStartX(0);
+                    if(card.getTags().size()>4){
+                        line.setEndX(tagDisplay.getPrefWidth()/(2*card.getTags().size()));
+                    }else{
+                        line.setEndX(tagDisplay.getPrefWidth()/5);
+                    }
+                    line.setStroke(Color.valueOf(color));
+                    line.setStrokeWidth(tagDisplay.getPrefHeight()/2);
+                    line.setStrokeLineCap(StrokeLineCap.ROUND);
+                    tagDisplay.getChildren().add(line);
+                }
             }
             ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100), cardNode);
             scaleTransition.setToX(1.1);
@@ -146,6 +166,9 @@ public class CardCtrl {
 
             CustomizationUtils.updateTextColor(cardNode, BoardID);
             CustomizationUtils.updateCardColour(cardNode, BoardID);
+
+
+
 
             parent.getChildren().add(index, cardNode);
             //cardNode.getScene();

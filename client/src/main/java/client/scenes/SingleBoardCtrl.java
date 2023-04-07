@@ -22,6 +22,7 @@ import java.net.URL;
 import javafx.scene.Node;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 
@@ -61,6 +62,9 @@ public class SingleBoardCtrl implements Initializable {
     Button newTagBtn;
     @FXML
     HBox hbox_lists;
+
+    @FXML
+    ScrollPane scrollTags;
 
     @FXML
     Button passwordBtn;
@@ -163,6 +167,8 @@ public class SingleBoardCtrl implements Initializable {
             }
             addNewTag();
         });
+        scrollTags.setStyle("-fx-background-color: transparent;" +
+                " -fx-background: transparent; -fx-border-color: transparent");
         refresh();
         System.out.println(server);
         server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList -> {

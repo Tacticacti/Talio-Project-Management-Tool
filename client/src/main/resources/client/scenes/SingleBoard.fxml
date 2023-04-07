@@ -70,6 +70,10 @@
          </font>
       </Label>
       <Button fx:id="newTagBtn" layoutX="998.0" layoutY="51.0" mnemonicParsing="false" text="Add tag" />
-      <HBox fx:id="tagHbox" layoutX="1063.0" layoutY="10.0" prefHeight="69.0" prefWidth="568.0" />
+      <ScrollPane fx:id="scrollTags" layoutX="1068.0" layoutY="10.0">
+         <content>
+            <HBox fx:id="tagHbox" prefHeight="89.0" prefWidth="568.0" />
+         </content>
+      </ScrollPane>
    </children>
 </AnchorPane>
