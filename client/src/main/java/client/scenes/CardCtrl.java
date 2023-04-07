@@ -202,7 +202,9 @@ public class CardCtrl {
         }
     }
 
-    private void setHighlightedCard(ScaleTransition scaleTransition, AnchorPane cardNode, ObservableList<Node> boardLists, int listIndex, AnchorPane list) {
+    private void setHighlightedCard(ScaleTransition scaleTransition, AnchorPane cardNode,
+                                    ObservableList<Node> boardLists, int listIndex,
+                                    AnchorPane list) {
         AnchorPane currentList = (AnchorPane) boardLists.get(listIndex);
         int size = list.getChildren().size();
         VBox listVbox = (VBox) list.getChildren().get(size - 1);
