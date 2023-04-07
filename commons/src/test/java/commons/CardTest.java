@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CardTest {
@@ -74,11 +76,11 @@ class CardTest {
         assertEquals(0, c1.getCompletedSubs());
         c1.completeSubTask("research otters");
         assertEquals(1, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
+        c1.completeSubTask("research monkeys");
         assertEquals(2, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
-        assertEquals(3, c1.getCompletedSubs());
-        c1.completeSubTask("research otters");
+        c1.completeSubTask("research monkeys");
+        assertEquals(2, c1.getCompletedSubs());
+        c1.completeSubTask("research donkeys");
         assertEquals(3, c1.getCompletedSubs());
     }
 
@@ -251,12 +253,21 @@ class CardTest {
     void completedTasksTest(){
         Card c1 = new Card("Slides", "prep slide 3-5");
         List<String> completed= new ArrayList<>();
-        completed.add("Subtask 1");
-        completed.add("Subtask 2");
+        String sub1 = "Subtask 1";
+        String sub2 = "Subtask 2";
+        completed.add(sub1);
+        completed.add(sub2);
         c1.setCompletedTasks(completed);
+        c1.setSubtasks(completed);
 
         assertEquals(completed, c1.getCompletedTasks());
+        c1.removeSubTask("Subtask 1");
+        assertFalse(c1.getSubtasks().contains(sub1));
+        assertTrue(c1.getSubtasks().contains(sub2));
+
+        assertDoesNotThrow(() -> c1.uncompleteSubTask("randomName"));
     }
+
     @Test
     void CompletedSubsTest(){
         Card card = new Card("Card title", "Card description");
@@ -266,6 +277,33 @@ class CardTest {
         card.setCompletedSubs(2);
         assertEquals(2, card.getCompletedSubs());
     }
+
+    @Test
+    public void testRemoveSub() {
+        Card card = new Card("Card title", "Card description");
+        String sub1 = "Subtask 1";
+        String sub2 = "Subtask 2";
+        String sub3 = "Subtask 3";
+        card.addSubTask(sub1);
+        card.addSubTask(sub2);
+
+        assertTrue(card.getSubtasks().contains(sub1));
+        assertTrue(card.getSubtasks().contains(sub2));
+
+        card.completeSubTask(sub3);
+        assertTrue(!card.getSubtasks().contains(sub3));
+        assertTrue(card.getCompletedTasks().contains(sub3));
+
+        card.removeSubTask(sub1);
+        card.uncompleteSubTask(sub3);
+        //card.removeSubTask(sub3);
+        assertFalse(card.getSubtasks().contains(sub1));
+        assertTrue(card.getSubtasks().contains(sub2));
+        assertFalse(card.getSubtasks().contains(sub3));
+        assertFalse(card.getCompletedTasks().contains(sub3));
+        assertDoesNotThrow(() -> card.removeSubTask("random task"));
+    }
+
     @Test
     void testToString(){
         Card card = new Card("Card title", "Card description");

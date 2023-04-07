@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.LocalUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -12,15 +13,16 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
-import static client.scenes.BoardOverviewCtrl.localUtils;
 import static client.utils.CustomizationUtils.customizationData;
 import static client.utils.LocalUtils.writeCustomization;
 
 public class BoardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
+    private LocalUtils localUtils;
 
-    public BoardCtrl(SingleBoardCtrl singleBoardCtrl) {
+    public BoardCtrl(SingleBoardCtrl singleBoardCtrl, LocalUtils localUtils) {
         this.singleBoardCtrl = singleBoardCtrl;
+        this.localUtils = localUtils;
     }
 
     public void requestBoardName(TextField text, Long id) throws Exception {
@@ -45,8 +47,8 @@ public class BoardCtrl {
                 singleBoardCtrl.getClass().getResource("customizationPage.fxml"));
         AnchorPane customization = loader.load();
         // doesn't actually delete anything just goes back to board overview
-        Button delbtn = (Button) customization.lookup("#deleteBoard");
-        delbtn.setOnAction(event -> {
+        Button deletebtn = (Button) customization.lookup("#deleteBoard");
+        deletebtn.setOnAction(event -> {
             if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
