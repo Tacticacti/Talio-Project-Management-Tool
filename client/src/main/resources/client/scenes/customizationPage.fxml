@@ -14,11 +14,19 @@
    <children>
       <VBox layoutX="4.0" layoutY="4.0" prefHeight="476.0" prefWidth="380.0" spacing="20.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="350.0" text="Customization" textAlignment="CENTER">
-               <font>
-                  <Font name="System Bold Italic" size="24.0" />
-               </font>
-            </Label>
+            <Group>
+               <children>
+                  <Button layoutX="247.0" layoutY="110.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" scaleX="0.9" scaleY="0.9" text="Reset" textOverrun="CLIP" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-43.0" layoutY="90.0" prefHeight="57.0" prefWidth="347.0" text="Customization" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold Italic" size="28.0" />
+                     </font>
+                     <padding>
+                        <Insets top="3.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </Group>
             <Group>
                <children>
                   <Label layoutX="8.0" layoutY="47.0" prefHeight="21.0" prefWidth="143.0" text="Board Customization">
@@ -76,7 +84,7 @@
             </Group>
          </children>
          <padding>
-            <Insets left="20.0" right="10.0" />
+            <Insets left="20.0" />
          </padding>
       </VBox>
    </children>
