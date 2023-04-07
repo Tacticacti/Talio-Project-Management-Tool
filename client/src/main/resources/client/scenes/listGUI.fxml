@@ -35,7 +35,7 @@
       </Button>
       <VBox fx:id="card_list" layoutX="14.0" layoutY="90.0" prefHeight="79.0" prefWidth="303.0">
          <children>
-            <Button fx:id="addNewCardButton" focusTraversable="false" minHeight="35.0" minWidth="277.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="277.0" text="+ Add New Card">
+            <Button fx:id="addNewCardButton" focusTraversable="false" minHeight="35.0" minWidth="277.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="277.0" text="+ Add New  Task">
                <font>
                   <Font size="13.0" />
                </font>

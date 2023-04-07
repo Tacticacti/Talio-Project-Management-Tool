@@ -444,7 +444,7 @@ public class CardCtrl {
             }
         });
         Scene scene = new Scene(root);
-        popUpStage.setTitle("Card Details");
+        popUpStage.setTitle("Task Details");
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
