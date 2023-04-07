@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 
 public class ListCtrl {
@@ -169,7 +168,8 @@ public class ListCtrl {
                     // deleting on client(GUI) side
                     board_lists.remove(deleteBoardList.getParent());
                     // deleting list on server side
-                    singleBoardCtrl.server.removeBoardList(singleBoardCtrl.BoardID, boardList.getId());
+                    singleBoardCtrl.server.removeBoardList(singleBoardCtrl.BoardID,
+                            boardList.getId());
                     singleBoardCtrl.current_board.removeList(boardList);
                     try {
                         singleBoardCtrl.refresh();
