@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.CustomizationUtils;
 import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -32,15 +33,20 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static client.scenes.MainCtrl.primaryStage;
+import static client.scenes.SingleBoardCtrl.BoardID;
+import static client.utils.CustomizationUtils.addDefaultCustomization;
+import static client.utils.CustomizationUtils.customizationData;
+import static client.utils.LocalUtils.writeCustomization;
 
 public class BoardOverviewCtrl implements Initializable {
     private ServerUtils server;
-    LocalUtils localUtils;
+    public LocalUtils localUtils;
     private final MainCtrl mainCtrl;
 
     private final Set<Long> drawnBoards;
@@ -89,6 +95,8 @@ public class BoardOverviewCtrl implements Initializable {
             // load board and style it
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AddedBoard.fxml"));
             AnchorPane board = loader.load();
+
+
             last_row.getChildren().add(board);
 
             Board new_board = server.addBoard(new Board());
@@ -108,6 +116,10 @@ public class BoardOverviewCtrl implements Initializable {
             // enter board after creating it by default
             addJoinedBoard(new_board);
             localUtils.add(new_board.getId());
+
+            addDefaultCustomization(new_board.getId());
+            writeCustomization();
+
             enterBoard(new_board);
         }
         // create a new row in vbox
@@ -123,6 +135,7 @@ public class BoardOverviewCtrl implements Initializable {
             HBox.setMargin(board, new Insets(0, 0, 0, 187.5));
 
             Board new_board = server.addBoard(new Board());
+
 
             // add it to board overview
             hbox.getChildren().add(board);
@@ -158,7 +171,8 @@ public class BoardOverviewCtrl implements Initializable {
         // Check if the board is already joined
         boolean isUnlocked = drawnBoards.contains(new_board.getId());
 
-        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, this, mainCtrl, isUnlocked);
+        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, this,
+                mainCtrl, isUnlocked, localUtils);
         singleBoardCtrl.setBoard(new_board);
         loader.setController(singleBoardCtrl);
 
@@ -172,7 +186,19 @@ public class BoardOverviewCtrl implements Initializable {
         System.out.println(new_board.getName());
 
         primaryStage.setScene(new_scene);
+        primaryStage.getScene().getRoot().getChildrenUnmodifiable()
+                .forEach(child -> CustomizationUtils.updateTextColor(child, new_board.getId()));
 
+        CustomizationUtils.updateBackgroundColour(primaryStage.getScene()
+                .lookup("#hbox_lists"), new_board.getId());
+
+        CustomizationUtils.updateForegroundColour(primaryStage.getScene()
+                .getRoot(), new_board.getId());
+
+        CustomizationUtils.updateAccessibilityMode(primaryStage.getScene()
+                .getRoot());
+
+        CustomizationUtils.updateListColour(BoardID);
         System.out.println(new_scene);
     }
 
@@ -245,9 +271,39 @@ public class BoardOverviewCtrl implements Initializable {
                             enterBoard(board);
                         }
                     }
+
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent() && result.get().equals(board.getPassword())) {
+                        addJoinedBoard(board);
+                        localUtils.add(board.getId());
+                        enterBoard(board);
+                    } else if (result.isPresent()
+                            && !result.get().isEmpty()
+                            && !result.get().equals(board.getPassword())) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setHeaderText("Error joining board!");
+                        alert.setContentText("Invalid password for password-protected board.");
+                        alert.showAndWait();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initModality(Modality.APPLICATION_MODAL);
+                        alert.setHeaderText("Read-Only Mode");
+                        alert.setContentText("You are now entering the board in Read-Only mode.");
+                        alert.showAndWait();
+
+                        addDefaultCustomization(board.getId());
+                        writeCustomization();
+
+                        enterBoard(board);
+                    }
                 } else {
                     addJoinedBoard(board);
                     localUtils.add(board.getId());
+
+                    addDefaultCustomization(board.getId());
+                    writeCustomization();
+
                     enterBoard(board);
                 }
                 System.out.println("hello!");
@@ -273,6 +329,18 @@ public class BoardOverviewCtrl implements Initializable {
 
         Text name = (Text) tmp.lookup("#boardName");
         name.setText(board2.getName());
+
+        // correct outline
+        //if (customizationData.containsKey(board.getId())) {
+
+        //    var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+        //    ((AnchorPane) board).getChildren().get(0).setStyle(
+        //            "-fx-background-color: grey;"
+        //                    + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+        //                    + "-fx-border-radius: 10;-fx-background-radius: 15"
+        //    );
+        //}
+
     }
 
     private void updateBoardImage(Board board, ImageView imageView) {
@@ -320,6 +388,17 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
 
+            if (customizationData.containsKey(board2.getId())) {
+
+                var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+                ((AnchorPane) board).getChildren().get(0).setStyle(
+                        "-fx-background-color: grey;"
+                                + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+                                + "-fx-border-radius: 10;-fx-background-radius: 15"
+                );
+            }
+
+
 
         }
         // create a new row in vbox
@@ -353,11 +432,20 @@ public class BoardOverviewCtrl implements Initializable {
                 }
             });
 
+            if (customizationData.containsKey(board2.getId())) {
+                var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
+                ((AnchorPane) board).getChildren().get(0).setStyle(
+                        "-fx-background-color: grey;"
+                                + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
+                                + "-fx-border-radius: 10;-fx-background-radius: 15"
+                );
+            }
+
         }
 
     }
 
-    public void refresh() {
+    public void refresh() throws IOException {
         if(localUtils == null)
             localUtils = new LocalUtils();
         if(!Objects.equals(localUtils.getPath(), server.getPath())) {
@@ -383,6 +471,10 @@ public class BoardOverviewCtrl implements Initializable {
                 return;
             try {
                 addJoinedBoard(server.getBoardById(x));
+
+
+
+
             } catch (IOException e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.initModality(Modality.APPLICATION_MODAL);
@@ -391,6 +483,17 @@ public class BoardOverviewCtrl implements Initializable {
                 alert.showAndWait();
             }
         });
+
+        var savedCustomizationBoard = CustomizationUtils.customizationData;
+
+        for (Long currentBoard : tmp) {
+
+            if (!(savedCustomizationBoard.containsKey(currentBoard))) {
+                addDefaultCustomization(currentBoard);
+                writeCustomization();
+            }
+        }
+
     }
 
     public void disconnect() {
@@ -414,7 +517,11 @@ public class BoardOverviewCtrl implements Initializable {
                     error.setContentText("Error: " + e.getMessage());
                     error.showAndWait();
                 }
-                refresh();
+                try {
+                    refresh();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         disconnect();
@@ -456,6 +563,12 @@ public class BoardOverviewCtrl implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
-        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board-> refresh());
+        server.checkForUpdatesToRefresh("/topic/boards", Board.class, board->{
+            try {
+                refresh();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

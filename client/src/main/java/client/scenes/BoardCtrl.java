@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.LocalUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -12,11 +13,16 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
+import static client.utils.CustomizationUtils.customizationData;
+import static client.utils.LocalUtils.writeCustomization;
+
 public class BoardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
+    private LocalUtils localUtils;
 
-    public BoardCtrl(SingleBoardCtrl singleBoardCtrl) {
+    public BoardCtrl(SingleBoardCtrl singleBoardCtrl, LocalUtils localUtils) {
         this.singleBoardCtrl = singleBoardCtrl;
+        this.localUtils = localUtils;
     }
 
     public void requestBoardName(TextField text, Long id) throws Exception {
@@ -33,7 +39,9 @@ public class BoardCtrl {
         }
     }
 
-    public void openBoardSettings() throws IOException {
+    public void openBoardSettings(long BoardID,
+                                  ConnectHomeCtrl connectHomeCtrl) throws IOException {
+
         System.out.println("running!" + singleBoardCtrl.server.getBoards());
         FXMLLoader loader = new FXMLLoader(
                 singleBoardCtrl.getClass().getResource("customizationPage.fxml"));
@@ -47,15 +55,38 @@ public class BoardCtrl {
             // remove this specific board
             Node source = (Node) event.getSource();
             Stage stage = (Stage) source.getScene().getWindow();
+
+            // remove board with this id from Board Overview
+            System.out.println("remove: " + BoardID);
+            try {
+                localUtils.remove(BoardID);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
             stage.close();
-            //mainCtrl.showBoardOverview();
+            customizationData.remove(BoardID);
+            writeCustomization();
+
+
+            try {
+                connectHomeCtrl.showBoardOverview();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         });
         Scene scene = new Scene(customization);
         Stage popUpStage = new Stage();
+
         popUpStage.setTitle("Customization Details");
         popUpStage.setResizable(false);
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
     }
+
+
+
+
 }

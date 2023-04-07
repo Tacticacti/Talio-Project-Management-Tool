@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.CustomizationUtils;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
@@ -14,9 +15,10 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-
 import java.io.IOException;
 import java.util.Objects;
+
+
 
 public class ListCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
@@ -38,6 +40,9 @@ public class ListCtrl {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
+
         singleBoardCtrl.refresh();
     }
 
@@ -45,6 +50,11 @@ public class ListCtrl {
         FXMLLoader loader = new FXMLLoader(singleBoardCtrl.getClass().getResource("listGUI.fxml"));
         AnchorPane list = loader.load();
         list.setUserData(boardList);
+
+        CustomizationUtils.updateTextColor(list, SingleBoardCtrl.BoardID);
+
+
+
         // set up deleting a board list
         setDeleteBoardList(boardList, board_lists, list);
         for (Node anchorPane : singleBoardCtrl.hbox_lists.getChildren()) {
@@ -98,6 +108,11 @@ public class ListCtrl {
             }
             singleBoardCtrl.addNewCard(parentList);
         });
+
+        // update customization for list from CustomizationUtils (read from file)
+
+
+
         // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
         board_lists.add(list);
         return list;

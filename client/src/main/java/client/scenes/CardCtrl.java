@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.CustomizationUtils;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
@@ -47,6 +48,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import static client.scenes.SingleBoardCtrl.BoardID;
 
 public class CardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
@@ -129,10 +131,22 @@ public class CardCtrl {
             if (parent.getChildren().size() == 1) {
                 index = 0;
             }
+
+            System.out.println("updating!");
+            System.out.println(CustomizationUtils.customizationData);
+
+
+            CustomizationUtils.updateTextColor(cardNode, BoardID);
+            CustomizationUtils.updateCardColour(cardNode, BoardID);
+
             parent.getChildren().add(index, cardNode);
+            //cardNode.getScene();
+
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     private void setShortcuts(ScaleTransition scaleTransition, KeyEvent event) {
@@ -450,7 +464,7 @@ public class CardCtrl {
             }
         }
         singleBoardCtrl.server.addCard(current);
-        singleBoardCtrl.updateCardFromList(singleBoardCtrl.BoardID, listId, current);
+        singleBoardCtrl.updateCardFromList(BoardID, listId, current);
         //server.stopExec();
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
@@ -495,7 +509,7 @@ public class CardCtrl {
             placeCard(parent, newCard);
             Card saved = singleBoardCtrl.server.addCard(newCard);
             newCard.setId(saved.getId());
-            singleBoardCtrl.saveCardToList(singleBoardCtrl.BoardID, listId, newCard);
+            singleBoardCtrl.saveCardToList(BoardID, listId, newCard);
             singleBoardCtrl.refresh();
         }
     }
@@ -549,7 +563,7 @@ public class CardCtrl {
                 long sourceListId = Long.parseLong(splitDragboard[1].trim());
                 long sourceListIndex =
                         singleBoardCtrl.listCtrl.getListIndex(
-                                singleBoardCtrl.BoardID, sourceListId);
+                                BoardID, sourceListId);
                 ObservableList<Node> hboxChildren = singleBoardCtrl.hbox_lists.getChildren();
                 AnchorPane sourceList = (AnchorPane) (hboxChildren.get((int) sourceListIndex));
                 int sourceListSize = sourceList.getChildren().size();
@@ -560,9 +574,9 @@ public class CardCtrl {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);
                         singleBoardCtrl.deleteCardFromList(
-                                singleBoardCtrl.BoardID, sourceListId, draggedCard);
+                                BoardID, sourceListId, draggedCard);
                         singleBoardCtrl.saveCardToList(
-                                singleBoardCtrl.BoardID, listId, draggedCard);
+                                BoardID, listId, draggedCard);
                         success = true;
                     } else {
                         ObservableList<Node> children = parent.getChildren();
@@ -570,7 +584,7 @@ public class CardCtrl {
                         int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
                         draggedCardNode = children.remove(draggedIndex);
                         singleBoardCtrl.deleteCardFromList(
-                                singleBoardCtrl.BoardID, sourceListId, draggedCard);
+                                BoardID, sourceListId, draggedCard);
                         children.add(dropIndex, draggedCardNode);
                         addCardAtIndex(sourceListId, dropIndex, draggedCard);
                     }

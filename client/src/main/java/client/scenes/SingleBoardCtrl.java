@@ -1,5 +1,7 @@
 package client.scenes;
 
+import client.utils.CustomizationUtils;
+import client.utils.LocalUtils;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.Board;
@@ -37,16 +39,17 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.HashMap;
 
+
 public class SingleBoardCtrl implements Initializable {
     final ListCtrl listCtrl = new ListCtrl(this);
     final CardCtrl cardCtrl = new CardCtrl(this);
     final TagCtrl tagCtrl = new TagCtrl(this);
-    final BoardCtrl boardCtrl = new BoardCtrl(this);
+    private BoardCtrl boardCtrl;
     final SecurityCtrl securityCtrl = new SecurityCtrl(this);
     ServerUtils server;
     final BoardOverviewCtrl boardOverviewCtrl;
     final MainCtrl mainCtrl;
-    Long BoardID = 1L;
+    static Long BoardID = 1L;
     Node newCardBtn;
 
     @FXML
@@ -64,7 +67,7 @@ public class SingleBoardCtrl implements Initializable {
     Board current_board;
     @FXML
     TextField board_name;
-    Map<Node, Card> nodeCardMap;
+    static Map<Node, Card> nodeCardMap;
     ClipboardContent content;
     static Dragboard dragboard;
     @FXML
@@ -77,16 +80,21 @@ public class SingleBoardCtrl implements Initializable {
     Button copyInvite;
     boolean isUnlocked;
 
+    private LocalUtils localUtils;
+
     @Inject
     public SingleBoardCtrl(
             ServerUtils server,
             BoardOverviewCtrl boardOverviewCtrl,
             MainCtrl mainCtrl,
-            Boolean isUnlocked) {
+            Boolean isUnlocked,
+            LocalUtils localUtils) {
         this.boardOverviewCtrl = boardOverviewCtrl;
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.isUnlocked = isUnlocked;
+        this.localUtils = localUtils;
+        this.boardCtrl = new BoardCtrl(this, localUtils);
     }
 
     @Override
@@ -108,7 +116,7 @@ public class SingleBoardCtrl implements Initializable {
                 if (securityCtrl.checkReadOnlyMode(isUnlocked)) {
                     return;
                 }
-                boardCtrl.openBoardSettings();
+                boardCtrl.openBoardSettings(BoardID, new ConnectHomeCtrl(server, mainCtrl));
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -120,7 +128,13 @@ public class SingleBoardCtrl implements Initializable {
             }
             listCtrl.createNewList();
         });
-        backBtn.setOnAction(e-> back());
+        backBtn.setOnAction(e->{
+            try {
+                back();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         nodeCardMap = new HashMap<>();
         current_board = new Board();
         board_name.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -153,7 +167,7 @@ public class SingleBoardCtrl implements Initializable {
         });
     }
 
-    public void back(){
+    public void back() throws IOException {
         ConnectHomeCtrl connectHomeCtrl = new ConnectHomeCtrl(server, mainCtrl);
         connectHomeCtrl.showBoardOverview();
     }
@@ -213,6 +227,10 @@ public class SingleBoardCtrl implements Initializable {
         cardCtrl.setCancel(event, hboxCard);
     }
 
+    public void openBoardSettings() throws IOException {
+        boardCtrl.openBoardSettings(BoardID, new ConnectHomeCtrl(server, mainCtrl));
+    }
+
     public void setBoard(Board board) {
         this.current_board = board;
         this.BoardID = board.getId();
@@ -229,6 +247,7 @@ public class SingleBoardCtrl implements Initializable {
         board_lists.clear();
         for(BoardList boardList : lists) {
             listCtrl.wrapList(boardList, board_lists);
+
         }
         board_lists.add(newCardBtn);
     }
@@ -238,11 +257,19 @@ public class SingleBoardCtrl implements Initializable {
         if(!name.equals(board_name.getText()))
             board_name.setText(name);
         try {
+            System.out.println("Refreshes Single Board");
             drawLists();
+
+            CustomizationUtils.updateListColour(BoardID);
+
+
         }
         catch(Exception e) {
             e.printStackTrace();
         }
+
+        //CustomizationUtils.updateTextColor((Node) primaryStage.getScene().getRoot(), BoardID);
+
     }
 
     public void copyInvite() {
@@ -253,6 +280,10 @@ public class SingleBoardCtrl implements Initializable {
 
     public void setServer(ServerUtils server){
         this.server = server;
+    }
+
+    public static Long getBoardID() {
+        return BoardID;
     }
 
     public MainCtrl getMainCtrl() {
