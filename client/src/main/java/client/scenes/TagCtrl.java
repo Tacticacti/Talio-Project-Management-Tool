@@ -295,6 +295,10 @@ public class TagCtrl {
         deleteBtn.setGraphic(imageView);
         deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
                 , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
+        BackgroundFill backgroundFillbtn = new BackgroundFill(Color.TRANSPARENT
+                , CornerRadii.EMPTY, Insets.EMPTY);
+        Background backgroundbtn = new Background(backgroundFillbtn);
+        deleteBtn.setBackground(backgroundbtn);
         deleteBtn.setOnMouseEntered(event -> {
             deleteBtn.setStyle("-fx-background-color: white");
         });

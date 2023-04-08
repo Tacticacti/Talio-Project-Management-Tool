@@ -64,7 +64,7 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <Label layoutX="1003.0" layoutY="14.0" text="Tags" textFill="WHITE">
+      <Label style="-fx-text-fill: light gray" layoutX="1003.0" layoutY="14.0" text="Tags" textFill="WHITE">
          <font>
             <Font size="24.0" />
          </font>
