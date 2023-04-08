@@ -84,17 +84,15 @@ public class SecurityCtrl {
             singleBoardCtrl.server.removeBoardPassword(singleBoardCtrl.current_board.getId());
             showAlert(Alert.AlertType.INFORMATION,
                     "Password removed", "The board password has been deleted.");
-            singleBoardCtrl.refresh();
-            updatePasswordButtonImage();
         }
         else {
             singleBoardCtrl.server.setBoardPassword(
                     singleBoardCtrl.current_board.getId(), newPassword);
             showAlert(Alert.AlertType.INFORMATION,
                     "Password Updated", "The board password has been updated.");
-            singleBoardCtrl.refresh();
-            updatePasswordButtonImage();
         }
+        singleBoardCtrl.refresh();
+        updatePasswordButtonImage();
     }
 
     String promptForPassword(String title, String contentText) {
@@ -128,16 +126,17 @@ public class SecurityCtrl {
 
     void updatePasswordButtonImage() {
         if (singleBoardCtrl.current_board.getPassword() == null) {
-            ImageView imageUnlocked = new ImageView(singleBoardCtrl.getClass()
-                    .getResource("../images/unlocked.png")
+            ImageView imageUnlocked = new ImageView(
+                    Objects.requireNonNull(singleBoardCtrl.getClass()
+                            .getResource("../images/unlocked.png"))
                     .toExternalForm());
             imageUnlocked.setFitWidth(singleBoardCtrl.passwordBtn.getPrefWidth());
             imageUnlocked.setFitHeight(singleBoardCtrl.passwordBtn.getPrefHeight());
             imageUnlocked.setPreserveRatio(true);
             singleBoardCtrl.passwordBtn.setGraphic(imageUnlocked);
         } else {
-            ImageView imageLocked = new ImageView(singleBoardCtrl.getClass()
-                    .getResource("../images/locked.png")
+            ImageView imageLocked = new ImageView(Objects.requireNonNull(singleBoardCtrl.getClass()
+                            .getResource("../images/locked.png"))
                     .toExternalForm());
             imageLocked.setFitWidth(singleBoardCtrl.passwordBtn.getPrefWidth());
             imageLocked.setFitHeight(singleBoardCtrl.passwordBtn.getPrefHeight());

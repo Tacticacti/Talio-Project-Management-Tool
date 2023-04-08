@@ -31,22 +31,10 @@ public class ListCtrl {
         if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
             return;
         }
-        ObservableList<Node> board_lists = singleBoardCtrl.hbox_lists.getChildren();
-        Long listId = singleBoardCtrl.server.addEmptyList(singleBoardCtrl.BoardID, "task list");
-        BoardList boardList = singleBoardCtrl.server.getList(listId);
-        Node list;
-        try {
-            list = wrapList(boardList, board_lists);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-
-
         singleBoardCtrl.refresh();
     }
 
-    public Node wrapList(BoardList boardList, ObservableList<Node> board_lists) throws IOException {
+    public void wrapList(BoardList boardList, ObservableList<Node> board_lists) throws IOException {
         FXMLLoader loader = new FXMLLoader(singleBoardCtrl.getClass().getResource("listGUI.fxml"));
         AnchorPane list = loader.load();
         list.setUserData(boardList);
@@ -78,7 +66,7 @@ public class ListCtrl {
             if (SingleBoardCtrl.dragboard.hasString()) {
                 String[] splitDragboard = SingleBoardCtrl.dragboard.getString().split(";");
                 long originalListId = Long.parseLong(splitDragboard[1].trim());
-                long originalListIndex = getListIndex(singleBoardCtrl.BoardID, originalListId);
+                long originalListIndex = getListIndex(SingleBoardCtrl.BoardID, originalListId);
                 ObservableList<Node> hboxChildren = singleBoardCtrl.hbox_lists.getChildren();
                 AnchorPane originalList = (AnchorPane) (hboxChildren.get((int) originalListIndex));
                 int originalListSize = originalList.getChildren().size();
@@ -86,10 +74,9 @@ public class ListCtrl {
                 Node draggedCardNode = originalParent.lookup("#" + splitDragboard[0].trim());
                 if (draggedCardNode != null && originalParent != list_vbox) {
                     list_vbox.getChildren().add(0, draggedCardNode);
-                    Card draggedCard = singleBoardCtrl.nodeCardMap.get(draggedCardNode);
-                    singleBoardCtrl.deleteCardFromList(
-                            singleBoardCtrl.BoardID, originalListId, draggedCard);
-                    singleBoardCtrl.saveCardToList(singleBoardCtrl.BoardID, listId, draggedCard);
+                    Card draggedCard = SingleBoardCtrl.nodeCardMap.get(draggedCardNode);
+                    singleBoardCtrl.deleteCardFromList(originalListId, draggedCard);
+                    singleBoardCtrl.saveCardToList(listId, draggedCard);
                 }
             }
             //event.consume();
@@ -115,14 +102,13 @@ public class ListCtrl {
 
         // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
         board_lists.add(list);
-        return list;
     }
 
     public void requestNameChange(TextField title, Node list) throws Exception {
         if (!title.getText().isEmpty()) {
             System.out.println(title.getText().trim());
             BoardList changedBoardList = (BoardList) list.getUserData();
-            System.out.println("requesting change name: " + singleBoardCtrl.BoardID + " " +
+            System.out.println("requesting change name: " + SingleBoardCtrl.BoardID + " " +
                     changedBoardList.getId() + " " + title.getText().trim());
             singleBoardCtrl.server.changeListName(changedBoardList.getId(), title.getText().trim());
         } else {
@@ -183,7 +169,7 @@ public class ListCtrl {
                     // deleting on client(GUI) side
                     board_lists.remove(deleteBoardList.getParent());
                     // deleting list on server side
-                    singleBoardCtrl.server.removeBoardList(singleBoardCtrl.BoardID,
+                    singleBoardCtrl.server.removeBoardList(SingleBoardCtrl.BoardID,
                             boardList.getId());
                     singleBoardCtrl.current_board.removeList(boardList);
                     try {

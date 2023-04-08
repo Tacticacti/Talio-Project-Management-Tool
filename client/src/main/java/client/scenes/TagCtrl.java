@@ -27,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 @SuppressWarnings("checkstyle:Indentation")
 
@@ -52,9 +53,7 @@ public class TagCtrl {
         TextField textField = (TextField) addTag.lookup("#tagName");
         ColorPicker tagColor = (ColorPicker) addTag.lookup("#tagColor");
         Button add = (Button) addTag.lookup("#addTag");
-        add.setOnAction(event -> {
-            addNewTag(singleBoardCtrl.tagHbox, textField, tagColor);
-        });
+        add.setOnAction(event -> addNewTag(textField, tagColor));
         Scene tagScene = new Scene(addTag);
         Stage popUpStage = new Stage();
         popUpStage.setTitle("Edit tag details");
@@ -63,21 +62,21 @@ public class TagCtrl {
         popUpStage.showAndWait();
     }
 
-    public void addNewTag(HBox parent, TextField textField, ColorPicker colorPicker) {
+    public void addNewTag(TextField textField, ColorPicker colorPicker) {
         if (textField.getText().equals("")) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No empty tag.");
             alert.setContentText("Tag name cannot be empty");
             alert.showAndWait();
         }
-        singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID
+        singleBoardCtrl.server.addTagToBoard(SingleBoardCtrl.BoardID
                 , textField.getText(), colorPicker.getValue().toString());
         Stage popUp = (Stage) textField.getScene().getWindow();
         popUp.close();
 
     }
 
-    public void loadTagCard(VBox root, Card current) {
+    public void loadTagCard(VBox root) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("TagPopUp.fxml"));
         AnchorPane addTag;
         try {
@@ -88,9 +87,7 @@ public class TagCtrl {
         TextField textField = (TextField) addTag.lookup("#tagName");
         ColorPicker tagColor = (ColorPicker) addTag.lookup("#tagColor");
         Button add = (Button) addTag.lookup("#addTag");
-        add.setOnAction(event -> {
-            addCustomTagToCard(root, current, textField, tagColor);
-        });
+        add.setOnAction(event -> addCustomTagToCard(root, textField, tagColor));
         Scene tagScene = new Scene(addTag);
         Stage popUpStage = new Stage();
         popUpStage.setTitle("Edit tag details");
@@ -99,8 +96,8 @@ public class TagCtrl {
         popUpStage.showAndWait();
     }
 
-    public void addCustomTagToCard(VBox root, Card current
-            , TextField textField, ColorPicker colorPicker) {
+    public void addCustomTagToCard(VBox root,
+                                   TextField textField, ColorPicker colorPicker) {
         if (textField.getText().equals("")) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No empty tag.");
@@ -121,24 +118,19 @@ public class TagCtrl {
         Label title = (Label) tag.lookup("#tagName");
         title.setText(textField.getText());
         Button deleteBtn = (Button) tag.lookup("#delBtn");
-        deleteBtn.setOnAction(event -> {
-            deleteTagCard(root, tag);
-        });
+        deleteBtn.setOnAction(event -> deleteTagCard(root, tag));
 
-        ImageView imageView = new ImageView(getClass()
-                .getResource("../images/trash.png").toExternalForm());
+        ImageView imageView = new ImageView(Objects.requireNonNull(getClass()
+                .getResource("../images/trash.png")).toExternalForm());
         imageView.setFitWidth(deleteBtn.getPrefWidth());
         imageView.setFitHeight(deleteBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
         deleteBtn.setGraphic(imageView);
         deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
                 , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
-        deleteBtn.setOnMouseEntered(event -> {
-            deleteBtn.setStyle("-fx-background-color: white");
-        });
-        deleteBtn.setOnMouseExited(event -> {
-            deleteBtn.setStyle("-fx-background-color: transparent");
-        });
+        deleteBtn.setOnMouseEntered(event -> deleteBtn.setStyle("-fx-background-color: white"));
+        deleteBtn.setOnMouseExited(
+                event -> deleteBtn.setStyle("-fx-background-color: transparent"));
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(colorPicker.getValue()
                 .toString())
                 , null, null);
@@ -170,9 +162,7 @@ public class TagCtrl {
             placeTagCard(tags, t, boardTags.get(t), current);
         }
         Button save = (Button) root.lookup("#saveBtn");
-        save.setOnAction(event -> {
-            saveTags(tagsDetails, tags, current);
-        });
+        save.setOnAction(event -> saveTags(tagsDetails, tags, current));
         Button back = (Button) root.lookup("#backBtn");
         back.setOnAction(event -> {
             Button source = (Button) event.getSource();
@@ -191,15 +181,14 @@ public class TagCtrl {
 
     public void saveTags(VBox parendDetails, VBox parent, Card current) {
         for (Node n : parent.getChildren()) {
-            if (n instanceof CheckBox) {
-                CheckBox cb = (CheckBox) n;
+            if (n instanceof CheckBox cb) {
                 Pair<String, String> tagCheck = (Pair<String, String>) cb.getUserData();
-                if (!cb.isSelected() && current.getTags().keySet().contains(tagCheck.getLeft())) {
+                if (!cb.isSelected() && current.getTags().containsKey(tagCheck.getLeft())) {
                     parendDetails.getChildren().removeIf(x -> (x.getUserData())
                             .equals(cb.getUserData()));
                 }
-                if (cb.isSelected() && !current.getTags().keySet()
-                        .contains(tagCheck.getLeft())) {
+                if (cb.isSelected() && !current.getTags()
+                        .containsKey(tagCheck.getLeft())) {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("Tag.fxml"));
                     AnchorPane tag;
                     try {
@@ -211,23 +200,21 @@ public class TagCtrl {
                     Label title = (Label) tag.lookup("#tagName");
                     title.setText(tagCheck.getLeft());
                     Button deleteBtn = (Button) tag.lookup("#delBtn");
-                    deleteBtn.setOnAction(event -> {
-                        deleteTagCard((VBox) ((AnchorPane) event.getSource()).getParent(), tag);
-                    });
-                    ImageView imageView = new ImageView(getClass()
-                            .getResource("../images/trash.png").toExternalForm());
+                    deleteBtn.setOnAction(
+                            event -> deleteTagCard((VBox) (
+                                    (AnchorPane) event.getSource()).getParent(), tag));
+                    ImageView imageView = new ImageView(Objects.requireNonNull(getClass()
+                            .getResource("../images/trash.png")).toExternalForm());
                     imageView.setFitWidth(deleteBtn.getPrefWidth());
                     imageView.setFitHeight(deleteBtn.getPrefHeight());
                     imageView.setPreserveRatio(true);
                     deleteBtn.setGraphic(imageView);
                     deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
                             , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
-                    deleteBtn.setOnMouseEntered(event -> {
-                        deleteBtn.setStyle("-fx-background-color: white");
-                    });
-                    deleteBtn.setOnMouseExited(event -> {
-                        deleteBtn.setStyle("-fx-background-color: transparent");
-                    });
+                    deleteBtn.setOnMouseEntered(
+                            event -> deleteBtn.setStyle("-fx-background-color: white"));
+                    deleteBtn.setOnMouseExited(
+                            event -> deleteBtn.setStyle("-fx-background-color: transparent"));
                     BackgroundFill backgroundFill = new BackgroundFill
                             (Paint.valueOf(tagCheck.getRight())
                                     , null, null);
@@ -261,7 +248,7 @@ public class TagCtrl {
         Background background = new Background(backgroundFill);
         tag.setBackground(background);
         cb.setGraphic(tag);
-        if (current.getTags().keySet().contains(t)) {
+        if (current.getTags().containsKey(t)) {
             cb.setSelected(true);
         }
         parent.getChildren().add(cb);
@@ -283,23 +270,18 @@ public class TagCtrl {
         Label title = (Label) tagBox.lookup("#tagName");
         title.setText(tag);
         Button deleteBtn = (Button) tagBox.lookup("#delBtn");
-        deleteBtn.setOnAction(event -> {
-            deleteTag(tag);
-        });
-        ImageView imageView = new ImageView(getClass()
-                .getResource("../images/trash.png").toExternalForm());
+        deleteBtn.setOnAction(event -> deleteTag(tag));
+        ImageView imageView = new ImageView(Objects.requireNonNull(getClass()
+                .getResource("../images/trash.png")).toExternalForm());
         imageView.setFitWidth(deleteBtn.getPrefWidth());
         imageView.setFitHeight(deleteBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
         deleteBtn.setGraphic(imageView);
         deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
                 , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
-        deleteBtn.setOnMouseEntered(event -> {
-            deleteBtn.setStyle("-fx-background-color: white");
-        });
-        deleteBtn.setOnMouseExited(event -> {
-            deleteBtn.setStyle("-fx-background-color: transparent");
-        });
+        deleteBtn.setOnMouseEntered(event -> deleteBtn.setStyle("-fx-background-color: white"));
+        deleteBtn.setOnMouseExited(
+                event -> deleteBtn.setStyle("-fx-background-color: transparent"));
         VBox setTags = new VBox();
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(color)
                 , null, null);
@@ -350,9 +332,7 @@ public class TagCtrl {
         ColorPicker tagColor = (ColorPicker) addTag.lookup("#tagColor");
         tagColor.setValue(Color.valueOf(color));
         Button add = (Button) addTag.lookup("#addTag");
-        add.setOnAction(event -> {
-            editOldTag(singleBoardCtrl.tagHbox, textField, tagColor, tag);
-        });
+        add.setOnAction(event -> editOldTag(textField, tagColor, tag));
         Scene tagScene = new Scene(addTag);
         Stage popUpStage = new Stage();
         popUpStage.setTitle("Edit tag details");
@@ -362,7 +342,7 @@ public class TagCtrl {
 
     }
 
-    public void editOldTag(HBox parent, TextField textField, ColorPicker colorPicker, String tag) {
+    public void editOldTag(TextField textField, ColorPicker colorPicker, String tag) {
         if (textField.getText().equals("")) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No empty tag.");
@@ -370,13 +350,13 @@ public class TagCtrl {
             alert.showAndWait();
         }
         Map<String, String> map = singleBoardCtrl.current_board.getTagLists();
-        if (map.keySet().contains(tag) && !tag.equals(textField.getText())) {
-            singleBoardCtrl.server.deleteTagToBoard(singleBoardCtrl.BoardID, tag);
+        if (map.containsKey(tag) && !tag.equals(textField.getText())) {
+            singleBoardCtrl.server.deleteTagToBoard(SingleBoardCtrl.BoardID, tag);
         }
-        singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, textField.getText()
+        singleBoardCtrl.server.addTagToBoard(SingleBoardCtrl.BoardID, textField.getText()
                 , colorPicker.getValue().toString());
 
-        singleBoardCtrl.server.updateCardsTag(singleBoardCtrl.BoardID
+        singleBoardCtrl.server.updateCardsTag(SingleBoardCtrl.BoardID
                 , textField.getText(), colorPicker.getValue().toString());
 
 
@@ -386,8 +366,7 @@ public class TagCtrl {
     }
 
     public void deleteTag(String tag) {
-        singleBoardCtrl.server.deleteTagToBoard(singleBoardCtrl.BoardID, tag);
+        singleBoardCtrl.server.deleteTagToBoard(SingleBoardCtrl.BoardID, tag);
         // singleBoardCtrl.refresh();
     }
 }
-
