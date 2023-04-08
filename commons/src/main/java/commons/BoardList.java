@@ -69,6 +69,7 @@ public class BoardList {
 
     public void removeCard(Card card) {
         this.cards.remove(card);
+        //card.boardList = null;
     }
 
     // other helper methods

@@ -94,6 +94,8 @@ public class BoardListController {
 
 
 
+
+
     @PostMapping(path="/update/{id}")
     public ResponseEntity<BoardList> updateCardInId(@PathVariable("id") long listId,
                                                     @RequestBody Card card){
@@ -101,7 +103,7 @@ public class BoardListController {
         System.out.println("updating card: ");
         System.out.println(listId + " " + card);
 
-        var list = repo.findById(card.getBoardList().getId());
+        var list = repo.findById(listId);
 
         if(list.isEmpty()) {
             return ResponseEntity.badRequest().build();

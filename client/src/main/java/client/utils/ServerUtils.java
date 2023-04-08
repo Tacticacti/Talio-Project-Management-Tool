@@ -329,6 +329,8 @@ public class ServerUtils {
                 .get(BoardList.class);
     }
 
+
+
     public void addCardAtIndex(Long listId, long index, Card card) {
         ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/lists/insertAt/" + listId.toString())
