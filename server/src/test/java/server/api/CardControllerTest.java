@@ -1,9 +1,11 @@
 package server.api;
 
+import commons.Board;
 import commons.Card;
-import commons.Tag;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,20 +22,21 @@ public class CardControllerTest {
     private CardController controller;
 
     Card c1, c2;
-    Tag t1, t2;
+
 
     @BeforeEach
     public void setup() {
         repo = new TestCardRepository();
         controller = new CardController(repo);
         c1 = new Card("card 1");
+        c1.board = new Board();
         c2 = new Card("card 2");
+        c2.board = new Board();
+
 
         c1.id = 0L;
         c2.id = 1L;
 
-        t1 = new Tag("tag 1");
-        t2 = new Tag("tag 2");
     }
 
     @Test
@@ -98,33 +101,33 @@ public class CardControllerTest {
         ret = controller.addTag(null, 99L);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
-        ret = controller.addTag(t1, 99L);
+        ret = controller.addTag(Pair.of("anim", "#ffffff"), 99L);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
-        ret = controller.addTag(t1, 0L);
+        ret = controller.addTag(Pair.of("anim", "#ffffff"), 0L);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertTrue(ret.getBody().getTags().contains(t1));
+        assertTrue(ret.getBody().getTags().keySet().contains("anim"));
     }
 
     @Test
     public void deleteTag() {
         var ret = controller.add(c1);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        ret = controller.addTag(t1, 0L);
+        ret = controller.addTag(Pair.of("anim", "#ffffff"), 0L);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
 
         ret = controller.deleteTag(null, 0L);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
-        ret = controller.deleteTag(t1, 99L);
+        ret = controller.deleteTag("anim", 99L);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
-        ret = controller.deleteTag(t2, 0L);
+        ret = controller.deleteTag("anime", 0L);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertTrue(ret.getBody().getTags().contains(t1));
+        assertTrue(ret.getBody().getTags().keySet().contains("anim"));
 
-        ret = controller.deleteTag(t1, 0L);
+        ret = controller.deleteTag("anim", 0L);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertFalse(ret.getBody().getTags().contains(t1));
+        assertFalse(ret.getBody().getTags().keySet().contains("anim"));
     }
 }

@@ -2,12 +2,17 @@ package commons;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 
@@ -24,19 +29,34 @@ public class Tag {
     public Board board;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "CARD_ID")
-    public Card card;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "tagsDistribution",
+            joinColumns = {@JoinColumn(name = "tag_id")},
+            inverseJoinColumns = {@JoinColumn(name = "card_id")}
+    )
+    public Set<Card> cards;
 
 
     public String title;
 
-    public Tag(String title) {
+    public String color;
+
+    public Tag(String title, String color) {
+        this.color = color;
         this.title = title;
+        cards = new HashSet<>();
     }
 
-    public Tag() {
+    public Tag(String title) {
+        this.color = "#ffffff";
+        this.title = title;
+        cards = new HashSet<>();
+    }
+    public Tag(){
         this.title = "";
+        this.color = "#ffffff";
+        cards = new HashSet<>();
     }
 
     public long getId(){
@@ -54,12 +74,28 @@ public class Tag {
         return title;
     }
 
+    public void addCard(Card card){
+        cards.add(card);
+    }
+
+    public void removeCard(Card card){
+        cards.remove(card);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
         return Objects.equals(title, tag.title);
+    }
+
+    public void setColor(String color){
+
+        this.color = color;
+    }
+    public String getColor(){
+        return color;
     }
 
     @Override

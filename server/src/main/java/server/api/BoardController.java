@@ -5,8 +5,11 @@ import java.util.Objects;
 
 import commons.Board;
 
+import commons.BoardList;
+import commons.Card;
+import org.springframework.data.util.Pair;
 import server.Admin;
-import commons.Tag;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
 import server.Encryption;
@@ -32,14 +35,13 @@ public class BoardController {
     private final Encryption encryption;
 
 
-
     private BoardServiceImpl boardService;
-
 
 
     private final SimpMessagingTemplate messagingTemplate;
 
     public BoardController(BoardRepository repo,
+
                            DatabaseUtils databaseUtils,
                            SimpMessagingTemplate messagingTemplate,
                            Admin admin,
@@ -52,26 +54,25 @@ public class BoardController {
         this.encryption = encryption;
 
         // TODO uncomment **ONLY** for debug!!
-        /*
-        Board board = databaseUtils.mockSimpleBoard();
-        repo.save(board);
-        */
+   /*
+   Board board = databaseUtils.mockSimpleBoard();
+   repo.save(board);
+   */
     }
-    @PostMapping( "/addTag/{id}")
+
+    @PostMapping("/addTag/{id}")
     public ResponseEntity<Board> addTagToId(@PathVariable("id") long listId,
-                                                 @RequestBody Tag tag) {
+                                            @RequestBody Pair<String, String> tagEntry) {
 
         var board = repo.findById(listId);
 
         if (!repo.existsById(listId)) {
             return ResponseEntity.badRequest().build();
         }
-
-        board.get().addBoardTag(tag);
+        board.get().addBoardTag(tagEntry.getFirst(), tagEntry.getSecond());
 
         Board saved = repo.save(board.get());
         messagingTemplate.convertAndSend("/topic/boards", saved);
-
         return ResponseEntity.ok(saved);
     }
 
@@ -83,6 +84,7 @@ public class BoardController {
     @GetMapping(path = "/debug")
     public String getAllDebug() {
         List<Board> list = repo.findAll();
+
         StringBuilder res = new StringBuilder();
         for(Board b : list)
             res.append(b).append("<br> \n");
@@ -117,25 +119,57 @@ public class BoardController {
 
     @PostMapping(path = "/tag/delete/{id}")
     public ResponseEntity<Board> deleteTag(@PathVariable("id") long boardId,
-                                            @RequestBody Tag tag) {
+                                           @RequestBody String tagEntry) {
 
         if (!repo.existsById(boardId)) {
             return ResponseEntity.badRequest().build();
         }
 
-        System.out.println("deleting " + boardId + " " + tag);
+        //System.out.println("deleting " + boardId + " " + tag);
 
         Board board = repo.findById(boardId).get();
-        board.getTagLists().removeIf(x -> Objects.equals(x.getId(), tag.getId()));
+        board.removeBoardTag(tagEntry);
+
+        for (BoardList boardList : board.getLists()) {
+            for (Card card : boardList.getCards()) {
+                card.removeTag(tagEntry);
+            }
+        }
+
+
         repo.save(board);
         messagingTemplate.convertAndSend("/topic/boards", board);
         return ResponseEntity.ok(board);
 
     }
 
+    @PostMapping("/updateTags/{id}/{oldTag}")
+    public ResponseEntity<Board> updateTags(@PathVariable("id") long boardId
+            , @PathVariable("oldTag") String oldTag
+            , @RequestBody Pair<String, String> tagEntry) {
+
+        var board = repo.findById(boardId);
+
+        if (!repo.existsById(boardId)) {
+            return ResponseEntity.badRequest().build();
+        }
+        for (BoardList bl : board.get().getLists()) {
+            for (Card card : bl.getCards()) {
+                if(card.getTags().keySet().contains(oldTag))
+                    card.addTag(tagEntry.getFirst(), tagEntry.getSecond());
+            }
+        }
+
+        Board saved = repo.save(board.get());
+        messagingTemplate.convertAndSend("/topic/boards", saved);
+        return ResponseEntity.ok(saved);
+    }
+
+
     @PostMapping(path = "/delete/{id}")
     public ResponseEntity<Boolean> deleteBoard(@PathVariable("id") long boardId,
-            @RequestBody String psswd) {
+                                               @RequestBody String psswd) {
+
 
         if(psswd == null || !psswd.equals(admin.getPassword())) {
             return ResponseEntity.badRequest().build();

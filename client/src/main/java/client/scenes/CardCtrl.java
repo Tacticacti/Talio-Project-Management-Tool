@@ -4,12 +4,15 @@ import client.utils.CustomizationUtils;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.ScaleTransition;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.FXMLLoader;
+
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -31,6 +34,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -40,9 +45,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
 import java.util.Map;
@@ -50,6 +58,7 @@ import java.util.Optional;
 import java.util.UUID;
 import static client.scenes.SingleBoardCtrl.BoardID;
 
+@SuppressWarnings("checkstyle:Indentation")
 public class CardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
     private EventTarget target;
@@ -77,6 +86,24 @@ public class CardCtrl {
                         .setText(card.getCompletedSubs() + "/"
                                 + card.getSubtasks().size());
             }
+            HBox tagDisplay = (HBox) cardNode.lookup("#tagDisplay");
+            tagDisplay.setSpacing(5);
+            if(card.getTags().size()>0){
+                for(String t: card.getTags().keySet()){
+                    String color = card.getTags().get(t);
+                    Line line = new Line();
+                    line.setStartX(0);
+                    if(card.getTags().size()>4){
+                        line.setEndX(tagDisplay.getPrefWidth()/(2*card.getTags().size()));
+                    }else{
+                        line.setEndX(tagDisplay.getPrefWidth()/5);
+                    }
+                    line.setStroke(Color.valueOf(color));
+                    line.setStrokeWidth(tagDisplay.getPrefHeight()/2);
+                    line.setStrokeLineCap(StrokeLineCap.ROUND);
+                    tagDisplay.getChildren().add(line);
+                }
+            }
             ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100), cardNode);
             scaleTransition.setToX(1.1);
             scaleTransition.setToY(1.1);
@@ -102,6 +129,7 @@ public class CardCtrl {
             });
             cardNode.setOnMouseClicked(event -> {
                 cardNode.requestFocus();
+
                 if(event.getClickCount()==2){
                     setCardDetail(scaleTransition);
                 }
@@ -139,6 +167,9 @@ public class CardCtrl {
             CustomizationUtils.updateTextColor(cardNode, BoardID);
             CustomizationUtils.updateCardColour(cardNode, BoardID);
 
+
+
+
             parent.getChildren().add(index, cardNode);
             //cardNode.getScene();
 
@@ -152,6 +183,11 @@ public class CardCtrl {
     private void setShortcuts(ScaleTransition scaleTransition, KeyEvent event) {
         if (target instanceof AnchorPane) {
             switch (event.getCode()) {
+//
+//                case E:
+//                    editTaskTitleShortcut(parent, scaleTransition);
+//                    break;
+
                 case E: editTaskTitleShortcut();
                 break;
                 case BACK_SPACE:
@@ -286,6 +322,7 @@ public class CardCtrl {
             }
         } else {
             if (index > 0) {
+
                 Node node = children.get(index-1);
                 scaleTransition.stop();
                 cardNode.setScaleY(1);
@@ -404,12 +441,25 @@ public class CardCtrl {
                 }
             }
         }
+        Button custom = (Button) root.lookup("#CustomTag");
+
+        Button board = (Button) root.lookup("#BoardTag");
+
+        VBox tags = (VBox) root.lookup("#tagVbox");
+        board.setOnAction(event -> {
+            singleBoardCtrl.openBoardTags(tags, card);
+        });
+        custom.setOnAction(event -> {
+            singleBoardCtrl.addCustomTag(tags, card);
+        });
+        showTags(tags, card);
         MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
         Stage popUpStage = new Stage();
         root.setOnKeyPressed(event -> {
             mainCtrl.showHelpPage(event);
             if (event.getCode() == KeyCode.ESCAPE) {
                 event.consume();
+                singleBoardCtrl.server.stopExec();
                 popUpStage.close();
                 cardNode.requestFocus();
                 scaleTransition.setNode(cardNode);
@@ -417,11 +467,61 @@ public class CardCtrl {
             }
         });
         Scene scene = new Scene(root);
-        popUpStage.setTitle("Card Details");
+        popUpStage.setTitle("Task Details");
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
-        singleBoardCtrl.refresh();
+        popUpStage.setOnCloseRequest(event -> {
+            singleBoardCtrl.server.stopExec();
+        });
+        //singleBoardCtrl.refresh();
+    }
+
+    public void showTags(VBox parent, Card current) {
+        for (String t : current.getTags().keySet()) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Tag.fxml"));
+            AnchorPane tag;
+            try {
+                tag = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Pair<String, String> tagPair = Pair.of(t, current.getTags().get(t));
+            tag.setUserData(tagPair);
+            Label title = (Label) tag.lookup("#tagName");
+            title.setText(t);
+            Button deleteBtn = (Button) tag.lookup("#delBtn");
+            deleteBtn.setOnAction(event -> {
+                deleteTag(event, parent);
+            });
+            ImageView imageView = new ImageView(getClass()
+                    .getResource("../images/trash.png").toExternalForm());
+            imageView.setFitWidth(deleteBtn.getPrefWidth());
+            imageView.setFitHeight(deleteBtn.getPrefHeight());
+            imageView.setPreserveRatio(true);
+            deleteBtn.setGraphic(imageView);
+            deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
+                    , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
+            deleteBtn.setOnMouseEntered(event -> {
+                deleteBtn.setStyle("-fx-background-color: white");
+            });
+            deleteBtn.setOnMouseExited(event -> {
+                deleteBtn.setStyle("-fx-background-color: transparent");
+            });
+            BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(current.getTags()
+                    .get(t))
+                    , null, null);
+            Background background = new Background(backgroundFill);
+            tag.setBackground(background);
+            parent.getChildren().add(tag);
+        }
+
+    }
+
+    public void deleteTag(ActionEvent event, VBox parent) {
+        Button source = (Button) event.getSource();
+        parent.getChildren().remove(source.getParent());
+        //singleBoardCtrl.server.deleteTagToCard(card.getId(), tag);
     }
 
     void setDone(long listId, Card current, ActionEvent event) {
@@ -447,25 +547,38 @@ public class CardCtrl {
                 if (!current.getSubtasks().contains(cb.getText()))
                     current.addSubTask(cb.getText());
 
-                if(cb.isSelected()){
+                if (cb.isSelected()) {
                     current.completeSubTask(cb.getText());
                 }
 
                 if (!current.getSubtasks().get(i).equals(cb.getText())
-                                && current.getSubtasks().contains(cb.getText())) {
+                        && current.getSubtasks().contains(cb.getText())) {
                     current.removeSubTask(cb.getText());
                     current.addSubtaskAtIndex(cb.getText(), i);
                     if (cb.isSelected()) {
                         current.completeSubTask(cb.getText());
                     }
                 }
-
-
             }
         }
+        VBox tags = (VBox) ap.lookup("#tagVbox");
+
+        current.getTags().clear();
+        for (Node n : tags.getChildren()) {
+            AnchorPane tagAp = (AnchorPane) n;
+            Pair<String, String> tagPair = (Pair<String, String>) tagAp.getUserData();
+            if (!current.getTags().keySet().contains(((Pair<String, String>) tagAp.getUserData())
+                    .getLeft())) {
+                current.addTag(tagPair.getLeft(), tagPair.getRight());
+            }
+            if (!singleBoardCtrl.current_board.getTagLists().keySet().contains(tagPair.getLeft()))
+                singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, tagPair.getLeft()
+                        , tagPair.getRight());
+        }
         singleBoardCtrl.server.addCard(current);
-        singleBoardCtrl.updateCardFromList(BoardID, listId, current);
-        //server.stopExec();
+        singleBoardCtrl.updateCardFromList(singleBoardCtrl.BoardID, listId, current);
+        singleBoardCtrl.server.stopExec();
+
         Stage popup = (Stage) source.getScene().getWindow();
         popup.close();
         //singleBoardCtrl.refresh();
@@ -481,9 +594,8 @@ public class CardCtrl {
                 VBox par = (VBox) hbox.getParent();
                 par.getChildren().remove(hbox);
                 singleBoardCtrl.nodeCardMap.remove(hbox, current);
-
                 singleBoardCtrl.server.deleteCardFromList(listId, current);
-                singleBoardCtrl.refresh();
+                //singleBoardCtrl.refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
                 System.out.println(popup);
