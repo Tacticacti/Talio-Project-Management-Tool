@@ -2,8 +2,12 @@ package commons;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -14,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CardTest {
 
     @Test
-    void emptyConstructorTest(){
+    void emptyConstructorTest() {
         Card c1 = new Card();
         c1.setTitle("Slides");
         assertEquals("Slides", c1.getTitle());
@@ -25,7 +29,7 @@ class CardTest {
     }
 
     @Test
-    void constructorTest(){
+    void constructorTest() {
         Card c1 = new Card("Slides");
         assertEquals("Slides", c1.getTitle());
         assertTrue(c1.getSubtasks().isEmpty());
@@ -59,10 +63,9 @@ class CardTest {
     @Test
     void getTags() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        Tag tag= new Tag("animals");
-        c1.addTag(tag);
-        List<Tag> tags = new ArrayList<>();
-        tags.add(tag);
+        c1.addTag("animals", "#ffffff");
+        Map<String, String> tags = new HashMap<>();
+        tags.put("animals", "#ffffff");
         assertEquals(tags, c1.getTags());
 
     }
@@ -85,7 +88,6 @@ class CardTest {
     }
 
 
-
     @Test
     void setTitle() {
         Card c1 = new Card("Slides", "prep slide3-5");
@@ -101,21 +103,20 @@ class CardTest {
     }
 
     @Test
-    void setCardId()
-    {
+    void setCardId() {
         Card c1 = new Card("Slides", "prep slide3-5");
         c1.setId(12345678);
         assertEquals(12345678, c1.getId());
     }
 
-    /*
-    @Test
-    void setListId() {
-        Card c1 = new Card("Slides", "prep slide3-5");
-        c1.setListId(4563);
-        assertEquals(4563, c1.getListId());
-    }
-    */
+ /*
+ @Test
+ void setListId() {
+   Card c1 = new Card("Slides", "prep slide3-5");
+   c1.setListId(4563);
+   assertEquals(4563, c1.getListId());
+ }
+ */
 
     @Test
     void addSubTask() {
@@ -186,10 +187,11 @@ class CardTest {
     @Test
     void addTag() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        Tag t = new Tag("");
-        c1.addTag(t);
-        List<Tag> tags = new ArrayList<>();
-        tags.add(t);
+        c1.addTag("a", "#ffffff");
+
+        Map<String, String> tags = new HashMap<>();
+        tags.put("a", "#ffffff");
+
         assertEquals(tags, c1.getTags());
 
     }
@@ -197,13 +199,13 @@ class CardTest {
     @Test
     void removeTag() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        Tag tag= new Tag("animals");
-        c1.addTag(tag);
-        List<Tag> tags = new ArrayList<>();
-        tags.add(tag);
+
+        c1.addTag("ani", "#ffffff");
+        Map<String, String> tags = new HashMap<>();
+        tags.put("ani", "#ffffff");
         assertEquals(tags, c1.getTags());
-        c1.removeTag(tag);
-        tags.remove(tag);
+        c1.removeTag("ani");
+        tags.remove("ani");
         assertEquals(tags, c1.getTags());
     }
 
@@ -222,7 +224,7 @@ class CardTest {
     }
 
     @Test
-    void setBoardList(){
+    void setBoardList() {
         Card card = new Card("Card title", "Card description");
         BoardList boardList = new BoardList("Board");
         card.setBoardList(boardList);
@@ -230,7 +232,7 @@ class CardTest {
     }
 
     @Test
-    void SubtaskAtIndex(){
+    void SubtaskAtIndex() {
         Card card = new Card("Card title", "Card description");
         card.getSubtasks().add("Subtask 1");
         card.getSubtasks().add("Subtask 3");
@@ -239,9 +241,9 @@ class CardTest {
     }
 
     @Test
-    void setSubtasks(){
+    void setSubtasks() {
         Card card = new Card("Card title", "Card description");
-        List<String> subtasks= new ArrayList<>();
+        List<String> subtasks = new ArrayList<>();
         subtasks.add("Subtask 1");
         subtasks.add("Subtask 2");
 
@@ -250,9 +252,9 @@ class CardTest {
     }
 
     @Test
-    void completedTasksTest(){
+    void completedTasksTest() {
         Card c1 = new Card("Slides", "prep slide 3-5");
-        List<String> completed= new ArrayList<>();
+        List<String> completed = new ArrayList<>();
         String sub1 = "Subtask 1";
         String sub2 = "Subtask 2";
         completed.add(sub1);
@@ -269,7 +271,7 @@ class CardTest {
     }
 
     @Test
-    void CompletedSubsTest(){
+    void CompletedSubsTest() {
         Card card = new Card("Card title", "Card description");
         card.getSubtasks().add("Subtask 1");
         card.getSubtasks().add("Subtask 3");
@@ -305,14 +307,14 @@ class CardTest {
     }
 
     @Test
-    void testToString(){
+    void testToString() {
         Card card = new Card("Card title", "Card description");
-        Tag tag=new Tag("tag");
+
         card.getSubtasks().add("Subtask 1");
         card.getSubtasks().add("Subtask 2");
-        card.getTags().add(tag);
-//        card.getTags().add("Tag 2");
-//        card.getTags().add("Tag 3");
+        card.getTags().put("ani", "#ffffff");
+//    card.getTags().add("Tag 2");
+//    card.getTags().add("Tag 3");
 
         String result = card.toString();
         String expected = new ToStringBuilder(card, MULTI_LINE_STYLE)
@@ -323,7 +325,7 @@ class CardTest {
                 .append("description", card.getDescription())
                 .append("id", card.getId())
                 .append("subtasks", card.getSubtasks())
-                .append("tags", card.getTags())
+                .append("tagColors", card.getTags())
                 .append("title", card.getTitle())
                 .toString();
 

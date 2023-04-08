@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.CustomizationUtils;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
@@ -8,14 +9,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-
 import java.io.IOException;
 import java.util.Objects;
+
+
 
 public class ListCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
@@ -37,6 +40,9 @@ public class ListCtrl {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
+
         singleBoardCtrl.refresh();
     }
 
@@ -44,6 +50,11 @@ public class ListCtrl {
         FXMLLoader loader = new FXMLLoader(singleBoardCtrl.getClass().getResource("listGUI.fxml"));
         AnchorPane list = loader.load();
         list.setUserData(boardList);
+
+        CustomizationUtils.updateTextColor(list, SingleBoardCtrl.BoardID);
+
+
+
         // set up deleting a board list
         setDeleteBoardList(boardList, board_lists, list);
         for (Node anchorPane : singleBoardCtrl.hbox_lists.getChildren()) {
@@ -97,6 +108,11 @@ public class ListCtrl {
             }
             singleBoardCtrl.addNewCard(parentList);
         });
+
+        // update customization for list from CustomizationUtils (read from file)
+
+
+
         // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
         board_lists.add(list);
         return list;
@@ -158,19 +174,28 @@ public class ListCtrl {
             if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
-            // deleting on client(GUI) side
-            board_lists.remove(deleteBoardList.getParent());
-            // deleting list on server side
-            singleBoardCtrl.server.removeBoardList(singleBoardCtrl.BoardID, boardList.getId());
-            singleBoardCtrl.current_board.removeList(boardList);
-            try {
-                singleBoardCtrl.refresh();
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.initModality(Modality.APPLICATION_MODAL);
-                alert.setContentText("Error removing list!");
-                alert.showAndWait();
-            }
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("Delete List");
+            alert.setContentText("Are you sure you want to delete this list? (Irreversible)");
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // deleting on client(GUI) side
+                    board_lists.remove(deleteBoardList.getParent());
+                    // deleting list on server side
+                    singleBoardCtrl.server.removeBoardList(singleBoardCtrl.BoardID,
+                            boardList.getId());
+                    singleBoardCtrl.current_board.removeList(boardList);
+                    try {
+                        singleBoardCtrl.refresh();
+                    } catch (Exception e) {
+                        Alert error = new Alert(Alert.AlertType.ERROR);
+                        error.initModality(Modality.APPLICATION_MODAL);
+                        error.setContentText("Error removing list!");
+                        error.showAndWait();
+                    }
+                }
+            });
         });
     }
 

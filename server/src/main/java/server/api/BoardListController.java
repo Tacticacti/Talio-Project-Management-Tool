@@ -2,7 +2,6 @@ package server.api;
 
 import commons.BoardList;
 import commons.Card;
-import commons.Tag;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,25 +77,6 @@ public class BoardListController {
                                                  @RequestBody Card card) {
 
         return boardListService.addCard(listId, card);
-    }
-
-    @PostMapping(path = "/addTag/{id}")
-    public ResponseEntity<BoardList> addTagToId(@PathVariable("id") long listId,
-                                                @RequestBody Tag tag) {
-
-        System.out.println("add tag: " + listId + " " + tag);
-
-        var board = repo.findById(listId);
-
-        if(board.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        //  board.get().addTag(tag);
-
-        BoardList saved = repo.save(board.get());
-
-        return ResponseEntity.ok(saved);
     }
 
     @PostMapping(path="/deleteCard/{id}")

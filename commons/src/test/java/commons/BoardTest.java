@@ -18,7 +18,6 @@ public class BoardTest {
     private Board board;
     private BoardList list1, list2;
     private Card card1;
-    private Tag t1;
 
     // initialize the Board object before each test
     @BeforeEach
@@ -27,7 +26,6 @@ public class BoardTest {
         list1 = new BoardList("List 1");
         list2 = new BoardList("List 2");
         card1 = new Card("card 1");
-        t1 = new Tag("tag 1");
     }
 
     // test the constructor
@@ -35,9 +33,9 @@ public class BoardTest {
     public void testConstructor() {
         Board newBoard = new Board("New Board");
         Assertions.assertEquals("New Board", newBoard.getName(),
-			"Constructor should set the board name");
+                "Constructor should set the board name");
         Assertions.assertNotNull(newBoard.getLists(),
-			"Constructor should initialize the lists variable");
+                "Constructor should initialize the lists variable");
         Assertions.assertEquals(0, newBoard.getLists().size(),
 			"Constructor should initialize an empty lists variable");
         Assertions.assertNotNull(newBoard.getTagLists(),
@@ -88,7 +86,7 @@ public class BoardTest {
     public void testName() {
         board.setName("New Name");
         Assertions.assertEquals("New Name", board.getName(),
-			"setName() should set the board name");
+                "setName() should set the board name");
     }
 
     // test the addList() method
@@ -96,9 +94,9 @@ public class BoardTest {
     public void testAddList() {
         board.addList(list1);
         Assertions.assertTrue(board.getLists().contains(list1),
-			"addList() should add a list to the board");
+                "addList() should add a list to the board");
         Assertions.assertEquals(1, board.getLists().size(),
-			"addList() should increase the size of the lists variable by 1");
+                "addList() should increase the size of the lists variable by 1");
     }
 
     // test the removeList() method
@@ -108,9 +106,9 @@ public class BoardTest {
         board.addList(list2);
         board.removeList(list1);
         assertFalse(board.getLists().contains(list1),
-			"removeList() should remove a list from the board");
+                "removeList() should remove a list from the board");
         Assertions.assertEquals(1, board.getLists().size(),
-			"removeList() should decrease the size of the lists variable by 1");
+                "removeList() should decrease the size of the lists variable by 1");
     }
 
     // test the getLists() method
@@ -122,7 +120,7 @@ public class BoardTest {
         expectedLists.add(list1);
         expectedLists.add(list2);
         Assertions.assertEquals(expectedLists, board.getLists(),
-			"getLists() should return the list of lists");
+                "getLists() should return the list of lists");
     }
 
     @Test
@@ -154,9 +152,9 @@ public class BoardTest {
 
     @Test
     public void addTag() {
-        board.addBoardTag(t1);
-        assertTrue(board.getTagLists().contains(t1));
-        board.removeBoardTag(t1);
-        assertFalse(board.getTagLists().contains(t1));
+        board.addBoardTag("anim", "#ffffff");
+        assertTrue(board.getTagLists().keySet().contains("anim"));
+        board.removeBoardTag("anim");
+        assertFalse(board.getTagLists().keySet().contains("anim"));
     }
 }

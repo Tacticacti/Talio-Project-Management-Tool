@@ -15,6 +15,7 @@
  */
 package client;
 
+import static client.utils.LocalUtils.readCustomization;
 import static com.google.inject.Guice.createInjector;
 
 import client.scenes.AdminLoginCtrl;
@@ -47,6 +48,9 @@ public class Main extends Application {
         var admin = FXML.load(AdminLoginCtrl.class, "client", "scenes", "AdminLogin.fxml");
         var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
+
+        readCustomization();
+
         mainCtrl.initialize1(primaryStage, home, boverview, admin, dashboard);
     }
 }

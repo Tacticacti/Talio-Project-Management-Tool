@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@SuppressWarnings("checkstyle:Indentation")
 @Entity
 public class BoardList {
     @Id
@@ -28,9 +29,6 @@ public class BoardList {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Tag> tags;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     // @JoinColumn(name = "list_id")
     private List<Card> cards;
 
@@ -39,7 +37,7 @@ public class BoardList {
         this.name = "";
         this.cards = new ArrayList<>();
     }
-        
+
     public BoardList(String name) {
         this.name = name;
         this.cards = new ArrayList<>();
@@ -81,10 +79,10 @@ public class BoardList {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof BoardList){
+        if (obj instanceof BoardList) {
             BoardList bl = (BoardList) obj;
 
-            if(bl.cards.equals(this.cards) && bl.name.equals(this.name)){
+            if (bl.cards.equals(this.cards) && bl.name.equals(this.name)) {
                 return true;
             }
             return false;
