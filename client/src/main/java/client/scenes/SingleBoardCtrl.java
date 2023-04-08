@@ -268,9 +268,10 @@ public class SingleBoardCtrl implements Initializable {
         }
     }
 
-    public void deleteCardFromList(Long boardId, Long listIdIndex, Card current) {
+    public void deleteCardFromList(Long boardId, Long listIdIndex
+            , Card current, Boolean permanent) {
         try {
-            server.deleteCardFromList(listIdIndex, current);
+            server.deleteCardFromList(listIdIndex, current, permanent);
         } catch (WebApplicationException e) {
             alertError(e);
         }

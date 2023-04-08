@@ -312,12 +312,13 @@ public class ServerUtils {
                 .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
     }
 
-    public BoardList deleteCardFromList(Long listId, Card card) {
+    public BoardList deleteCardFromList(Long listId, Card card, Boolean permanent ) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/lists/deleteCard/" + listId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
+                .post(Entity.entity(new CustomPair(permanent, card)
+                        , APPLICATION_JSON), BoardList.class);
     }
 
     public BoardList getList(Long listId) {

@@ -88,7 +88,7 @@ public class ListCtrl {
                     list_vbox.getChildren().add(0, draggedCardNode);
                     Card draggedCard = singleBoardCtrl.nodeCardMap.get(draggedCardNode);
                     singleBoardCtrl.deleteCardFromList(
-                            singleBoardCtrl.BoardID, originalListId, draggedCard);
+                            singleBoardCtrl.BoardID, originalListId, draggedCard, false);
                     singleBoardCtrl.saveCardToList(singleBoardCtrl.BoardID, listId, draggedCard);
                 }
             }
