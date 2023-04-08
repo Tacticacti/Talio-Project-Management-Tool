@@ -474,7 +474,7 @@ public class CardCtrl {
         popUpStage.setOnCloseRequest(event -> {
             singleBoardCtrl.server.stopExec();
         });
-        singleBoardCtrl.refresh();
+        //singleBoardCtrl.refresh();
     }
 
     public void showTags(VBox parent, Card current) {

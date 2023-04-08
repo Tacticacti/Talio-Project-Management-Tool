@@ -206,9 +206,11 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Card.class);
     }
 
-    public Board updateCardsTag(Long boardId, String tag, String color) {
+    public Board updateCardsTag(Long boardId, String oldTag
+            , String tag, String color) {
         return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/boards/updateTags/" + boardId.toString()) //
+                .target(server).path("api/boards/updateTags/" + boardId.toString()
+                        + "/" + oldTag) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Board.class);

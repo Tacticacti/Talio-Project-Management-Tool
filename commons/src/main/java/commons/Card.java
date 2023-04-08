@@ -63,7 +63,6 @@ public class Card implements Serializable {
         this.title = title;
         this.description = description;
         subtasks = new ArrayList<>();
-
         completedSubs = 0;
         completedTasks = new ArrayList<>();
     }

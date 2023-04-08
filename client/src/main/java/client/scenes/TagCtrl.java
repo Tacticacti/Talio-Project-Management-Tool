@@ -282,6 +282,7 @@ public class TagCtrl {
         setDoubleClick(tagBox, tag, color);
         Label title = (Label) tagBox.lookup("#tagName");
         title.setText(tag);
+        title.setTextFill(Color.BLACK);
         Button deleteBtn = (Button) tagBox.lookup("#delBtn");
         deleteBtn.setOnAction(event -> {
             deleteTag(tag);
@@ -370,14 +371,15 @@ public class TagCtrl {
             alert.showAndWait();
         }
         Map<String, String> map = singleBoardCtrl.current_board.getTagLists();
+        singleBoardCtrl.server.updateCardsTag(singleBoardCtrl.BoardID, tag
+                , textField.getText(), colorPicker.getValue().toString());
+
         if (map.keySet().contains(tag) && !tag.equals(textField.getText())) {
             singleBoardCtrl.server.deleteTagToBoard(singleBoardCtrl.BoardID, tag);
         }
+
         singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, textField.getText()
                 , colorPicker.getValue().toString());
-
-        singleBoardCtrl.server.updateCardsTag(singleBoardCtrl.BoardID
-                , textField.getText(), colorPicker.getValue().toString());
 
 
         Stage popUp = (Stage) textField.getScene().getWindow();

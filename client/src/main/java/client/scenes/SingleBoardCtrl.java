@@ -168,7 +168,7 @@ public class SingleBoardCtrl implements Initializable {
             addNewTag();
         });
         scrollTags.setStyle("-fx-background-color: transparent;" +
-                " -fx-background: transparent; -fx-border-color: transparent");
+                " -fx-background: transparent; -fx-border-color: transparent;");
         refresh();
         System.out.println(server);
         server.checkForUpdatesToRefresh("/topic/lists", BoardList.class, boardList -> {
