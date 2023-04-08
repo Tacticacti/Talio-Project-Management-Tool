@@ -268,45 +268,13 @@ public class BoardOverviewCtrl implements Initializable {
                                     "You are now entering the board in Read-Only mode.");
                             alert.showAndWait();
 
+                            addDefaultCustomization(board.getId());
+                            writeCustomization();
+
                             enterBoard(board);
                         }
                     }
-
-                    Optional<String> result = dialog.showAndWait();
-                    if (result.isPresent() && result.get().equals(board.getPassword())) {
-                        addJoinedBoard(board);
-                        localUtils.add(board.getId());
-                        enterBoard(board);
-                    } else if (result.isPresent()
-                            && !result.get().isEmpty()
-                            && !result.get().equals(board.getPassword())) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setHeaderText("Error joining board!");
-                        alert.setContentText("Invalid password for password-protected board.");
-                        alert.showAndWait();
-                    } else {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setHeaderText("Read-Only Mode");
-                        alert.setContentText("You are now entering the board in Read-Only mode.");
-                        alert.showAndWait();
-
-                        addDefaultCustomization(board.getId());
-                        writeCustomization();
-
-                        enterBoard(board);
-                    }
-                } else {
-                    addJoinedBoard(board);
-                    localUtils.add(board.getId());
-
-                    addDefaultCustomization(board.getId());
-                    writeCustomization();
-
-                    enterBoard(board);
                 }
-                System.out.println("hello!");
             }
         }
 
