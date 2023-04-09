@@ -4,7 +4,6 @@ import client.scenes.SingleBoardCtrl;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -125,7 +124,7 @@ public class CustomizationUtils {
     public static void setCustomizationField(Long boardID, String updatedField, int index) {
         System.out.println(updatedField);
         var updatedBoardData = customizationData.get(boardID).split(",");
-        System.out.println(updatedBoardData);
+        System.out.println(Arrays.toString(updatedBoardData));
         updatedBoardData[index] = updatedField;
         customizationData.put(boardID, Arrays.toString(updatedBoardData)
                 .replace("0x", "#")
@@ -153,7 +152,7 @@ public class CustomizationUtils {
 
 
 
-        return (boardData.split(",")[index]).toString().replace("0x", "#");
+        return (boardData.split(",")[index]).replace("0x", "#");
     }
 
     // takes in main anchor-pane of single board
@@ -192,7 +191,7 @@ public class CustomizationUtils {
         if (h_boxlist != null) {
             for (Node node2 : h_boxlist.getChildren()) {
                 if (node2.getId().equals("list_anchor")) {
-                    var node_vbox = ((AnchorPane) node2).lookup("#card_list");
+                    var node_vbox = node2.lookup("#card_list");
                     //var node_vbox = node2;
                     node_vbox.setStyle("-fx-background-color: "+ colour +";"
                             + "-fx-background-radius: 10;");

@@ -1,13 +1,13 @@
 package client.scenes;
-import com.google.inject.Inject;
+//import com.google.inject.Inject;
 
 import client.utils.ServerUtils;
 import commons.Card;
 
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+//import javafx.event.ActionEvent;
+//import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
@@ -36,6 +36,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -72,13 +73,13 @@ public class AddCardCtrl implements Initializable {
 
 
 
-    @Inject
-    public AddCardCtrl(ServerUtils server, MainCtrl mainCtrl){
-        this.server = server;
-        this.mainCtrl = mainCtrl;
-        checksubs = new ArrayList<>();
-
-    }
+//    @Inject
+//    public AddCardCtrl(ServerUtils server, MainCtrl mainCtrl){
+//        this.server = server;
+//        this.mainCtrl = mainCtrl;
+//        checksubs = new ArrayList<>();
+//
+//    }
     public AddCardCtrl(){
         this.server =new ServerUtils();
         this.mainCtrl = new MainCtrl();
@@ -88,7 +89,7 @@ public class AddCardCtrl implements Initializable {
 
 
     public boolean checkIfValid(Card card, String text) {
-        if(text == "")
+        if(Objects.equals(text, ""))
             return false;
         return !card.getSubtasks().contains(text);
     }
@@ -124,7 +125,7 @@ public class AddCardCtrl implements Initializable {
         }
     }
 
-    private List<String> checksubs;
+    private final List<String> checksubs;
 
     public CheckBox createCheckbox(String text, Card current){
         CheckBox cb = new CheckBox();
@@ -142,19 +143,16 @@ public class AddCardCtrl implements Initializable {
             cb.setText(textField.getText());
             cb.setGraphic(null);
         });
-        cb.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(cb.isSelected()){
-                    if(!current.getSubtasks().contains(cb.getText())){
-                        current.addSubTask(cb.getText());
-                    }
-                    current.completeSubTask(cb.getText());
-                    cb.setOpacity(0.5);
-                }else{
-                    current.uncompleteSubTask(cb.getText());
-                    cb.setOpacity(1);
+        cb.setOnAction(event -> {
+            if(cb.isSelected()){
+                if(!current.getSubtasks().contains(cb.getText())){
+                    current.addSubTask(cb.getText());
                 }
+                current.completeSubTask(cb.getText());
+                cb.setOpacity(0.5);
+            }else{
+                current.uncompleteSubTask(cb.getText());
+                cb.setOpacity(1);
             }
         });
         return cb;
@@ -175,8 +173,8 @@ public class AddCardCtrl implements Initializable {
         sub.setPadding(new Insets(0));
         delBtn.setOnAction(event -> deleteSubTask(delBtn, current));
         delBtn.setPrefHeight(20);
-        ImageView imageView = new ImageView(getClass()
-                .getResource("../images/trash.png").toExternalForm());
+        ImageView imageView = new ImageView(Objects.requireNonNull(getClass()
+                .getResource("../images/trash.png")).toExternalForm());
         imageView.setFitWidth(delBtn.getPrefWidth());
         imageView.setFitHeight(delBtn.getPrefHeight());
         imageView.setPreserveRatio(true);
@@ -236,7 +234,7 @@ public class AddCardCtrl implements Initializable {
         });
 
     }
-    public void addTag(Card current){
+//    public void addTag(Card current){
 //        TextField tag = new TextField();
 //        tag.setPromptText("Enter new tag");
 //        tagHbox.getChildren().add(0, tag);
@@ -252,7 +250,7 @@ public class AddCardCtrl implements Initializable {
 //                }
 //            }
 //        });
-    }
+//    }
 
     public void displayAlert(String text) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

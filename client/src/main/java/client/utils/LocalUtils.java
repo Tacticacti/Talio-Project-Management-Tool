@@ -109,7 +109,7 @@ public class LocalUtils {
             directory.mkdir();
         }
 
-        FileWriter fileWriter = null;
+        FileWriter fileWriter;
         try {
             fileWriter = new FileWriter("data/customization.txt");
         } catch (IOException e) {

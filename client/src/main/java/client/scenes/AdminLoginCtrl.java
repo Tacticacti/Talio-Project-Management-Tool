@@ -17,8 +17,8 @@ public class AdminLoginCtrl {
     @FXML
     private Button loginBtn;
 
-    private ServerUtils server;
-    private MainCtrl mainCtrl;
+    private final ServerUtils server;
+    private final MainCtrl mainCtrl;
 
     @Inject
     public AdminLoginCtrl(ServerUtils server, MainCtrl mainCtrl) {

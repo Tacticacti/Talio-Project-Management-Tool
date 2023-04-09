@@ -306,7 +306,7 @@ class CardTest {
         assertTrue(card.getSubtasks().contains(sub2));
 
         card.completeSubTask(sub3);
-        assertTrue(!card.getSubtasks().contains(sub3));
+        assertFalse(card.getSubtasks().contains(sub3));
         assertTrue(card.getCompletedTasks().contains(sub3));
 
         card.removeSubTask(sub1);

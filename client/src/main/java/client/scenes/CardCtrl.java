@@ -1,7 +1,6 @@
 package client.scenes;
 
 import client.utils.CustomizationUtils;
-import commons.Board;
 import commons.BoardList;
 import commons.Card;
 
@@ -53,15 +52,15 @@ import javafx.util.Duration;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import static client.scenes.SingleBoardCtrl.BoardID;
 
 @SuppressWarnings("checkstyle:Indentation")
 public class CardCtrl {
-    private final SingleBoardCtrl singleBoardCtrl;
-    private EventTarget target;
+    final SingleBoardCtrl singleBoardCtrl;
+    private final ShortcutsCtrl shortcutsCtrl = new ShortcutsCtrl(this);
+    EventTarget target;
 
     public CardCtrl(SingleBoardCtrl singleBoardCtrl) {
         this.singleBoardCtrl = singleBoardCtrl;
@@ -125,7 +124,7 @@ public class CardCtrl {
 //                System.out.println("On Key Pressed: " + target);
                 scaleTransition.setNode(cardNode);
                 scaleTransition.play();
-                setShortcuts(scaleTransition, event);
+                shortcutsCtrl.setShortcuts(scaleTransition, event);
             });
             cardNode.setOnMouseClicked(event -> {
                 cardNode.requestFocus();
@@ -164,8 +163,8 @@ public class CardCtrl {
             System.out.println(CustomizationUtils.customizationData);
 
 
-            CustomizationUtils.updateTextColor(cardNode, BoardID);
-            CustomizationUtils.updateCardColour(cardNode, BoardID);
+            CustomizationUtils.updateTextColor(cardNode, singleBoardCtrl.BoardID);
+            CustomizationUtils.updateCardColour(cardNode, singleBoardCtrl.BoardID);
 
 
 
@@ -178,200 +177,6 @@ public class CardCtrl {
             throw new RuntimeException(e);
         }
 
-    }
-
-    private void setShortcuts(ScaleTransition scaleTransition, KeyEvent event) {
-        if (target instanceof AnchorPane) {
-            switch (event.getCode()) {
-//
-//                case E:
-//                    editTaskTitleShortcut(parent, scaleTransition);
-//                    break;
-
-                case E: editTaskTitleShortcut();
-                break;
-                case BACK_SPACE:
-                case DELETE:
-                    deleteCardShortcut();
-                    break;
-                case ENTER:setCardDetail(scaleTransition);
-                break;
-                case UP: moveUpShortcut(scaleTransition, event);
-                break;
-                case DOWN: moveDownShortcut(scaleTransition, event);
-                break;
-                case LEFT: moveLeftShortcut(scaleTransition);
-                break;
-                case RIGHT: moveRightShortcut(scaleTransition);
-                break;
-            }
-            MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
-            if (target != null && target instanceof AnchorPane) {
-                ((AnchorPane) target).requestFocus();
-                scaleTransition.setNode((AnchorPane) target);
-                scaleTransition.play();
-            }
-        }
-    }
-
-    private void moveRightShortcut(ScaleTransition scaleTransition) {
-        if (target == null) {
-            return;
-        }
-        AnchorPane cardNode = (AnchorPane) target;
-        VBox parent = (VBox) cardNode.getParent();
-        ObservableList<Node> boardLists = singleBoardCtrl.getHbox_lists().getChildren();
-        int listIndex = boardLists.indexOf(parent.getParent());
-        if (listIndex < boardLists.size() - 2) {
-            AnchorPane rightList = (AnchorPane) boardLists.get(listIndex + 1);
-            setHighlightedCard(scaleTransition, cardNode, boardLists, listIndex, rightList);
-        }
-    }
-
-    private void moveLeftShortcut(ScaleTransition scaleTransition) {
-        if (target == null) {
-            return;
-        }
-        AnchorPane cardNode = (AnchorPane) target;
-        VBox parent = (VBox) cardNode.getParent();
-        ObservableList<Node> boardLists = singleBoardCtrl.getHbox_lists().getChildren();
-        int listIndex = boardLists.indexOf(parent.getParent());
-        if (listIndex > 0) {
-            AnchorPane leftList = (AnchorPane) boardLists.get(listIndex - 1);
-            setHighlightedCard(scaleTransition, cardNode, boardLists, listIndex, leftList);
-        }
-    }
-
-    private void setHighlightedCard(ScaleTransition scaleTransition, AnchorPane cardNode,
-                                    ObservableList<Node> boardLists, int listIndex,
-                                    AnchorPane list) {
-        AnchorPane currentList = (AnchorPane) boardLists.get(listIndex);
-        int size = list.getChildren().size();
-        VBox listVbox = (VBox) list.getChildren().get(size - 1);
-        VBox currentVbox = (VBox) currentList.getChildren().get(size - 1);
-        int cardIndex = currentVbox.getChildren().indexOf(cardNode);
-        AnchorPane highlightCard = (AnchorPane) target;
-        if (listVbox.getChildren().size() - 2 >= cardIndex) {
-            highlightCard = (AnchorPane) listVbox.getChildren().get(cardIndex);
-        } else if (listVbox.getChildren().size() - 2 >= cardIndex - 1 && cardIndex > 0) {
-            highlightCard = (AnchorPane) listVbox.getChildren().get(cardIndex - 1);
-        } else if (listVbox.getChildren().size() > 1) {
-            highlightCard = (AnchorPane) listVbox.getChildren().get(0);
-        }
-        scaleTransition.stop();
-        cardNode.setScaleY(1);
-        cardNode.setScaleX(1);
-        target = highlightCard;
-    }
-
-    private void moveDownShortcut(ScaleTransition scaleTransition, KeyEvent event) {
-        if (target == null) {
-            return;
-        }
-        AnchorPane cardNode = (AnchorPane) target;
-        VBox parent = (VBox) cardNode.getParent();
-        ObservableList<Node> children = parent.getChildren();
-        int index = children.indexOf(cardNode);
-        if (event.isShiftDown()) {
-            Map<Node, Card> nodeCardMap = singleBoardCtrl.getNodeCardMap();
-            Card card = nodeCardMap.get(cardNode);
-            BoardList boardList = (BoardList) parent.getUserData();
-            if (index < boardList.getCards().size() - 1) {
-                scaleTransition.stop();
-                cardNode.setScaleY(1);
-                cardNode.setScaleX(1);
-                Node temp = children.remove(index);
-                singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID, boardList.getId(),
-                        card, false);
-                children.add(index + 1, cardNode);
-                addCardAtIndex(boardList.getId(), index + 1, card);
-                target = temp;
-            }
-        } else if (index < children.size()-2) {
-            Node node = children.get(index+1);
-            scaleTransition.stop();
-            cardNode.setScaleY(1);
-            cardNode.setScaleX(1);
-            node.requestFocus();
-            target = node;
-        }
-    }
-
-    private void moveUpShortcut(ScaleTransition scaleTransition, KeyEvent event) {
-        if (target == null) {
-            return;
-        }
-        AnchorPane cardNode = (AnchorPane) target;
-        VBox parent = (VBox) cardNode.getParent();
-        ObservableList<Node> children = parent.getChildren();
-        int index = children.indexOf(cardNode);
-        if (event.isShiftDown()) {
-            Map<Node, Card> nodeCardMap = singleBoardCtrl.getNodeCardMap();
-            Card card = nodeCardMap.get(cardNode);
-            BoardList boardList = (BoardList) parent.getUserData();
-            if (index > 0) {
-                scaleTransition.stop();
-                cardNode.setScaleY(1);
-                cardNode.setScaleX(1);
-                Node temp = children.remove(index);
-                singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID, boardList.getId(),
-                        card, false);
-                children.add(index - 1, cardNode);
-                addCardAtIndex(boardList.getId(), index - 1, card);
-                target = temp;
-            }
-        } else {
-            if (index > 0) {
-
-                Node node = children.get(index-1);
-                scaleTransition.stop();
-                cardNode.setScaleY(1);
-                cardNode.setScaleX(1);
-                node.requestFocus();
-                target = node;
-            }
-        }
-    }
-
-    private void deleteCardShortcut() {
-        if (target == null) {
-            return;
-        }
-        AnchorPane cardNode = (AnchorPane) target;
-        VBox parent = (VBox) cardNode.getParent();
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation Dialog");
-        alert.setHeaderText("Delete Task");
-        alert.setContentText("Are you sure you want to delete this task? (Irreversible)");
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                Map<Node, Card> nodeCardMap = singleBoardCtrl.getNodeCardMap();
-                Card deleteCard = nodeCardMap.remove(cardNode);
-                BoardList boardList = (BoardList) parent.getUserData();
-                singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID,
-                        boardList.getId(), deleteCard, true);
-                target = null;
-            }
-        });
-    }
-
-    private void editTaskTitleShortcut() {
-        if (target == null) {
-            return;
-        }
-        Node cardNode = (AnchorPane) target;
-        VBox parent = (VBox) cardNode.getParent();
-        Optional<String> newTitle = showTitleDialog();
-        Map<Node, Card> nodeCardMap = singleBoardCtrl.getNodeCardMap();
-        Card card = nodeCardMap.get(cardNode);
-        if (card != null && newTitle.isPresent()) {
-            card.setTitle(newTitle.get());
-            BoardList boardList = (BoardList) parent.getUserData();
-            Board current_board = singleBoardCtrl.getCurrent_board();
-            singleBoardCtrl.updateCardFromList(current_board.getId(), boardList.getId(),
-                    card);
-            target = cardNode;
-        }
     }
 
     public void setCardDetail(ScaleTransition scaleTransition) {
@@ -417,9 +222,7 @@ public class CardCtrl {
         });
         //sets up cancel card button
         Button cancelButton = (Button) root.lookup("#cancelTaskButton");
-        cancelButton.setOnAction(event -> {
-            setCancel(event, cardNode);
-        });
+        cancelButton.setOnAction(this::setCancel);
         //sets up card title
         TextField title = (TextField) root.lookup("#taskTitle");
         title.setText(card.getTitle());
@@ -446,12 +249,8 @@ public class CardCtrl {
         Button board = (Button) root.lookup("#BoardTag");
 
         VBox tags = (VBox) root.lookup("#tagVbox");
-        board.setOnAction(event -> {
-            singleBoardCtrl.openBoardTags(tags, card);
-        });
-        custom.setOnAction(event -> {
-            singleBoardCtrl.addCustomTag(tags, card);
-        });
+        board.setOnAction(event -> singleBoardCtrl.openBoardTags(tags, card));
+        custom.setOnAction(event -> singleBoardCtrl.addCustomTag(tags));
         showTags(tags, card);
         MainCtrl mainCtrl = singleBoardCtrl.getMainCtrl();
         Stage popUpStage = new Stage();
@@ -471,10 +270,8 @@ public class CardCtrl {
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
-        popUpStage.setOnCloseRequest(event -> {
-            singleBoardCtrl.server.stopExec();
-        });
-        //singleBoardCtrl.refresh();
+        popUpStage.setOnCloseRequest(event -> singleBoardCtrl.server.stopExec());
+        singleBoardCtrl.refresh();
     }
 
     public void showTags(VBox parent, Card current) {
@@ -491,23 +288,19 @@ public class CardCtrl {
             Label title = (Label) tag.lookup("#tagName");
             title.setText(t);
             Button deleteBtn = (Button) tag.lookup("#delBtn");
-            deleteBtn.setOnAction(event -> {
-                deleteTag(event, parent);
-            });
-            ImageView imageView = new ImageView(getClass()
-                    .getResource("../images/trash.png").toExternalForm());
+            deleteBtn.setOnAction(event -> deleteTag(event, parent));
+            ImageView imageView = new ImageView(Objects.requireNonNull(getClass()
+                    .getResource("../images/trash.png")).toExternalForm());
             imageView.setFitWidth(deleteBtn.getPrefWidth());
             imageView.setFitHeight(deleteBtn.getPrefHeight());
             imageView.setPreserveRatio(true);
             deleteBtn.setGraphic(imageView);
             deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
                     , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
-            deleteBtn.setOnMouseEntered(event -> {
-                deleteBtn.setStyle("-fx-background-color: white");
-            });
-            deleteBtn.setOnMouseExited(event -> {
-                deleteBtn.setStyle("-fx-background-color: transparent");
-            });
+            deleteBtn.setOnMouseEntered(
+                    event -> deleteBtn.setStyle("-fx-background-color: white"));
+            deleteBtn.setOnMouseExited(
+                    event -> deleteBtn.setStyle("-fx-background-color: transparent"));
             BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(current.getTags()
                     .get(t))
                     , null, null);
@@ -536,8 +329,7 @@ public class CardCtrl {
         VBox subs = (VBox) ap.lookup("#subtaskVbox");
         for (int i = 0; i < subs.getChildren().size(); i++) {
             Node hb = subs.getChildren().get(i);
-            if (hb instanceof TextField) {
-                TextField subtask = (TextField) hb;
+            if (hb instanceof TextField subtask) {
                 if (!current.getSubtasks().contains(subtask.getText())
                         && !subtask.getText().equals(""))
                     current.addSubTask(subtask.getText());
@@ -567,16 +359,16 @@ public class CardCtrl {
         for (Node n : tags.getChildren()) {
             AnchorPane tagAp = (AnchorPane) n;
             Pair<String, String> tagPair = (Pair<String, String>) tagAp.getUserData();
-            if (!current.getTags().keySet().contains(((Pair<String, String>) tagAp.getUserData())
+            if (!current.getTags().containsKey(((Pair<String, String>) tagAp.getUserData())
                     .getLeft())) {
                 current.addTag(tagPair.getLeft(), tagPair.getRight());
             }
-            if (!singleBoardCtrl.current_board.getTagLists().keySet().contains(tagPair.getLeft()))
+            if (!singleBoardCtrl.current_board.getTagLists().containsKey(tagPair.getLeft()))
                 singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, tagPair.getLeft()
                         , tagPair.getRight());
         }
         singleBoardCtrl.server.addCard(current);
-        singleBoardCtrl.updateCardFromList(singleBoardCtrl.BoardID, listId, current);
+        singleBoardCtrl.updateCardFromList(listId, current);
         singleBoardCtrl.server.stopExec();
 
         Stage popup = (Stage) source.getScene().getWindow();
@@ -605,7 +397,7 @@ public class CardCtrl {
         singleBoardCtrl.server.stopExec();
     }
 
-    public void setCancel(ActionEvent event, Node hboxCard) {
+    public void setCancel(ActionEvent event) {
         Button cancel = (Button) event.getSource();
         Stage popup = (Stage) cancel.getScene().getWindow();
         popup.close();
@@ -621,7 +413,7 @@ public class CardCtrl {
             placeCard(parent, newCard);
             Card saved = singleBoardCtrl.server.addCard(newCard);
             newCard.setId(saved.getId());
-            singleBoardCtrl.saveCardToList(BoardID, listId, newCard);
+            singleBoardCtrl.saveCardToList(listId, newCard);
             singleBoardCtrl.refresh();
         }
     }
@@ -647,35 +439,35 @@ public class CardCtrl {
             if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
-            SingleBoardCtrl.dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
+            singleBoardCtrl.dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             singleBoardCtrl.content = new ClipboardContent();
             singleBoardCtrl.content.putString(
                     cardNode.getId() + "; " + ((BoardList) parent.getUserData()).getId());
-            SingleBoardCtrl.dragboard.setContent(singleBoardCtrl.content);
+            singleBoardCtrl.dragboard.setContent(singleBoardCtrl.content);
             // Create a snapshot of the current card
             WritableImage snapshot = cardNode.snapshot(new SnapshotParameters(), null);
             ImageView imageView = new ImageView(snapshot);
             imageView.setFitWidth(cardNode.getBoundsInLocal().getWidth());
             imageView.setFitHeight(cardNode.getBoundsInLocal().getHeight());
             // Set the custom drag view to only show the current card being dragged
-            SingleBoardCtrl.dragboard.setDragView(
+            singleBoardCtrl.dragboard.setDragView(
                     imageView.getImage(), event.getX(), event.getY());
             event.consume();
         });
         cardNode.setOnDragOver(event -> {
-            if (SingleBoardCtrl.dragboard.hasString()) {
+            if (singleBoardCtrl.dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
         cardNode.setOnDragDropped(event -> {
             boolean success = false;
-            if (SingleBoardCtrl.dragboard.hasString()) {
-                String[] splitDragboard = SingleBoardCtrl.dragboard.getString().split(";");
+            if (singleBoardCtrl.dragboard.hasString()) {
+                String[] splitDragboard = singleBoardCtrl.dragboard.getString().split(";");
                 long sourceListId = Long.parseLong(splitDragboard[1].trim());
                 long sourceListIndex =
                         singleBoardCtrl.listCtrl.getListIndex(
-                                BoardID, sourceListId);
+                                singleBoardCtrl.BoardID, sourceListId);
                 ObservableList<Node> hboxChildren = singleBoardCtrl.hbox_lists.getChildren();
                 AnchorPane sourceList = (AnchorPane) (hboxChildren.get((int) sourceListIndex));
                 int sourceListSize = sourceList.getChildren().size();
@@ -685,18 +477,15 @@ public class CardCtrl {
                 if (draggedCardNode != null) {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);
-                        singleBoardCtrl.deleteCardFromList(
-                                BoardID, sourceListId, draggedCard, false);
-                        singleBoardCtrl.saveCardToList(
-                                BoardID, listId, draggedCard);
+                        singleBoardCtrl.deleteCardFromList(sourceListId, draggedCard, false);
+                        singleBoardCtrl.saveCardToList(listId, draggedCard);
                         success = true;
                     } else {
                         ObservableList<Node> children = parent.getChildren();
                         int draggedIndex = children.indexOf((AnchorPane) event.getGestureSource());
                         int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
                         draggedCardNode = children.remove(draggedIndex);
-                        singleBoardCtrl.deleteCardFromList(
-                                BoardID, sourceListId, draggedCard, false);
+                        singleBoardCtrl.deleteCardFromList(sourceListId, draggedCard, false);
                         children.add(dropIndex, draggedCardNode);
                         addCardAtIndex(sourceListId, dropIndex, draggedCard);
                     }
@@ -712,7 +501,7 @@ public class CardCtrl {
                     event.getGestureTarget() instanceof AnchorPane) {
                 targetParent = (VBox) ((AnchorPane) event.getGestureTarget()).getParent();
             }
-            if (SingleBoardCtrl.dragboard.hasString()
+            if (singleBoardCtrl.dragboard.hasString()
                     && event.isDropCompleted() && sourceParent != targetParent) {
                 parent.getChildren().remove(cardNode);
             }
@@ -725,7 +514,7 @@ public class CardCtrl {
         try {
             singleBoardCtrl.server.addCardAtIndex(sourceListId, dropIndex, card);
         } catch (WebApplicationException e) {
-            SingleBoardCtrl.alertError(e);
+            singleBoardCtrl.alertError(e);
         }
     }
 }
