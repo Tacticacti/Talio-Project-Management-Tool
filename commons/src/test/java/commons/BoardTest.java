@@ -63,7 +63,7 @@ public class BoardTest {
     }
 
     @Test
-    public void emptyConstructorTest(){
+    public void emptyConstructorTest() {
         Board newBoard = new Board();
         newBoard.setName("New Board");
         Assertions.assertEquals("New Board", newBoard.getName(),

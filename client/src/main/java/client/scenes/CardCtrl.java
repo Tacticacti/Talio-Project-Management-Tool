@@ -55,7 +55,6 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import static client.scenes.SingleBoardCtrl.BoardID;
 
 @SuppressWarnings("checkstyle:Indentation")
 public class CardCtrl {
@@ -164,8 +163,8 @@ public class CardCtrl {
             System.out.println(CustomizationUtils.customizationData);
 
 
-            CustomizationUtils.updateTextColor(cardNode, BoardID);
-            CustomizationUtils.updateCardColour(cardNode, BoardID);
+            CustomizationUtils.updateTextColor(cardNode, singleBoardCtrl.BoardID);
+            CustomizationUtils.updateCardColour(cardNode, singleBoardCtrl.BoardID);
 
 
 
@@ -365,7 +364,7 @@ public class CardCtrl {
                 current.addTag(tagPair.getLeft(), tagPair.getRight());
             }
             if (!singleBoardCtrl.current_board.getTagLists().containsKey(tagPair.getLeft()))
-                singleBoardCtrl.server.addTagToBoard(BoardID, tagPair.getLeft()
+                singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, tagPair.getLeft()
                         , tagPair.getRight());
         }
         singleBoardCtrl.server.addCard(current);
@@ -468,7 +467,7 @@ public class CardCtrl {
                 long sourceListId = Long.parseLong(splitDragboard[1].trim());
                 long sourceListIndex =
                         singleBoardCtrl.listCtrl.getListIndex(
-                                BoardID, sourceListId);
+                                singleBoardCtrl.BoardID, sourceListId);
                 ObservableList<Node> hboxChildren = singleBoardCtrl.hbox_lists.getChildren();
                 AnchorPane sourceList = (AnchorPane) (hboxChildren.get((int) sourceListIndex));
                 int sourceListSize = sourceList.getChildren().size();
@@ -502,7 +501,7 @@ public class CardCtrl {
                     event.getGestureTarget() instanceof AnchorPane) {
                 targetParent = (VBox) ((AnchorPane) event.getGestureTarget()).getParent();
             }
-            if (SingleBoardCtrl.dragboard.hasString()
+            if (singleBoardCtrl.dragboard.hasString()
                     && event.isDropCompleted() && sourceParent != targetParent) {
                 parent.getChildren().remove(cardNode);
             }
@@ -515,7 +514,7 @@ public class CardCtrl {
         try {
             singleBoardCtrl.server.addCardAtIndex(sourceListId, dropIndex, card);
         } catch (WebApplicationException e) {
-            SingleBoardCtrl.alertError(e);
+            singleBoardCtrl.alertError(e);
         }
     }
 }

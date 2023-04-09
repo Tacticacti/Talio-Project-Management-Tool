@@ -31,10 +31,19 @@ public class ListCtrl {
         if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
             return;
         }
+        ObservableList<Node> board_lists = singleBoardCtrl.hbox_lists.getChildren();
+        Long listId = singleBoardCtrl.server.addEmptyList(singleBoardCtrl.BoardID, "task list");
+        BoardList boardList = singleBoardCtrl.server.getList(listId);
+        Node list;
+        try {
+            list = wrapList(boardList, board_lists);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         singleBoardCtrl.refresh();
     }
 
-    public void wrapList(BoardList boardList, ObservableList<Node> board_lists) throws IOException {
+    public Node wrapList(BoardList boardList, ObservableList<Node> board_lists) throws IOException {
         FXMLLoader loader = new FXMLLoader(singleBoardCtrl.getClass().getResource("listGUI.fxml"));
         AnchorPane list = loader.load();
         list.setUserData(boardList);
@@ -102,6 +111,7 @@ public class ListCtrl {
 
         // board_lists.get(board_lists.size()-2).lookup("#list_title").requestFocus();
         board_lists.add(list);
+        return list;
     }
 
     public void requestNameChange(TextField title, Node list) throws Exception {
