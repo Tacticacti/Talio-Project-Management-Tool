@@ -191,6 +191,5 @@ public class LocalUtilsTest {
 
         // compare the actual and expected contents of the file
         assertEquals(expectedContents, contents);
-        file.delete();
     }
 }
