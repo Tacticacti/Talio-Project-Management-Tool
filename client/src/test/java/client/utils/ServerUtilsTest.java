@@ -3,6 +3,7 @@ package client.utils;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
+
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation;
@@ -15,6 +16,8 @@ import jakarta.ws.rs.client.Client;
 
 import okhttp3.mockwebserver.MockWebServer;
 import org.glassfish.jersey.client.ClientConfig;
+import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +27,11 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -50,7 +58,10 @@ public class ServerUtilsTest {
 
     Client client;
 
+
+
     @BeforeEach
+<<<<<<< client/src/test/java/client/utils/ServerUtilsTest.java
     public void setUp() throws IOException {
         Mockito.framework().clearInlineMocks();
        // server.start();
@@ -78,6 +89,7 @@ public class ServerUtilsTest {
 
         assertEquals("http://" + serverAddress, serverUtils.getPath());
     }
+
 
     @Test
     public void getBoards() throws IOException {
@@ -695,6 +707,19 @@ public class ServerUtilsTest {
         serverUtils.disconnect();
 
         verify(stompSession).disconnect();
+    }
+
+    @Test
+    public void testSetAdminPassword() throws NoSuchFieldException, IllegalAccessException {
+        String expectedPassword = "testpassword";
+        serverUtils.setAdminPassword(expectedPassword);
+
+        // Use reflection to access the private 'password' field
+        Field passwordField = ServerUtils.class.getDeclaredField("password");
+        passwordField.setAccessible(true);
+        String actualPassword = (String) passwordField.get(serverUtils);
+
+        Assertions.assertEquals(expectedPassword, actualPassword);
     }
 
     @Test

@@ -152,7 +152,7 @@ public class CardCtrl {
             Label title = (Label) cardNode.lookup("#taskTitle");
             detail.setOnAction(event -> setCardDetail(scaleTransition));
             title.setText(cardTitle);
-            SingleBoardCtrl.nodeCardMap.put(cardNode, card);
+            singleBoardCtrl.nodeCardMap.put(cardNode, card);
             setDragAndDrop(parent, cardNode);
             int index = parent.getChildren().size() - 1;
             if (parent.getChildren().size() == 1) {
@@ -195,7 +195,7 @@ public class CardCtrl {
         BoardList boardList = (BoardList) parent.getUserData();
         long listId = boardList.getId();
         Card card = singleBoardCtrl.server.getCardById(
-                SingleBoardCtrl.nodeCardMap.get(cardNode).getId());
+                singleBoardCtrl.nodeCardMap.get(cardNode).getId());
         FXMLLoader fxmlLoader = new FXMLLoader(
                 singleBoardCtrl.getClass().getResource("AddCard.fxml"));
         Parent root;
@@ -439,31 +439,31 @@ public class CardCtrl {
             if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
             }
-            SingleBoardCtrl.dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
+            singleBoardCtrl.dragboard = cardNode.startDragAndDrop(TransferMode.MOVE);
             singleBoardCtrl.content = new ClipboardContent();
             singleBoardCtrl.content.putString(
                     cardNode.getId() + "; " + ((BoardList) parent.getUserData()).getId());
-            SingleBoardCtrl.dragboard.setContent(singleBoardCtrl.content);
+            singleBoardCtrl.dragboard.setContent(singleBoardCtrl.content);
             // Create a snapshot of the current card
             WritableImage snapshot = cardNode.snapshot(new SnapshotParameters(), null);
             ImageView imageView = new ImageView(snapshot);
             imageView.setFitWidth(cardNode.getBoundsInLocal().getWidth());
             imageView.setFitHeight(cardNode.getBoundsInLocal().getHeight());
             // Set the custom drag view to only show the current card being dragged
-            SingleBoardCtrl.dragboard.setDragView(
+            singleBoardCtrl.dragboard.setDragView(
                     imageView.getImage(), event.getX(), event.getY());
             event.consume();
         });
         cardNode.setOnDragOver(event -> {
-            if (SingleBoardCtrl.dragboard.hasString()) {
+            if (singleBoardCtrl.dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
         cardNode.setOnDragDropped(event -> {
             boolean success = false;
-            if (SingleBoardCtrl.dragboard.hasString()) {
-                String[] splitDragboard = SingleBoardCtrl.dragboard.getString().split(";");
+            if (singleBoardCtrl.dragboard.hasString()) {
+                String[] splitDragboard = singleBoardCtrl.dragboard.getString().split(";");
                 long sourceListId = Long.parseLong(splitDragboard[1].trim());
                 long sourceListIndex =
                         singleBoardCtrl.listCtrl.getListIndex(
@@ -473,7 +473,7 @@ public class CardCtrl {
                 int sourceListSize = sourceList.getChildren().size();
                 VBox sourceParent = (VBox) sourceList.getChildren().get(sourceListSize - 1);
                 Node draggedCardNode = sourceParent.lookup("#" + splitDragboard[0].trim());
-                Card draggedCard = SingleBoardCtrl.nodeCardMap.get(draggedCardNode);
+                Card draggedCard = singleBoardCtrl.nodeCardMap.get(draggedCardNode);
                 if (draggedCardNode != null) {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);

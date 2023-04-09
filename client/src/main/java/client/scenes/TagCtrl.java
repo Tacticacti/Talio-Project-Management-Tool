@@ -69,7 +69,7 @@ public class TagCtrl {
             alert.setContentText("Tag name cannot be empty");
             alert.showAndWait();
         }
-        singleBoardCtrl.server.addTagToBoard(SingleBoardCtrl.BoardID
+        singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID
                 , textField.getText(), colorPicker.getValue().toString());
         Stage popUp = (Stage) textField.getScene().getWindow();
         popUp.close();
@@ -375,7 +375,7 @@ public class TagCtrl {
     }
 
     public void deleteTag(String tag) {
-        singleBoardCtrl.server.deleteTagToBoard(SingleBoardCtrl.BoardID, tag);
+        singleBoardCtrl.server.deleteTagToBoard(singleBoardCtrl.BoardID, tag);
         // singleBoardCtrl.refresh();
     }
 }

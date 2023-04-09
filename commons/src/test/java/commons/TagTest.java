@@ -29,11 +29,14 @@ class TagTest {
     }
 
     @Test
-    void constructor(){
-        Tag t = new Tag("name", "#ffffff");
-        assertEquals("name", t.getTitle());
-        assertEquals("#ffffff", t.getColor());
-        assertNotEquals(null, t.cards);
+    public void testConstructorWithTitleAndColor() {
+        String title = "test";
+        String color = "#123456";
+        Tag tag = new Tag(title, color);
+
+        assertEquals(title, tag.getTitle());
+        assertEquals(color, tag.getColor());
+        assertTrue(tag.cards.isEmpty());
     }
     @Test
     void setTitle() {
@@ -44,10 +47,10 @@ class TagTest {
 
     @Test
     void addCard(){
-        Tag t = new Tag();
-        Card c = new Card();
-        t.addCard(c);
-        assertTrue(t.cards.contains(c));
+        Tag tag = new Tag("Test Tag");
+        Card card = new Card("Test Card");
+        tag.addCard(card);
+        assertTrue(tag.cards.contains(card));
     }
 
     @Test
@@ -79,6 +82,12 @@ class TagTest {
         Tag t2= new Tag("tag");
         assertEquals(t1, t2);
         assertNotEquals(t1, "tag");
+    }
+
+    @Test
+    void testEqualsSameObject() {
+        Tag t1= new Tag("tag");
+        assertEquals(t1, t1);
     }
 
     @Test
