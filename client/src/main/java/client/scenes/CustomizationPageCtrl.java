@@ -213,7 +213,6 @@ public class CustomizationPageCtrl implements Initializable {
     public void setListBackgroundColour() {
         System.out.println("Set the list background colour");
 
-        Scene current_scene =  primaryStage.getScene();
         String cssColor = list_colour.getValue().toString().replace("0x", "#");
 
         CustomizationUtils.setCustomizationField(SingleBoardCtrl.getBoardID(), cssColor, 5);

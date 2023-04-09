@@ -85,13 +85,11 @@ public class Tag {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Tag)) return false;
-        Tag tag = (Tag) o;
+        if (!(o instanceof Tag tag)) return false;
         return Objects.equals(title, tag.title);
     }
 
     public void setColor(String color){
-
         this.color = color;
     }
     public String getColor(){

@@ -40,9 +40,6 @@ public class ListCtrl {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-
         singleBoardCtrl.refresh();
     }
 
@@ -51,7 +48,7 @@ public class ListCtrl {
         AnchorPane list = loader.load();
         list.setUserData(boardList);
 
-        CustomizationUtils.updateTextColor(list, SingleBoardCtrl.BoardID);
+        CustomizationUtils.updateTextColor(list, singleBoardCtrl.BoardID);
 
 
 
@@ -66,7 +63,7 @@ public class ListCtrl {
         // set up putting list title
         setListTitle(boardList, list);
         list.setOnDragOver(event -> {
-            if (SingleBoardCtrl.dragboard.hasString()) {
+            if (singleBoardCtrl.dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
                 System.out.println("draggin vbox");
             }
@@ -75,8 +72,8 @@ public class ListCtrl {
         var list_vbox = (VBox) list.getChildren().get(list.getChildren().size() - 1);
         Long listId = ((BoardList) list.getUserData()).getId();
         list_vbox.setOnDragDropped(event -> {
-            if (SingleBoardCtrl.dragboard.hasString()) {
-                String[] splitDragboard = SingleBoardCtrl.dragboard.getString().split(";");
+            if (singleBoardCtrl.dragboard.hasString()) {
+                String[] splitDragboard = singleBoardCtrl.dragboard.getString().split(";");
                 long originalListId = Long.parseLong(splitDragboard[1].trim());
                 long originalListIndex = getListIndex(singleBoardCtrl.BoardID, originalListId);
                 ObservableList<Node> hboxChildren = singleBoardCtrl.hbox_lists.getChildren();
@@ -87,9 +84,8 @@ public class ListCtrl {
                 if (draggedCardNode != null && originalParent != list_vbox) {
                     list_vbox.getChildren().add(0, draggedCardNode);
                     Card draggedCard = singleBoardCtrl.nodeCardMap.get(draggedCardNode);
-                    singleBoardCtrl.deleteCardFromList(
-                            singleBoardCtrl.BoardID, originalListId, draggedCard);
-                    singleBoardCtrl.saveCardToList(singleBoardCtrl.BoardID, listId, draggedCard);
+                    singleBoardCtrl.deleteCardFromList(originalListId, draggedCard, false);
+                    singleBoardCtrl.saveCardToList(listId, draggedCard);
                 }
             }
             //event.consume();

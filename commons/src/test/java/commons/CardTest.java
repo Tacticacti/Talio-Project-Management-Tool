@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CardTest {
@@ -26,6 +26,17 @@ class CardTest {
         assertTrue(c1.getTags().isEmpty());
         assertEquals(0, c1.getCompletedSubs());
         assertTrue(c1.getCompletedTasks().isEmpty());
+    }
+
+    @Test
+    void setTagsTest(){
+        Card c1 = new Card();
+        c1.addTag("anim",  "#ffffff");
+        Map<String, String> tags = new HashMap<>();
+        tags.put("mammal", "#000000");
+        assertNotEquals(c1.getTags().keySet(), tags.keySet());
+        c1.setTagColors(tags);
+        assertEquals(c1.getTags(), tags);
     }
 
     @Test
@@ -134,6 +145,7 @@ class CardTest {
         Card c1 = new Card("Slides", "prep slide 3-5");
         c1.addSubTask("research otters");
         c1.addSubTask("research monkeys");
+        c1.completeSubTask("research otters");
         List<String> tasks = new ArrayList<>();
         tasks.add("research otters");
         tasks.add("research monkeys");
@@ -141,6 +153,7 @@ class CardTest {
         assertEquals(2, c1.getSubtasks().size());
         c1.removeSubTask("research otters");
         tasks.remove("research otters");
+        assertEquals(0, c1.getCompletedSubs());
         assertEquals(tasks, c1.getSubtasks());
         assertEquals(1, c1.getSubtasks().size());
     }
@@ -293,7 +306,7 @@ class CardTest {
         assertTrue(card.getSubtasks().contains(sub2));
 
         card.completeSubTask(sub3);
-        assertTrue(!card.getSubtasks().contains(sub3));
+        assertFalse(card.getSubtasks().contains(sub3));
         assertTrue(card.getCompletedTasks().contains(sub3));
 
         card.removeSubTask(sub1);
@@ -330,6 +343,50 @@ class CardTest {
                 .toString();
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void testSetTagColors() {
+        // create a card object
+        Card card = new Card("Test Card");
+
+        // create a map of tag colors
+        Map<String, String> tagColors = new HashMap<>();
+        tagColors.put("Tag1", "Blue");
+        tagColors.put("Tag2", "Red");
+
+        // set the tag colors of the card
+        card.setTagColors(tagColors);
+
+        // check that the tag colors were set correctly
+        assertEquals(tagColors, card.getTags());
+    }
+
+    @Test
+    public void testRemoveSubtasks() {
+        // Create a card with two subtasks
+        Card card = new Card("Test card");
+        card.addSubTask("Subtask 1");
+        card.addSubTask("Subtask 2");
+        card.completeSubTask("Subtask 1");
+
+        // Check that both subtasks are present
+        assertEquals(2, card.getSubtasks().size());
+        assertTrue(card.getSubtasks().contains("Subtask 1"));
+        assertTrue(card.getSubtasks().contains("Subtask 2"));
+
+        // Remove one subtask and check that it's no longer present
+        card.removeSubTask("Subtask 1");
+        assertEquals(0, card.getCompletedTasks().size());
+        assertEquals(1, card.getSubtasks().size());
+        assertFalse(card.getSubtasks().contains("Subtask 1"));
+
+        // Try to remove a subtask that doesn't exist and check that the size and contents of the
+        // subtasks list haven't changed
+        card.removeSubTask("Subtask 3");
+        assertEquals(1, card.getSubtasks().size());
+        assertFalse(card.getSubtasks().contains("Subtask 3"));
+        assertTrue(card.getSubtasks().contains("Subtask 2"));
     }
 
 }

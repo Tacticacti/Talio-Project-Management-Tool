@@ -37,7 +37,29 @@ public class BoardTest {
         Assertions.assertNotNull(newBoard.getLists(),
                 "Constructor should initialize the lists variable");
         Assertions.assertEquals(0, newBoard.getLists().size(),
+			"Constructor should initialize an empty lists variable");
+        Assertions.assertNotNull(newBoard.getTagLists(),
+                "Constructor should initialize the tags variable");
+        Assertions.assertEquals(0, newBoard.getTagLists().size(),
+                "Constructor should initialize an empty tags variable");
+
+    }
+
+    @Test
+    public void ConstructorWithPasswordTest() {
+        Board newBoard = new Board("New Board", "p455w0rd");
+        Assertions.assertEquals("New Board", newBoard.getName(),
+                "Constructor should set the board name");
+        Assertions.assertEquals("p455w0rd", newBoard.getPassword(),
+                "Constructor should set the board password");
+        Assertions.assertNotNull(newBoard.getLists(),
+                "Constructor should initialize the lists variable");
+        Assertions.assertEquals(0, newBoard.getLists().size(),
                 "Constructor should initialize an empty lists variable");
+        Assertions.assertNotNull(newBoard.getTagLists(),
+                "Constructor should initialize the tags variable");
+        Assertions.assertEquals(0, newBoard.getTagLists().size(),
+                "Constructor should initialize an empty tags variable");
     }
 
     @Test
@@ -131,8 +153,8 @@ public class BoardTest {
     @Test
     public void addTag() {
         board.addBoardTag("anim", "#ffffff");
-        assertTrue(board.getTagLists().keySet().contains("anim"));
+        assertTrue(board.getTagLists().containsKey("anim"));
         board.removeBoardTag("anim");
-        assertFalse(board.getTagLists().keySet().contains("anim"));
+        assertFalse(board.getTagLists().containsKey("anim"));
     }
 }
