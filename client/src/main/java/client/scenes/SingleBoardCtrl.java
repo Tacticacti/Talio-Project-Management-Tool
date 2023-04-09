@@ -1,13 +1,15 @@
 package client.scenes;
 
+import client.MyModule;
 import client.utils.CustomizationUtils;
 import client.utils.LocalUtils;
 import client.utils.ServerUtils;
+import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import commons.Board;
 import commons.BoardList;
 import commons.Card;
-
 import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -15,31 +17,25 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
-
-import java.net.URL;
-
 import javafx.scene.Node;
-
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
-
-import javafx.scene.input.Clipboard;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.HashMap;
 
 
 @SuppressWarnings("checkstyle:Indentation")
@@ -92,11 +88,11 @@ public class SingleBoardCtrl implements Initializable {
     @Inject
     public SingleBoardCtrl(
             ServerUtils server,
-            BoardOverviewCtrl boardOverviewCtrl,
             MainCtrl mainCtrl,
             Boolean isUnlocked,
             LocalUtils localUtils) {
-        this.boardOverviewCtrl = boardOverviewCtrl;
+        Injector injector = Guice.createInjector(new MyModule());
+        this.boardOverviewCtrl = injector.getInstance(BoardOverviewCtrl.class);
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.isUnlocked = isUnlocked;
