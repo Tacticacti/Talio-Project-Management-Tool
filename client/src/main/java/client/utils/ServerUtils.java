@@ -198,13 +198,13 @@ public class ServerUtils {
                 .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
     }
 
-    public Card addTagToCard(Long cardId, String tag, String color) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/cards/addTag/" + cardId.toString()) //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Card.class);
-    }
+//    public Card addTagToCard(Long cardId, String tag, String color) {
+//        return ClientBuilder.newClient(new ClientConfig()) //
+//                .target(server).path("api/cards/addTag/" + cardId.toString()) //
+//                .request(APPLICATION_JSON) //
+//                .accept(APPLICATION_JSON) //
+//                .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Card.class);
+//    }
 
     public Board updateCardsTag(Long boardId, String oldTag
             , String tag, String color) {
@@ -216,13 +216,13 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Board.class);
     }
 
-    public Card deleteTagToCard(Long cardId, String tag) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/cards/deleteTag/" + cardId.toString()) //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(tag, APPLICATION_JSON), Card.class);
-    }
+//    public Card deleteTagToCard(Long cardId, String tag) {
+//        return ClientBuilder.newClient(new ClientConfig()) //
+//                .target(server).path("api/cards/deleteTag/" + cardId.toString()) //
+//                .request(APPLICATION_JSON) //
+//                .accept(APPLICATION_JSON) //
+//                .post(Entity.entity(tag, APPLICATION_JSON), Card.class);
+//    }
 
 
     public Long addEmptyList(Long boardId, String name) {
@@ -304,20 +304,21 @@ public class ServerUtils {
                 .post(Entity.entity(password, APPLICATION_JSON), boolean.class);
     }
 
-    public Card deleteCard(Long cardId) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(server).path("api/cards/delete/" + cardId.toString()) //
-                .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
-    }
+//    public Card deleteCard(Long cardId) {
+//        return ClientBuilder.newClient(new ClientConfig()) //
+//                .target(server).path("api/cards/delete/" + cardId.toString()) //
+//                .request(APPLICATION_JSON) //
+//                .accept(APPLICATION_JSON) //
+//                .post(Entity.entity(getCardById(cardId), APPLICATION_JSON), Card.class);
+//    }
 
-    public BoardList deleteCardFromList(Long listId, Card card) {
+    public BoardList deleteCardFromList(Long listId, Card card, Boolean permanent ) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/lists/deleteCard/" + listId.toString()) //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(card, APPLICATION_JSON), BoardList.class);
+                .post(Entity.entity(new CustomPair(permanent, card)
+                        , APPLICATION_JSON), BoardList.class);
     }
 
     public BoardList getList(Long listId) {
@@ -327,6 +328,8 @@ public class ServerUtils {
                 .accept(APPLICATION_JSON)
                 .get(BoardList.class);
     }
+
+
 
     public void addCardAtIndex(Long listId, long index, Card card) {
         ClientBuilder.newClient(new ClientConfig())

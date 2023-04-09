@@ -22,6 +22,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -33,7 +34,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,11 +65,6 @@ public class BoardOverviewCtrl implements Initializable {
     private Button adminLogin;
 
     private final int MAX_BOARDS_IN_ROW = 5;
-
-    //private ArrayList board_scenes = new ArrayList<Board>();
-
-
-
 
     @FXML
     private VBox board_rows;
@@ -171,13 +166,19 @@ public class BoardOverviewCtrl implements Initializable {
         // Check if the board is already joined
         boolean isUnlocked = drawnBoards.contains(new_board.getId());
 
-        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, this,
-                mainCtrl, isUnlocked, localUtils);
+        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl, this,
+                isUnlocked, localUtils);
         singleBoardCtrl.setBoard(new_board);
         loader.setController(singleBoardCtrl);
 
         Parent singleBoard = loader.load();
-        singleBoard.setOnKeyPressed(mainCtrl::showHelpPage);
+        singleBoard.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.T) {
+                singleBoardCtrl.addNewTag();
+            } else {
+                mainCtrl.showHelpPage(event);
+            }
+        });
 
         Scene new_scene = new Scene(singleBoard);
         TextField board_name = (TextField) new_scene.lookup("#board_name");
@@ -268,45 +269,13 @@ public class BoardOverviewCtrl implements Initializable {
                                     "You are now entering the board in Read-Only mode.");
                             alert.showAndWait();
 
+                            addDefaultCustomization(board.getId());
+                            writeCustomization();
+
                             enterBoard(board);
                         }
                     }
-
-                    Optional<String> result = dialog.showAndWait();
-                    if (result.isPresent() && result.get().equals(board.getPassword())) {
-                        addJoinedBoard(board);
-                        localUtils.add(board.getId());
-                        enterBoard(board);
-                    } else if (result.isPresent()
-                            && !result.get().isEmpty()
-                            && !result.get().equals(board.getPassword())) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setHeaderText("Error joining board!");
-                        alert.setContentText("Invalid password for password-protected board.");
-                        alert.showAndWait();
-                    } else {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initModality(Modality.APPLICATION_MODAL);
-                        alert.setHeaderText("Read-Only Mode");
-                        alert.setContentText("You are now entering the board in Read-Only mode.");
-                        alert.showAndWait();
-
-                        addDefaultCustomization(board.getId());
-                        writeCustomization();
-
-                        enterBoard(board);
-                    }
-                } else {
-                    addJoinedBoard(board);
-                    localUtils.add(board.getId());
-
-                    addDefaultCustomization(board.getId());
-                    writeCustomization();
-
-                    enterBoard(board);
                 }
-                System.out.println("hello!");
             }
         }
 
@@ -330,28 +299,17 @@ public class BoardOverviewCtrl implements Initializable {
         Text name = (Text) tmp.lookup("#boardName");
         name.setText(board2.getName());
 
-        // correct outline
-        //if (customizationData.containsKey(board.getId())) {
-
-        //    var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
-        //    ((AnchorPane) board).getChildren().get(0).setStyle(
-        //            "-fx-background-color: grey;"
-        //                    + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
-        //                    + "-fx-border-radius: 10;-fx-background-radius: 15"
-        //    );
-        //}
-
     }
 
     private void updateBoardImage(Board board, ImageView imageView) {
         if (board.getPassword() == null || board.getPassword().isEmpty()) {
             imageView.setImage(
-                    new Image(getClass().getResource(
-                            "../images/unlocked.png").toExternalForm()));
+                    new Image(Objects.requireNonNull(getClass().getResource(
+                            "../images/unlocked.png")).toExternalForm()));
         } else {
             imageView.setImage(
-                    new Image(getClass().getResource(
-                            "../images/locked.png").toExternalForm()));
+                    new Image(Objects.requireNonNull(getClass().getResource(
+                            "../images/locked.png")).toExternalForm()));
         }
     }
 
@@ -391,7 +349,7 @@ public class BoardOverviewCtrl implements Initializable {
             if (customizationData.containsKey(board2.getId())) {
 
                 var colour = CustomizationUtils.getCustomizationField(board2.getId(), 6);
-                ((AnchorPane) board).getChildren().get(0).setStyle(
+                board.getChildren().get(0).setStyle(
                         "-fx-background-color: grey;"
                                 + "-fx-border-width: 4;-fx-border-color: "+ colour +";"
                                 + "-fx-border-radius: 10;-fx-background-radius: 15"
