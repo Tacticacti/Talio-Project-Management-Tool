@@ -1,11 +1,10 @@
 package client.utils;
 
 import commons.Board;
+import commons.BoardList;
 import commons.Card;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Invocation;
-import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.client.*;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import okhttp3.mockwebserver.MockWebServer;
@@ -17,16 +16,14 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompSession;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ServerUtilsTest {
 
@@ -45,6 +42,7 @@ public class ServerUtilsTest {
         webTarget = mock(WebTarget.class);
         invocationBuilder = mock(Invocation.Builder.class);
         client = mock(Client.class);
+
 
         serverUtils = new ServerUtils() {
             @Override
@@ -96,6 +94,68 @@ public class ServerUtilsTest {
         server.shutdown();
 
 
+    }
+
+    @Test
+    public void getBoards() throws IOException {
+
+        server.start();
+        serverUtils.setTestServer(server.url("/").toString());
+        List<Board> expectedBoards = Arrays.asList(new Board("Board 1"), new Board("Board 2"));
+        Response response = mock(Response.class);
+
+        mockStatic(ClientBuilder.class);
+        // Mock the behavior of the ClientBuilder
+        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+        Mockito.when(client.target(Mockito.anyString())).thenReturn(webTarget);
+
+        // Mock the behavior of the WebTarget
+        Mockito.when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+        Mockito.when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        Mockito.when(invocationBuilder.accept(MediaType.APPLICATION_JSON))
+                .thenReturn(invocationBuilder);
+        when(invocationBuilder.get(new GenericType<List<Board>>() {})).thenReturn(expectedBoards);
+
+        List<Board> actualBoards= serverUtils.getBoards();
+
+        assertEquals(expectedBoards, actualBoards);
+
+        server.shutdown();
+    }
+
+    @Test
+    public void addCardToList() throws IOException {
+        server.start();
+        serverUtils.setTestServer(server.url("/").toString());
+        Card card = new Card("Test Card");
+        Response response = mock(Response.class);
+
+
+        mockStatic(ClientBuilder.class);
+        // Mock the behavior of the ClientBuilder
+        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+        Mockito.when(client.target(Mockito.anyString())).thenReturn(webTarget);
+        
+        // Mock the behavior of the WebTarget
+        Mockito.when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+        Mockito.when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        Mockito.when(invocationBuilder.accept(MediaType.APPLICATION_JSON))
+                .thenReturn(invocationBuilder);
+        when(invocationBuilder.get(Card.class)).thenReturn(card);
+
+//        // Mock the behavior of the Response
+//        Mockito.when(response.getStatus()).thenReturn(200);
+//        Mockito.when(response.readEntity(Board.class)).thenReturn(expectedBoard);
+
+        serverUtils.addCardToList(1L, card);
+
+        verify(webTarget).path("api/lists/add/1");
+        verify(webTarget).request(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).accept(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).post(Entity.entity(card, MediaType.APPLICATION_JSON),
+                BoardList.class);
+
+        server.shutdown();
     }
 
     @Test
