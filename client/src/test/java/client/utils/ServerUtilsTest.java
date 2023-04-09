@@ -1,6 +1,7 @@
 package client.utils;
 
 import commons.Card;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -9,6 +10,7 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,11 +28,13 @@ public class ServerUtilsTest {
     private WebTarget webTarget;
     private Invocation.Builder invocationBuilder;
 
+
+
     @BeforeEach
     public void setUp() {
-        stompSession = mock(StompSession.class);
         webTarget = mock(WebTarget.class);
         invocationBuilder = mock(Invocation.Builder.class);
+        stompSession= mock(StompSession.class);
 
         serverUtils = new ServerUtils() {
             @Override
@@ -50,6 +54,7 @@ public class ServerUtilsTest {
         assertEquals("http://" + serverAddress, serverUtils.getPath());
     }
 
+
     @Test
     public void testCheckForUpdatesToRefresh() {
         String update = "/topic/update";
@@ -66,6 +71,19 @@ public class ServerUtilsTest {
         serverUtils.disconnect();
 
         verify(stompSession).disconnect();
+    }
+
+    @Test
+    public void testSetAdminPassword() throws NoSuchFieldException, IllegalAccessException {
+        String expectedPassword = "testpassword";
+        serverUtils.setAdminPassword(expectedPassword);
+
+        // Use reflection to access the private 'password' field
+        Field passwordField = ServerUtils.class.getDeclaredField("password");
+        passwordField.setAccessible(true);
+        String actualPassword = (String) passwordField.get(serverUtils);
+
+        Assertions.assertEquals(expectedPassword, actualPassword);
     }
 
     @Test
