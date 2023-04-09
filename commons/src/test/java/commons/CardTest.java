@@ -355,6 +355,7 @@ class CardTest {
         Card card = new Card("Test card");
         card.addSubTask("Subtask 1");
         card.addSubTask("Subtask 2");
+        card.completeSubTask("Subtask 1");
 
         // Check that both subtasks are present
         assertEquals(2, card.getSubtasks().size());
@@ -363,6 +364,7 @@ class CardTest {
 
         // Remove one subtask and check that it's no longer present
         card.removeSubTask("Subtask 1");
+        assertEquals(0, card.getCompletedTasks().size());
         assertEquals(1, card.getSubtasks().size());
         assertFalse(card.getSubtasks().contains("Subtask 1"));
 
