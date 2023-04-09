@@ -294,6 +294,17 @@ class CardTest {
     }
 
     @Test
+    public void testCompleteSubTask() {
+        Card card = new Card("Test Card");
+        card.addSubTask("Task 1");
+        card.addSubTask("Task 2");
+        card.addSubTask("Task 3");
+        card.completeSubTask("Task 1");
+        card.completeSubTask("Task 3");
+        assertEquals(2, card.getCompletedSubs());
+    }
+
+    @Test
     public void testRemoveSub() {
         Card card = new Card("Card title", "Card description");
         String sub1 = "Subtask 1";
