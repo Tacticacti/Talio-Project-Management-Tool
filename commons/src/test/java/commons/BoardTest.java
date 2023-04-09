@@ -153,8 +153,8 @@ public class BoardTest {
     @Test
     public void addTag() {
         board.addBoardTag("anim", "#ffffff");
-        assertTrue(board.getTagLists().keySet().contains("anim"));
+        assertTrue(board.getTagLists().containsKey("anim"));
         board.removeBoardTag("anim");
-        assertFalse(board.getTagLists().keySet().contains("anim"));
+        assertFalse(board.getTagLists().containsKey("anim"));
     }
 }

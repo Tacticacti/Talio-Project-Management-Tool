@@ -284,15 +284,15 @@ public class TagCtrl {
                 , CornerRadii.EMPTY, Insets.EMPTY);
         Background backgroundbtn = new Background(backgroundFillbtn);
         deleteBtn.setBackground(backgroundbtn);
-        deleteBtn.setOnMouseEntered(event -> {
-            deleteBtn.setStyle("-fx-background-color: white");
-        });
-        deleteBtn.setOnMouseExited(event -> {
-            deleteBtn.setStyle("-fx-background-color: transparent");
-        });
+        deleteBtn.setOnMouseEntered(
+                event -> deleteBtn.setStyle(
+                "-fx-background-color: white"));
+        deleteBtn.setOnMouseExited(
+                event -> deleteBtn.setStyle(
+                "-fx-background-color: transparent"));
         VBox setTags = new VBox();
-        BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(color)
-                , null, null);
+        BackgroundFill backgroundFill = new BackgroundFill(
+                Paint.valueOf(color), null, null);
         Background background = new Background(backgroundFill);
         tagBox.setBackground(background);
 
@@ -361,7 +361,7 @@ public class TagCtrl {
         singleBoardCtrl.server.updateCardsTag(singleBoardCtrl.BoardID, tag
                 , textField.getText(), colorPicker.getValue().toString());
 
-        if (map.keySet().contains(tag) && !tag.equals(textField.getText())) {
+        if (map.containsKey(tag) && !tag.equals(textField.getText())) {
             singleBoardCtrl.server.deleteTagToBoard(singleBoardCtrl.BoardID, tag);
         }
 

@@ -20,10 +20,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import client.scenes.SingleBoardCtrl;
+//import client.scenes.SingleBoardCtrl;
 import com.google.inject.Injector;
 
-import commons.Board;
+//import commons.Board;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.util.Builder;
@@ -33,7 +33,7 @@ import javafx.util.Pair;
 
 public class MyFXML {
 
-    private Injector injector;
+    private final Injector injector;
 
     public MyFXML(Injector injector) {
         this.injector = injector;
@@ -51,18 +51,18 @@ public class MyFXML {
         }
     }
 
-    public <T> Pair<T, Parent> load(Class<T> c, Board board, String... parts) {
-        try {
-            var loader = new FXMLLoader(getLocation(parts), null, null,
-                    new MyFactory(), StandardCharsets.UTF_8);
-            Parent parent = loader.load();
-            SingleBoardCtrl ctrl = loader.getController();
-            ctrl.setBoard(board);
-            return new Pair<>((T) ctrl, parent);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public <T> Pair<T, Parent> load(Class<T> c, Board board, String... parts) {
+//        try {
+//            var loader = new FXMLLoader(getLocation(parts), null, null,
+//                    new MyFactory(), StandardCharsets.UTF_8);
+//            Parent parent = loader.load();
+//            SingleBoardCtrl ctrl = loader.getController();
+//            ctrl.setBoard(board);
+//            return new Pair<>((T) ctrl, parent);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 
 
@@ -76,12 +76,7 @@ public class MyFXML {
         @Override
         @SuppressWarnings("rawtypes")
         public Builder<?> getBuilder(Class<?> type) {
-            return new Builder() {
-                @Override
-                public Object build() {
-                    return injector.getInstance(type);
-                }
-            };
+            return (Builder) () -> injector.getInstance(type);
         }
 
         @Override

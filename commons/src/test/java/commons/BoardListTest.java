@@ -7,9 +7,10 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class BoardListTest {
 
@@ -103,8 +104,8 @@ public class BoardListTest {
         bl.addCard(card);
         BoardList bl1 = new BoardList("Blah");
         bl1.addCard(card);
-        assertTrue(bl.equals(bl1));
-        assertNotEquals(bl, new String("Blah"));
-        assertFalse(bl.equals(new BoardList("Bruh")));
+        assertEquals(bl, bl1);
+        assertNotEquals(bl, "Blah");
+        assertNotEquals(bl, new BoardList("Bruh"));
     }
 }

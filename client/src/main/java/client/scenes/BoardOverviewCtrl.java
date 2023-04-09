@@ -173,7 +173,7 @@ public class BoardOverviewCtrl implements Initializable {
 
         Parent singleBoard = loader.load();
         singleBoard.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.P) {
+            if (event.getCode() == KeyCode.T) {
                 singleBoardCtrl.addNewTag();
             } else {
                 mainCtrl.showHelpPage(event);
