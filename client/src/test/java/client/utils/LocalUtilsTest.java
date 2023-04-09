@@ -17,6 +17,15 @@ public class LocalUtilsTest {
     }
 
     @Test
+    public void testSetPath() throws IOException {
+        String path = "data/test";
+        LocalUtils localUtils = new LocalUtils();
+        localUtils.setPath(path);
+
+        Assertions.assertEquals(path, localUtils.getPath());
+    }
+
+    @Test
     public void testFetch() throws IOException {
         localUtils.setPath("data/test");
         localUtils.write();
