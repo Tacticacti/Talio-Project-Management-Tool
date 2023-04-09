@@ -48,7 +48,7 @@ public class ListCtrl {
         AnchorPane list = loader.load();
         list.setUserData(boardList);
 
-        CustomizationUtils.updateTextColor(list, SingleBoardCtrl.BoardID);
+        CustomizationUtils.updateTextColor(list, singleBoardCtrl.BoardID);
 
 
 
@@ -63,7 +63,7 @@ public class ListCtrl {
         // set up putting list title
         setListTitle(boardList, list);
         list.setOnDragOver(event -> {
-            if (SingleBoardCtrl.dragboard.hasString()) {
+            if (singleBoardCtrl.dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
                 System.out.println("draggin vbox");
             }
@@ -72,10 +72,10 @@ public class ListCtrl {
         var list_vbox = (VBox) list.getChildren().get(list.getChildren().size() - 1);
         Long listId = ((BoardList) list.getUserData()).getId();
         list_vbox.setOnDragDropped(event -> {
-            if (SingleBoardCtrl.dragboard.hasString()) {
-                String[] splitDragboard = SingleBoardCtrl.dragboard.getString().split(";");
+            if (singleBoardCtrl.dragboard.hasString()) {
+                String[] splitDragboard = singleBoardCtrl.dragboard.getString().split(";");
                 long originalListId = Long.parseLong(splitDragboard[1].trim());
-                long originalListIndex = getListIndex(SingleBoardCtrl.BoardID, originalListId);
+                long originalListIndex = getListIndex(singleBoardCtrl.BoardID, originalListId);
                 ObservableList<Node> hboxChildren = singleBoardCtrl.hbox_lists.getChildren();
                 AnchorPane originalList = (AnchorPane) (hboxChildren.get((int) originalListIndex));
                 int originalListSize = originalList.getChildren().size();
@@ -118,7 +118,7 @@ public class ListCtrl {
         if (!title.getText().isEmpty()) {
             System.out.println(title.getText().trim());
             BoardList changedBoardList = (BoardList) list.getUserData();
-            System.out.println("requesting change name: " + SingleBoardCtrl.BoardID + " " +
+            System.out.println("requesting change name: " + singleBoardCtrl.BoardID + " " +
                     changedBoardList.getId() + " " + title.getText().trim());
             singleBoardCtrl.server.changeListName(changedBoardList.getId(), title.getText().trim());
         } else {
@@ -179,7 +179,7 @@ public class ListCtrl {
                     // deleting on client(GUI) side
                     board_lists.remove(deleteBoardList.getParent());
                     // deleting list on server side
-                    singleBoardCtrl.server.removeBoardList(SingleBoardCtrl.BoardID,
+                    singleBoardCtrl.server.removeBoardList(singleBoardCtrl.BoardID,
                             boardList.getId());
                     singleBoardCtrl.current_board.removeList(boardList);
                     try {
