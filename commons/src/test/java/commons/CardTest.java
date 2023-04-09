@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CardTest {
 
@@ -27,12 +31,12 @@ class CardTest {
     @Test
     void setTagsTest(){
         Card c1 = new Card();
-        c1.addTag("anim", "#ffffff");
+        c1.addTag("anim",  "#ffffff");
         Map<String, String> tags = new HashMap<>();
         tags.put("mammal", "#000000");
         assertNotEquals(c1.getTags().keySet(), tags.keySet());
         c1.setTagColors(tags);
-        assertEquals(c1.getTags(),tags);
+        assertEquals(c1.getTags(), tags);
     }
 
     @Test
