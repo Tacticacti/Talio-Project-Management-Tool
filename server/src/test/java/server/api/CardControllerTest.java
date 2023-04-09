@@ -1,14 +1,19 @@
 package server.api;
 
+import commons.Board;
 import commons.Card;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 public class CardControllerTest {
@@ -18,15 +23,20 @@ public class CardControllerTest {
 
     Card c1, c2;
 
+
     @BeforeEach
     public void setup() {
         repo = new TestCardRepository();
         controller = new CardController(repo);
         c1 = new Card("card 1");
+        c1.board = new Board();
         c2 = new Card("card 2");
+        c2.board = new Board();
+
 
         c1.id = 0L;
         c2.id = 1L;
+
     }
 
     @Test
@@ -81,5 +91,43 @@ public class CardControllerTest {
         var ret2 = controller.getCardById(1L);
         assertNotEquals(BAD_REQUEST, ret2.getStatusCode());
         assertEquals(c2, ret2.getBody());
+    }
+
+    @Test
+    public void addTag() {
+        var ret = controller.add(c1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTag(null, 99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTag(Pair.of("anim", "#ffffff"), 99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.addTag(Pair.of("anim", "#ffffff"), 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody().getTags().keySet().contains("anim"));
+    }
+
+    @Test
+    public void deleteTag() {
+        var ret = controller.add(c1);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.addTag(Pair.of("anim", "#ffffff"), 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteTag(null, 0L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteTag("anim", 99L);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.deleteTag("anime", 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody().getTags().keySet().contains("anim"));
+
+        ret = controller.deleteTag("anim", 0L);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody().getTags().keySet().contains("anim"));
     }
 }

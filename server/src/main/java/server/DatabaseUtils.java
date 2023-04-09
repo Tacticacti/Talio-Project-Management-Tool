@@ -7,9 +7,6 @@ import commons.BoardList;
 import commons.Card;
 
 
-import java.util.Objects;
-import java.util.Optional;
-
 @Service
 public class DatabaseUtils {
     public Board mockSimpleBoard() {
@@ -32,18 +29,14 @@ public class DatabaseUtils {
 
     public void updateCard(Card card, Card newCard) {
         System.out.println(newCard.getTitle());
-        if(!newCard.getTitle().trim().isEmpty())
+        if (!newCard.getTitle().trim().isEmpty())
             card.setTitle(newCard.getTitle());
 
         card.setDescription(newCard.getDescription());
         card.setSubtasks(newCard.getSubtasks());
         card.setCompletedTasks(newCard.getCompletedTasks());
         card.setCompletedSubs(newCard.getCompletedSubs());
-    }
-
-    public Optional<BoardList> getListById(Board board, Long listId) {
-        return board.getLists().stream()
-                .filter(x -> Objects.equals(x.getId(), listId))
-                .findFirst();
+        card.getTags().clear();
+        card.setTagColors(newCard.getTags());
     }
 }

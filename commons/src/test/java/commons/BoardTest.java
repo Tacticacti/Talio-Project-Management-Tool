@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,14 +33,15 @@ public class BoardTest {
     public void testConstructor() {
         Board newBoard = new Board("New Board");
         Assertions.assertEquals("New Board", newBoard.getName(),
-			"Constructor should set the board name");
+                "Constructor should set the board name");
         Assertions.assertNotNull(newBoard.getLists(),
-			"Constructor should initialize the lists variable");
+                "Constructor should initialize the lists variable");
         Assertions.assertEquals(0, newBoard.getLists().size(),
-			"Constructor should initialize an empty lists variable");
+                "Constructor should initialize an empty lists variable");
     }
+
     @Test
-    public void emptyConstructorTest(){
+    public void emptyConstructorTest() {
         Board newBoard = new Board();
         newBoard.setName("New Board");
         Assertions.assertEquals("New Board", newBoard.getName(),
@@ -61,7 +64,7 @@ public class BoardTest {
     public void testName() {
         board.setName("New Name");
         Assertions.assertEquals("New Name", board.getName(),
-			"setName() should set the board name");
+                "setName() should set the board name");
     }
 
     // test the addList() method
@@ -69,9 +72,9 @@ public class BoardTest {
     public void testAddList() {
         board.addList(list1);
         Assertions.assertTrue(board.getLists().contains(list1),
-			"addList() should add a list to the board");
+                "addList() should add a list to the board");
         Assertions.assertEquals(1, board.getLists().size(),
-			"addList() should increase the size of the lists variable by 1");
+                "addList() should increase the size of the lists variable by 1");
     }
 
     // test the removeList() method
@@ -80,10 +83,10 @@ public class BoardTest {
         board.addList(list1);
         board.addList(list2);
         board.removeList(list1);
-        Assertions.assertFalse(board.getLists().contains(list1),
-			"removeList() should remove a list from the board");
+        assertFalse(board.getLists().contains(list1),
+                "removeList() should remove a list from the board");
         Assertions.assertEquals(1, board.getLists().size(),
-			"removeList() should decrease the size of the lists variable by 1");
+                "removeList() should decrease the size of the lists variable by 1");
     }
 
     // test the getLists() method
@@ -95,7 +98,7 @@ public class BoardTest {
         expectedLists.add(list1);
         expectedLists.add(list2);
         Assertions.assertEquals(expectedLists, board.getLists(),
-			"getLists() should return the list of lists");
+                "getLists() should return the list of lists");
     }
 
     @Test
@@ -107,8 +110,29 @@ public class BoardTest {
 
     @Test
     public void testAddToList() {
+        list1.addCard(card1);
         board.addList(list1);
         board.addToList(0, card1);
         assertTrue(board.getLists().get(0).getCards().contains(card1));
+        assertEquals(board, card1.board);
+    }
+
+    @Test
+    public void passwordTests() {
+        Board b1 = new Board("name", "password");
+        assertEquals("password", b1.getPassword());
+        assertEquals("name", b1.getName());
+
+        b1.setPassword("admin123");
+        assertNotEquals("password", b1.getPassword());
+        assertEquals("admin123", b1.getPassword());
+    }
+
+    @Test
+    public void addTag() {
+        board.addBoardTag("anim", "#ffffff");
+        assertTrue(board.getTagLists().keySet().contains("anim"));
+        board.removeBoardTag("anim");
+        assertFalse(board.getTagLists().keySet().contains("anim"));
     }
 }

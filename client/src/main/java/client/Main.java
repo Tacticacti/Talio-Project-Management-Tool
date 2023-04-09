@@ -15,11 +15,11 @@
  */
 package client;
 
+import static client.utils.LocalUtils.readCustomization;
 import static com.google.inject.Guice.createInjector;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
+import client.scenes.AdminLoginCtrl;
+import client.scenes.DashboardCtrl;
 import client.scenes.MainCtrl;
 import client.scenes.BoardOverviewCtrl;
 import client.scenes.ConnectHomeCtrl;
@@ -33,19 +33,24 @@ public class Main extends Application {
     private static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
+    public static void main(String[] args) {
         launch();
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         var boverview = FXML.load(BoardOverviewCtrl.class, "client", "scenes",
 			"BoardOverview.fxml");
 //      var addcard = FXML.load(AddCardCtrl.class, "client", "scenes", "AddCard.fxml");
 //      var singleBoard = FXML.load(SingleBoardCtrl.class, "client", "scenes", "SingleBoard.fxml");
         var home = FXML.load(ConnectHomeCtrl.class
                 , "client", "scenes", "ConnectHomePage.fxml");
+        var admin = FXML.load(AdminLoginCtrl.class, "client", "scenes", "AdminLogin.fxml");
+        var dashboard = FXML.load(DashboardCtrl.class, "client", "scenes", "Dashboard.fxml");
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize1(primaryStage, home, boverview);
+
+        readCustomization();
+
+        mainCtrl.initialize1(primaryStage, home, boverview, admin, dashboard);
     }
 }

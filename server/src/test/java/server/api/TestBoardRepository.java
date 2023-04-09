@@ -2,6 +2,7 @@ package server.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -124,7 +125,8 @@ public class TestBoardRepository implements BoardRepository {
     @Override
     public Optional<Board> findById(Long id) {
         call("findById");
-        return Optional.of(boards.get(id.intValue()));
+        return Optional.ofNullable(id.intValue() >= boards.size() ?
+                null : boards.get(id.intValue()));
     }
 
     @Override
@@ -143,8 +145,8 @@ public class TestBoardRepository implements BoardRepository {
 
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        call("removeById" + id);
+        boards.removeIf(x -> Objects.equals(x.getId(), id));
     }
 
     @Override

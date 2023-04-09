@@ -29,7 +29,7 @@ public class ConnectHomeCtrl {
         this.server = server;
     }
 
-    public void connect(){
+    public void connect() throws IOException {
         boolean ok = false;
         boolean exception = false;
         String addr = "";
@@ -54,13 +54,14 @@ public class ConnectHomeCtrl {
             return;
         }
         server.setServer(addr);
+        // mainCtrl.showBoardOverview();
         showBoardOverview();
     }
 
-    public void connectDefault() {
+    public void connectDefault() throws IOException {
         boolean ok = false;
         boolean exception = false;
-        String addr = "http://localhost:8080";
+        String addr = "localhost:8080";
         try {
             addr = addr.trim();
             ok = server.check(addr);
@@ -84,7 +85,7 @@ public class ConnectHomeCtrl {
         showBoardOverview();
     }
 
-    public void showBoardOverview(){
+    public void showBoardOverview() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("BoardOverview.fxml"));
         BoardOverviewCtrl boardOverviewCtrl = new BoardOverviewCtrl(server, mainCtrl);
         loader.setController(boardOverviewCtrl);
@@ -95,6 +96,7 @@ public class ConnectHomeCtrl {
             throw new RuntimeException(e);
         }
         Scene boverview = new Scene(overview);
+        boverview.setOnKeyPressed(mainCtrl::showHelpPage);
         primaryStage.setTitle("Board overview");
         primaryStage.setScene(boverview);
         primaryStage.setOnCloseRequest(e->{
@@ -104,7 +106,7 @@ public class ConnectHomeCtrl {
         boardOverviewCtrl.refresh();
     }
 
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent e) throws IOException {
         switch(e.getCode()) {
             case ENTER:
                 connect();

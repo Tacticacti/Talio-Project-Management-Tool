@@ -1,11 +1,13 @@
 package commons;
+
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
-import javax.persistence.GenerationType;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -15,13 +17,16 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
  */
+@SuppressWarnings("checkstyle:Indentation")
 @Entity
 public class Card implements Serializable {
 
@@ -31,12 +36,12 @@ public class Card implements Serializable {
     public long id;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "BOARDLIST_ID")
     public BoardList boardList;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "BOARD_ID")
     public Board board;
 
@@ -44,8 +49,9 @@ public class Card implements Serializable {
     public String description;
     @ElementCollection
     public List<String> subtasks;
+
     @ElementCollection
-    public List<String> tags;
+    public Map<String, String> tagColors = new HashMap<>();
     private int completedSubs;
 
     @ElementCollection
@@ -53,26 +59,24 @@ public class Card implements Serializable {
 
 
     //constructor
-    public Card(String title, String description){
+    public Card(String title, String description) {
         this.title = title;
         this.description = description;
         subtasks = new ArrayList<>();
-        tags = new ArrayList<>();
         completedSubs = 0;
-        completedTasks=new ArrayList<>();
+        completedTasks = new ArrayList<>();
     }
 
-    public Card(String title){
+    public Card(String title) {
         this.title = title;
         subtasks = new ArrayList<>();
-        tags = new ArrayList<>();
+
         completedSubs = 0;
         completedTasks = new ArrayList<>();
     }
 
     public Card() {
         subtasks = new ArrayList<>();
-        tags = new ArrayList<>();
         completedSubs = 0;
         completedTasks = new ArrayList<>();
     }
@@ -82,13 +86,13 @@ public class Card implements Serializable {
         return id;
     }
 
-    /*
-    public long getListId() {
-        return list_id;
-    }
-    */
+ /*
+ public long getListId() {
+   return list_id;
+ }
+ */
 
-    public void setId(long id){
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -104,20 +108,24 @@ public class Card implements Serializable {
         return subtasks;
     }
 
-    public List<String> getTags() {
-        return tags;
+    public Map<String, String> getTags() {
+        return tagColors;
+    }
+
+    public void setTagColors(Map<String, String> tags) {
+        this.tagColors = tags;
     }
 
     public int getCompletedSubs() {
         return completedSubs;
     }
 
-    /*
-    public void setListId(long list_id) {
-        this.list_id = list_id;
-    }
-    */
-    
+ /*
+ public void setListId(long list_id) {
+   this.list_id = list_id;
+ }
+ */
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -127,51 +135,61 @@ public class Card implements Serializable {
     }
 
     //adding subtask
-    public void addSubTask(String task){
+    public void addSubTask(String task) {
         subtasks.add(task);
     }
 
     //remove subtask
-    public void removeSubTask(String task){
+    public void removeSubTask(String task) {
         subtasks.remove(task);
-        if(completedTasks.contains(task)){
+        if (completedTasks.contains(task)) {
             uncompleteSubTask(task);
         }
     }
+
     //complete a subtask
-    public void completeSubTask(String text)  {
-        if(completedSubs!=subtasks.size())
-            completedSubs++;
-        if(!completedTasks.contains(text))
+    public void completeSubTask(String text) {
+        if (!completedTasks.contains(text)) {
             completedTasks.add(text);
+            if (completedSubs != subtasks.size())
+                completedSubs++;
+        }
     }
 
-    public void uncompleteSubTask(String text){
-        if(completedSubs!=0)
-            completedSubs--;
-        if(completedTasks.contains(text))
+    public void uncompleteSubTask(String text) {
+
+        if (completedTasks.contains(text)) {
             completedTasks.remove(text);
+            if (completedSubs != 0)
+                completedSubs--;
+        }
 
     }
+
     //add a tag to card
-    public void addTag(String tag){
-        tags.add(tag);
+    public void addTag(String tag, String color) {
+        tagColors.put(tag, color);
+
     }
 
     //remove a tag from card
-    public void removeTag(String tag){
-        tags.remove(tag);
+    public void removeTag(String tag) {
+        tagColors.remove(tag);
+
     }
-     //equals method
+
+    //equals method
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
+
     //hashcode method
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
+
     //toString method
     @Override
     public String toString() {
@@ -190,18 +208,24 @@ public class Card implements Serializable {
         return completedTasks;
     }
 
-    public void addSubtaskAtIndex(String s, int index){
+    public void addSubtaskAtIndex(String s, int index) {
         subtasks.add(index, s);
     }
 
-    public void setCompletedSubs(int number){
+    public String getSubtaskAtIndex(int index) {
+        return subtasks.get(index);
+    }
+
+    public void setCompletedSubs(int number) {
         completedSubs = number;
     }
-    public void setSubtasks(List<String> subtasks){
+
+    public void setSubtasks(List<String> subtasks) {
         this.subtasks = subtasks;
     }
 
-    public void setCompletedTasks(List<String> complete){
+    public void setCompletedTasks(List<String> complete) {
         this.completedTasks = complete;
     }
 }
+

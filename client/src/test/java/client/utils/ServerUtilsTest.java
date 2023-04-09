@@ -44,10 +44,10 @@ public class ServerUtilsTest {
 
     @Test
     public void testSetServer() {
-        String serverAddress = "http://localhost:8080";
+        String serverAddress = "localhost:8080";
         serverUtils.setServer(serverAddress);
 
-        assertEquals(serverAddress, serverUtils.getPath());
+        assertEquals("http://" + serverAddress, serverUtils.getPath());
     }
 
     @Test

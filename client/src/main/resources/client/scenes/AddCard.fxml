@@ -9,10 +9,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="393.0" prefWidth="465.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
+<AnchorPane prefHeight="450.0" prefWidth="571.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AddCardCtrl">
    <children>
-      <Button fx:id="doneTaskButton" layoutX="407.0" layoutY="360.0" mnemonicParsing="false"  text="Done" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="13.333333333333336" />
-      <Button fx:id="cancelTaskButton" cancelButton="true" layoutX="283.0" layoutY="360.0" mnemonicParsing="false"  text="Cancel" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="130.66666666666666" />
+      <Button fx:id="doneTaskButton" layoutX="407.0" layoutY="360.0" mnemonicParsing="false" text="Done" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="13.333333333333336" />
+      <Button fx:id="cancelTaskButton" cancelButton="true" layoutX="283.0" layoutY="360.0" mnemonicParsing="false" text="Cancel" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="130.66666666666666" />
       <TextField fx:id="taskTitle" layoutX="5.0" layoutY="23.0" promptText="Task Title" />
       <Label layoutX="4.0" layoutY="205.0" prefHeight="18.0" prefWidth="83.0" text="Sub-Tasks" AnchorPane.leftAnchor="4.0" AnchorPane.topAnchor="205.0">
          <font>
@@ -26,13 +26,21 @@
          <font>
             <Font size="18.0" />
          </font></Label>
-      <TextArea fx:id="taskDescription" layoutX="4.0" layoutY="77.0" prefHeight="130.0" prefWidth="453.0" promptText="Description" AnchorPane.leftAnchor="4.0" AnchorPane.topAnchor="77.0" />
+      <TextArea fx:id="taskDescription" layoutX="4.0" layoutY="77.0" prefHeight="130.0" prefWidth="393.0" promptText="Description" AnchorPane.leftAnchor="4.0" AnchorPane.topAnchor="77.0" />
       <Button fx:id="deleteTaskButton" cancelButton="true" layoutX="345.0" layoutY="360.0" mnemonicParsing="false" text="Delete" AnchorPane.bottomAnchor="7.666666666666668" AnchorPane.rightAnchor="69.33333333333334" />
-      <ScrollPane layoutX="4.0" layoutY="232.0" prefHeight="119.0" prefWidth="456.0" AnchorPane.leftAnchor="4.0" AnchorPane.topAnchor="232.0">
+      <ScrollPane layoutX="4.0" layoutY="232.0" prefHeight="119.0" prefWidth="393.0" AnchorPane.leftAnchor="4.0" AnchorPane.topAnchor="232.0">
          <content>
-            <VBox fx:id="subtaskVbox" prefHeight="116.0" prefWidth="453.0" />
+            <VBox fx:id="subtaskVbox" prefHeight="116.0" prefWidth="390.0" />
          </content>
       </ScrollPane>
       <Button fx:id="addSubtaskButton" layoutX="88.0" layoutY="206.0" mnemonicParsing="false" text="+" AnchorPane.leftAnchor="88.0" AnchorPane.topAnchor="206.0" />
+      <Label alignment="CENTER" layoutX="450.0" layoutY="1.0" prefHeight="17.0" prefWidth="51.0" text="Tags" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="CustomTag" layoutX="369.0" layoutY="35.0" mnemonicParsing="false" text="+ Custom Tag" />
+      <VBox fx:id="tagVbox" layoutX="415.0" layoutY="73.0" prefHeight="317.0" prefWidth="141.0" />
+      <Button fx:id="BoardTag" layoutX="482.0" layoutY="35.0" mnemonicParsing="false" text="+Board Tag" />
    </children>
 </AnchorPane>
