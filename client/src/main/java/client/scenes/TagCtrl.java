@@ -269,6 +269,7 @@ public class TagCtrl {
         setDoubleClick(tagBox, tag, color);
         Label title = (Label) tagBox.lookup("#tagName");
         title.setText(tag);
+        title.setTextFill(Color.BLACK);
         Button deleteBtn = (Button) tagBox.lookup("#delBtn");
         deleteBtn.setOnAction(event -> deleteTag(tag));
         ImageView imageView = new ImageView(Objects.requireNonNull(getClass()
@@ -279,9 +280,16 @@ public class TagCtrl {
         deleteBtn.setGraphic(imageView);
         deleteBtn.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT
                 , new CornerRadii(5), javafx.geometry.Insets.EMPTY)));
-        deleteBtn.setOnMouseEntered(event -> deleteBtn.setStyle("-fx-background-color: white"));
-        deleteBtn.setOnMouseExited(
-                event -> deleteBtn.setStyle("-fx-background-color: transparent"));
+        BackgroundFill backgroundFillbtn = new BackgroundFill(Color.TRANSPARENT
+                , CornerRadii.EMPTY, Insets.EMPTY);
+        Background backgroundbtn = new Background(backgroundFillbtn);
+        deleteBtn.setBackground(backgroundbtn);
+        deleteBtn.setOnMouseEntered(event -> {
+            deleteBtn.setStyle("-fx-background-color: white");
+        });
+        deleteBtn.setOnMouseExited(event -> {
+            deleteBtn.setStyle("-fx-background-color: transparent");
+        });
         VBox setTags = new VBox();
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf(color)
                 , null, null);
@@ -350,14 +358,15 @@ public class TagCtrl {
             alert.showAndWait();
         }
         Map<String, String> map = singleBoardCtrl.current_board.getTagLists();
-        if (map.containsKey(tag) && !tag.equals(textField.getText())) {
-            singleBoardCtrl.server.deleteTagToBoard(SingleBoardCtrl.BoardID, tag);
-        }
-        singleBoardCtrl.server.addTagToBoard(SingleBoardCtrl.BoardID, textField.getText()
-                , colorPicker.getValue().toString());
-
-        singleBoardCtrl.server.updateCardsTag(SingleBoardCtrl.BoardID
+        singleBoardCtrl.server.updateCardsTag(singleBoardCtrl.BoardID, tag
                 , textField.getText(), colorPicker.getValue().toString());
+
+        if (map.keySet().contains(tag) && !tag.equals(textField.getText())) {
+            singleBoardCtrl.server.deleteTagToBoard(singleBoardCtrl.BoardID, tag);
+        }
+
+        singleBoardCtrl.server.addTagToBoard(singleBoardCtrl.BoardID, textField.getText()
+                , colorPicker.getValue().toString());
 
 
         Stage popUp = (Stage) textField.getScene().getWindow();

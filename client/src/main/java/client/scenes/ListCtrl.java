@@ -74,9 +74,10 @@ public class ListCtrl {
                 Node draggedCardNode = originalParent.lookup("#" + splitDragboard[0].trim());
                 if (draggedCardNode != null && originalParent != list_vbox) {
                     list_vbox.getChildren().add(0, draggedCardNode);
-                    Card draggedCard = SingleBoardCtrl.nodeCardMap.get(draggedCardNode);
-                    singleBoardCtrl.deleteCardFromList(originalListId, draggedCard);
-                    singleBoardCtrl.saveCardToList(listId, draggedCard);
+                    Card draggedCard = singleBoardCtrl.nodeCardMap.get(draggedCardNode);
+                    singleBoardCtrl.deleteCardFromList(
+                            singleBoardCtrl.BoardID, originalListId, draggedCard, false);
+                    singleBoardCtrl.saveCardToList(singleBoardCtrl.BoardID, listId, draggedCard);
                 }
             }
             //event.consume();

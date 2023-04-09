@@ -161,7 +161,7 @@ public class SingleBoardCtrl implements Initializable {
             addNewTag();
         });
         scrollTags.setStyle("-fx-background-color: transparent;" +
-                " -fx-background: transparent; -fx-border-color: transparent");
+                " -fx-background: transparent; -fx-border-color: transparent;");
         refresh();
         System.out.println(server);
         server.checkForUpdatesToRefresh(
@@ -211,9 +211,10 @@ public class SingleBoardCtrl implements Initializable {
         }
     }
 
-    public void deleteCardFromList(Long listIdIndex, Card current) {
+    public void deleteCardFromList(Long boardId, Long listIdIndex
+            , Card current, Boolean permanent) {
         try {
-            server.deleteCardFromList(listIdIndex, current);
+            server.deleteCardFromList(listIdIndex, current, permanent);
         } catch (WebApplicationException e) {
             alertError(e);
         }

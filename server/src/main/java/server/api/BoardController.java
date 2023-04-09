@@ -143,9 +143,10 @@ public class BoardController {
 
     }
 
-    @PostMapping("/updateTags/{id}")
-    public ResponseEntity<Board> updateTags(@PathVariable("id") long boardId,
-                                            @RequestBody Pair<String, String> tagEntry) {
+    @PostMapping("/updateTags/{id}/{oldTag}")
+    public ResponseEntity<Board> updateTags(@PathVariable("id") long boardId
+            , @PathVariable("oldTag") String oldTag
+            , @RequestBody Pair<String, String> tagEntry) {
 
         var board = repo.findById(boardId);
 
@@ -154,7 +155,8 @@ public class BoardController {
         }
         for (BoardList bl : board.get().getLists()) {
             for (Card card : bl.getCards()) {
-                card.addTag(tagEntry.getFirst(), tagEntry.getSecond());
+                if(card.getTags().keySet().contains(oldTag))
+                    card.addTag(tagEntry.getFirst(), tagEntry.getSecond());
             }
         }
 

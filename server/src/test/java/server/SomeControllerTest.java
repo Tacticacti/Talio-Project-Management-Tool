@@ -14,4 +14,28 @@ public class SomeControllerTest {
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals("Welcome to Talio!", ret.getBody());
     }
+
+    @Test
+    public void checkAdminPassword(){
+        Admin admin = new Admin();
+        SomeController sc = new SomeController(admin);
+        var ret = sc.checkAdminPassword("123");
+        assertEquals(false, ret.getBody());
+    }
+
+    @Test
+    public void checkNullPassword(){
+        Admin admin = new Admin();
+        SomeController sc = new SomeController(admin);
+        var ret = sc.checkAdminPassword(null);
+        assertEquals(false, ret.getBody());
+    }
+    
+    @Test
+    public void checkTruePassword(){
+        Admin admin = new Admin();
+        SomeController sc = new SomeController(admin);
+        var ret = sc.checkAdminPassword(admin.getPassword());
+        assertEquals(true, ret.getBody());
+    }
 }

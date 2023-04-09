@@ -64,13 +64,13 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <Label layoutX="1003.0" layoutY="14.0" text="Tags" textFill="WHITE">
+      <Label style="-fx-text-fill: light gray" layoutX="1003.0" layoutY="14.0" text="Tags" textFill="WHITE">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
       <Button fx:id="newTagBtn" layoutX="998.0" layoutY="51.0" mnemonicParsing="false" text="Add tag" />
-      <ScrollPane fx:id="scrollTags" layoutX="1068.0" layoutY="10.0">
+      <ScrollPane fx:id="scrollTags" layoutX="1068.0" layoutY="10.0" vbarPolicy="NEVER">
          <content>
             <HBox fx:id="tagHbox" prefHeight="89.0" prefWidth="568.0" />
          </content>

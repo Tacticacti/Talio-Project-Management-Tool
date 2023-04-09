@@ -386,8 +386,8 @@ public class CardCtrl {
             if (response == ButtonType.OK) {
                 VBox par = (VBox) hbox.getParent();
                 par.getChildren().remove(hbox);
-                SingleBoardCtrl.nodeCardMap.remove(hbox, current);
-                singleBoardCtrl.server.deleteCardFromList(listId, current);
+                singleBoardCtrl.nodeCardMap.remove(hbox, current);
+                singleBoardCtrl.server.deleteCardFromList(listId, current, true);
                 //singleBoardCtrl.refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
@@ -478,15 +478,18 @@ public class CardCtrl {
                 if (draggedCardNode != null) {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);
-                        singleBoardCtrl.deleteCardFromList(sourceListId, draggedCard);
-                        singleBoardCtrl.saveCardToList(listId, draggedCard);
+                        singleBoardCtrl.deleteCardFromList(
+                                BoardID, sourceListId, draggedCard, false);
+                        singleBoardCtrl.saveCardToList(
+                                BoardID, listId, draggedCard);
                         success = true;
                     } else {
                         ObservableList<Node> children = parent.getChildren();
                         int draggedIndex = children.indexOf((AnchorPane) event.getGestureSource());
                         int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
                         draggedCardNode = children.remove(draggedIndex);
-                        singleBoardCtrl.deleteCardFromList(sourceListId, draggedCard);
+                        singleBoardCtrl.deleteCardFromList(
+                                BoardID, sourceListId, draggedCard, false);
                         children.add(dropIndex, draggedCardNode);
                         addCardAtIndex(sourceListId, dropIndex, draggedCard);
                     }
