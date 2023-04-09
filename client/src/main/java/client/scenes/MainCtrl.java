@@ -91,53 +91,53 @@ public class MainCtrl {
         }
     }
 
-    public void showAddCard() {
-        try {
-            primaryStage.setTitle("Add Card");
-            primaryStage.setScene(addCard);
-            // addCard.setOnKeyPressed(e -> addCardCtrl.keyPressed(e));
-        } catch (Exception e) {
-            showErrorDialog("Error", "An error occurred while trying to add a card." +
-                    " Please try again later.");
-        }
-    }
-    public void showBoard(){
-        try {
-            primaryStage.setTitle("Board");
-            primaryStage.setScene(singleBoard);
-        }catch (Exception e) {
-            showErrorDialog("Error", "An error occurred while" +
-                    " trying to display the board." +
-                    " Please try again later.");
-        }
-    }
+//    public void showAddCard() {
+//        try {
+//            primaryStage.setTitle("Add Card");
+//            primaryStage.setScene(addCard);
+//            // addCard.setOnKeyPressed(e -> addCardCtrl.keyPressed(e));
+//        } catch (Exception e) {
+//            showErrorDialog("Error", "An error occurred while trying to add a card." +
+//                    " Please try again later.");
+//        }
+//    }
+//    public void showBoard(){
+//        try {
+//            primaryStage.setTitle("Board");
+//            primaryStage.setScene(singleBoard);
+//        }catch (Exception e) {
+//            showErrorDialog("Error", "An error occurred while" +
+//                    " trying to display the board." +
+//                    " Please try again later.");
+//        }
+//    }
 
-    public void showBoardOverview(){
-        try{
-            System.out.println("show overview: " +boverview);
-            System.out.println("primaryStage" + primaryStage);
-            primaryStage.setTitle("Board overview");
-            primaryStage.setScene(boverview);
-            boardOverviewCtrl.refresh();
-        }catch (Exception e) {
-            showErrorDialog("Error", "An error occurred while trying to display the boards." +
-                    " Please try again later.\n\n" + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+//    public void showBoardOverview(){
+//        try{
+//            System.out.println("show overview: " +boverview);
+//            System.out.println("primaryStage" + primaryStage);
+//            primaryStage.setTitle("Board overview");
+//            primaryStage.setScene(boverview);
+//            boardOverviewCtrl.refresh();
+//        }catch (Exception e) {
+//            showErrorDialog("Error", "An error occurred while trying to display the boards." +
+//                    " Please try again later.\n\n" + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
     public void showHome(){
         try {
             primaryStage.setTitle("Talio: Home connection page");
             primaryStage.setScene(home);
         }catch (Exception e) {
             showErrorDialog("Error", "An error occurred while trying to display the home page." +
-                     " Please try again later.");
+                    " Please try again later.");
         }
     }
 
-    public String getPrimaryStage() {
-        return primaryStage.toString();
-    }
+//    public String getPrimaryStage() {
+//        return primaryStage.toString();
+//    }
 
     public void showAdmin() {
         primaryStage.setTitle("Admin login");

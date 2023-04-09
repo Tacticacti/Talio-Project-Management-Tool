@@ -67,7 +67,7 @@ public class DashboardCtrl implements Initializable {
         Callback<TableColumn<Board, Button>, TableCell<Board, Button>> deleteFactory =
                 new Callback<>() {
             public TableCell<Board, Button> call(TableColumn<Board, Button> param) {
-                final TableCell<Board, Button> cell = new TableCell<>() {
+                return new TableCell<>() {
                     private final Button deleteButton = new Button("Delete");
 
                     {
@@ -87,7 +87,6 @@ public class DashboardCtrl implements Initializable {
                         }
                     }
                 };
-                return cell;
             }
         };
         delete.setCellFactory(deleteFactory);
@@ -95,7 +94,7 @@ public class DashboardCtrl implements Initializable {
         Callback<TableColumn<Board, Button>, TableCell<Board, Button>> resetFactory =
                 new Callback<>() {
             public TableCell<Board, Button> call(TableColumn<Board, Button> param) {
-                final TableCell<Board, Button> cell = new TableCell<>() {
+                return new TableCell<>() {
                     private final Button deleteButton = new Button("Reset");
 
                     {
@@ -115,7 +114,6 @@ public class DashboardCtrl implements Initializable {
                         }
                     }
                 };
-                return cell;
             }
         };
         resetPassword.setCellFactory(resetFactory);

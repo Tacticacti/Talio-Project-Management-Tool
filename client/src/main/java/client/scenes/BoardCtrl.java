@@ -18,14 +18,14 @@ import static client.utils.LocalUtils.writeCustomization;
 
 public class BoardCtrl {
     private final SingleBoardCtrl singleBoardCtrl;
-    private LocalUtils localUtils;
+    private final LocalUtils localUtils;
 
     public BoardCtrl(SingleBoardCtrl singleBoardCtrl, LocalUtils localUtils) {
         this.singleBoardCtrl = singleBoardCtrl;
         this.localUtils = localUtils;
     }
 
-    public void requestBoardName(TextField text, Long id) throws Exception {
+    public void requestBoardName(TextField text) throws Exception {
         if (!text.getText().isEmpty() && !Objects.equals(text.getText().trim(), "")) {
             if (singleBoardCtrl.checkReadOnlyMode(singleBoardCtrl.isUnlocked)) {
                 return;
@@ -85,8 +85,4 @@ public class BoardCtrl {
         popUpStage.initModality(Modality.APPLICATION_MODAL);
         popUpStage.showAndWait();
     }
-
-
-
-
 }

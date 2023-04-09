@@ -8,7 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
-import javafx.scene.input.KeyEvent;
+//import javafx.scene.input.KeyEvent;
 
 import com.google.inject.Inject;
 
@@ -30,8 +30,7 @@ public class ConnectHomeCtrl {
     }
 
     public void connect() throws IOException {
-        boolean ok = false;
-        boolean exception = false;
+        boolean ok;
         String addr = "";
         try {
             addr = serverAddress.getText();
@@ -43,10 +42,9 @@ public class ConnectHomeCtrl {
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("No talio instant present on: " + addr);
             alert.showAndWait();
-            exception = true;
             return;
         }
-        if(!ok && !exception) {
+        if(!ok) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("Invalid url: " + addr);
@@ -59,8 +57,7 @@ public class ConnectHomeCtrl {
     }
 
     public void connectDefault() throws IOException {
-        boolean ok = false;
-        boolean exception = false;
+        boolean ok;
         String addr = "localhost:8080";
         try {
             addr = addr.trim();
@@ -71,10 +68,9 @@ public class ConnectHomeCtrl {
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("No talio instant present on: " + addr);
             alert.showAndWait();
-            exception = true;
             return;
         }
-        if(!ok && !exception) {
+        if(!ok) {
             var alert = new Alert(Alert.AlertType.ERROR);
             alert.initModality(Modality.APPLICATION_MODAL);
             alert.setContentText("Invalid url: " + addr);
@@ -91,7 +87,7 @@ public class ConnectHomeCtrl {
         loader.setController(boardOverviewCtrl);
         AnchorPane overview;
         try {
-            overview = (AnchorPane) loader.load();
+            overview = loader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -106,11 +102,11 @@ public class ConnectHomeCtrl {
         boardOverviewCtrl.refresh();
     }
 
-    public void keyPressed(KeyEvent e) throws IOException {
-        switch(e.getCode()) {
-            case ENTER:
-                connect();
-                break;
-        }
-    }
+//    public void keyPressed(KeyEvent e) throws IOException {
+//        switch(e.getCode()) {
+//            case ENTER:
+//                connect();
+//                break;
+//        }
+//    }
 }
