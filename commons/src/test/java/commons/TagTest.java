@@ -4,8 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TagTest {
 
@@ -24,6 +27,14 @@ class TagTest {
         tag.setTitle("Tag");
         assertEquals("Tag", tag.getTitle());
     }
+
+    @Test
+    void constructor(){
+        Tag t = new Tag("name", "#ffffff");
+        assertEquals("name", t.getTitle());
+        assertEquals("#ffffff", t.getColor());
+        assertNotEquals(null, t.cards);
+    }
     @Test
     void setTitle() {
         Tag tag= new Tag("Tag");
@@ -31,6 +42,30 @@ class TagTest {
         assertEquals("Tag2", tag.getTitle());
     }
 
+    @Test
+    void addCard(){
+        Tag t = new Tag();
+        Card c = new Card();
+        t.addCard(c);
+        assertTrue(t.cards.contains(c));
+    }
+
+    @Test
+    void removeCard(){
+        Tag t = new Tag();
+        Card c = new Card();
+        t.addCard(c);
+        assertTrue(t.cards.contains(c));
+        t.removeCard(c);
+        assertFalse(t.cards.contains(c));
+    }
+
+    @Test
+    void setColor(){
+        Tag t = new Tag();
+        t.setColor("#ffffff");
+        assertTrue(t.getColor().equals("#ffffff"));
+    }
     @Test
     void getTitle() {
         Tag tag= new Tag("Tag");

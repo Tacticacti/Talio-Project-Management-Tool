@@ -282,7 +282,7 @@ public class CardCtrl {
                 cardNode.setScaleX(1);
                 Node temp = children.remove(index);
                 singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID, boardList.getId(),
-                        card);
+                        card, false);
                 children.add(index + 1, cardNode);
                 addCardAtIndex(boardList.getId(), index + 1, card);
                 target = temp;
@@ -315,7 +315,7 @@ public class CardCtrl {
                 cardNode.setScaleX(1);
                 Node temp = children.remove(index);
                 singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID, boardList.getId(),
-                        card);
+                        card, false);
                 children.add(index - 1, cardNode);
                 addCardAtIndex(boardList.getId(), index - 1, card);
                 target = temp;
@@ -349,7 +349,7 @@ public class CardCtrl {
                 Card deleteCard = nodeCardMap.remove(cardNode);
                 BoardList boardList = (BoardList) parent.getUserData();
                 singleBoardCtrl.deleteCardFromList(singleBoardCtrl.BoardID,
-                        boardList.getId(), deleteCard);
+                        boardList.getId(), deleteCard, true);
                 target = null;
             }
         });
@@ -594,7 +594,7 @@ public class CardCtrl {
                 VBox par = (VBox) hbox.getParent();
                 par.getChildren().remove(hbox);
                 singleBoardCtrl.nodeCardMap.remove(hbox, current);
-                singleBoardCtrl.server.deleteCardFromList(listId, current);
+                singleBoardCtrl.server.deleteCardFromList(listId, current, true);
                 //singleBoardCtrl.refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
@@ -686,7 +686,7 @@ public class CardCtrl {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);
                         singleBoardCtrl.deleteCardFromList(
-                                BoardID, sourceListId, draggedCard);
+                                BoardID, sourceListId, draggedCard, false);
                         singleBoardCtrl.saveCardToList(
                                 BoardID, listId, draggedCard);
                         success = true;
@@ -696,7 +696,7 @@ public class CardCtrl {
                         int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
                         draggedCardNode = children.remove(draggedIndex);
                         singleBoardCtrl.deleteCardFromList(
-                                BoardID, sourceListId, draggedCard);
+                                BoardID, sourceListId, draggedCard, false);
                         children.add(dropIndex, draggedCardNode);
                         addCardAtIndex(sourceListId, dropIndex, draggedCard);
                     }

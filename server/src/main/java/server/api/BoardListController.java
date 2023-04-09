@@ -81,12 +81,20 @@ public class BoardListController {
 
     @PostMapping(path="/deleteCard/{id}")
     public ResponseEntity<BoardList> deleteCardFromId(@PathVariable ("id") long listId,
-                                                      @RequestBody Card card) {
-        listeners.forEach((k, l)->{
-            l.accept(card);
-        });
+                                                      @RequestBody Pair<Boolean, Card> cardPair) {
+        boolean permanent = cardPair.getFirst();
+        Card card = cardPair.getSecond();
+        if(permanent){
+            listeners.forEach((k, l)->{
+                l.accept(card);
+            });
+        }
         return boardListService.deleteCard(listId, card);
     }
+
+
+
+
 
     @PostMapping(path="/update/{id}")
     public ResponseEntity<BoardList> updateCardInId(@PathVariable("id") long listId,
@@ -100,6 +108,7 @@ public class BoardListController {
         if(list.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
+
 
         var cards = list.get().getCards();
         var result = cards.stream()

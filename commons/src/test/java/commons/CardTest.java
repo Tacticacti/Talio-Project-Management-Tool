@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CardTest {
@@ -26,6 +26,17 @@ class CardTest {
         assertTrue(c1.getTags().isEmpty());
         assertEquals(0, c1.getCompletedSubs());
         assertTrue(c1.getCompletedTasks().isEmpty());
+    }
+
+    @Test
+    void setTagsTest(){
+        Card c1 = new Card();
+        c1.addTag("anim",  "#ffffff");
+        Map<String, String> tags = new HashMap<>();
+        tags.put("mammal", "#000000");
+        assertNotEquals(c1.getTags().keySet(), tags.keySet());
+        c1.setTagColors(tags);
+        assertEquals(c1.getTags(), tags);
     }
 
     @Test
@@ -134,6 +145,7 @@ class CardTest {
         Card c1 = new Card("Slides", "prep slide 3-5");
         c1.addSubTask("research otters");
         c1.addSubTask("research monkeys");
+        c1.completeSubTask("research otters");
         List<String> tasks = new ArrayList<>();
         tasks.add("research otters");
         tasks.add("research monkeys");
@@ -141,6 +153,7 @@ class CardTest {
         assertEquals(2, c1.getSubtasks().size());
         c1.removeSubTask("research otters");
         tasks.remove("research otters");
+        assertEquals(0, c1.getCompletedSubs());
         assertEquals(tasks, c1.getSubtasks());
         assertEquals(1, c1.getSubtasks().size());
     }
