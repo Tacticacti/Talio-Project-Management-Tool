@@ -332,4 +332,21 @@ class CardTest {
         assertEquals(expected, result);
     }
 
+    @Test
+    public void testSetTagColors() {
+        // create a card object
+        Card card = new Card("Test Card");
+
+        // create a map of tag colors
+        Map<String, String> tagColors = new HashMap<>();
+        tagColors.put("Tag1", "Blue");
+        tagColors.put("Tag2", "Red");
+
+        // set the tag colors of the card
+        card.setTagColors(tagColors);
+
+        // check that the tag colors were set correctly
+        assertEquals(tagColors, card.getTags());
+    }
+
 }
