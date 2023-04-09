@@ -478,18 +478,15 @@ public class CardCtrl {
                 if (draggedCardNode != null) {
                     if (sourceParent != parent) {
                         parent.getChildren().add(0, draggedCardNode);
-                        singleBoardCtrl.deleteCardFromList(
-                                BoardID, sourceListId, draggedCard, false);
-                        singleBoardCtrl.saveCardToList(
-                                BoardID, listId, draggedCard);
+                        singleBoardCtrl.deleteCardFromList(sourceListId, draggedCard, false);
+                        singleBoardCtrl.saveCardToList(listId, draggedCard);
                         success = true;
                     } else {
                         ObservableList<Node> children = parent.getChildren();
                         int draggedIndex = children.indexOf((AnchorPane) event.getGestureSource());
                         int dropIndex = children.indexOf((AnchorPane) event.getGestureTarget());
                         draggedCardNode = children.remove(draggedIndex);
-                        singleBoardCtrl.deleteCardFromList(
-                                BoardID, sourceListId, draggedCard, false);
+                        singleBoardCtrl.deleteCardFromList(sourceListId, draggedCard, false);
                         children.add(dropIndex, draggedCardNode);
                         addCardAtIndex(sourceListId, dropIndex, draggedCard);
                     }

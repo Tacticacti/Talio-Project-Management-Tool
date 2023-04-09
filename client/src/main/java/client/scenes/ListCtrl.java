@@ -75,9 +75,8 @@ public class ListCtrl {
                 if (draggedCardNode != null && originalParent != list_vbox) {
                     list_vbox.getChildren().add(0, draggedCardNode);
                     Card draggedCard = singleBoardCtrl.nodeCardMap.get(draggedCardNode);
-                    singleBoardCtrl.deleteCardFromList(
-                            singleBoardCtrl.BoardID, originalListId, draggedCard, false);
-                    singleBoardCtrl.saveCardToList(singleBoardCtrl.BoardID, listId, draggedCard);
+                    singleBoardCtrl.deleteCardFromList(originalListId, draggedCard, false);
+                    singleBoardCtrl.saveCardToList(listId, draggedCard);
                 }
             }
             //event.consume();

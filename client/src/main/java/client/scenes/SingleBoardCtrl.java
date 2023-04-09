@@ -211,7 +211,7 @@ public class SingleBoardCtrl implements Initializable {
         }
     }
 
-    public void deleteCardFromList(Long boardId, Long listIdIndex
+    public void deleteCardFromList(Long listIdIndex
             , Card current, Boolean permanent) {
         try {
             server.deleteCardFromList(listIdIndex, current, permanent);

@@ -108,8 +108,7 @@ public class ShortcutsCtrl {
                 cardNode.setScaleY(1);
                 cardNode.setScaleX(1);
                 Node temp = children.remove(index);
-                cardCtrl.singleBoardCtrl.deleteCardFromList(boardList.getId(),
-                        card);
+                cardCtrl.singleBoardCtrl.deleteCardFromList(boardList.getId(), card, false);
                 children.add(index + 1, cardNode);
                 cardCtrl.addCardAtIndex(boardList.getId(), index + 1, card);
                 cardCtrl.target = temp;
@@ -141,8 +140,8 @@ public class ShortcutsCtrl {
                 cardNode.setScaleY(1);
                 cardNode.setScaleX(1);
                 Node temp = children.remove(index);
-                cardCtrl.singleBoardCtrl.deleteCardFromList(boardList.getId(),
-                        card);
+                cardCtrl.singleBoardCtrl.deleteCardFromList(boardList.getId(), card, false);
+
                 children.add(index - 1, cardNode);
                 cardCtrl.addCardAtIndex(boardList.getId(), index - 1, card);
                 cardCtrl.target = temp;
@@ -175,7 +174,8 @@ public class ShortcutsCtrl {
                 Map<Node, Card> nodeCardMap = cardCtrl.singleBoardCtrl.getNodeCardMap();
                 Card deleteCard = nodeCardMap.remove(cardNode);
                 BoardList boardList = (BoardList) parent.getUserData();
-                cardCtrl.singleBoardCtrl.deleteCardFromList(boardList.getId(), deleteCard);
+                cardCtrl.singleBoardCtrl.deleteCardFromList(boardList.getId(), deleteCard, true);
+
                 cardCtrl.target = null;
             }
         });
