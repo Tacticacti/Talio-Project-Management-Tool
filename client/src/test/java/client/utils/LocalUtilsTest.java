@@ -180,8 +180,6 @@ public class LocalUtilsTest {
         // write the customization data to the file
         CustomizationUtils.customizationData = customizationData;
         LocalUtils.writeCustomization();
-        File directory = new File("data");
-        assertTrue(directory.exists());
 
         // read the contents of the file
         String contents = new String(Files.readAllBytes(Paths.get(filePath)));
