@@ -366,7 +366,8 @@ class CardTest {
         assertEquals(1, card.getSubtasks().size());
         assertFalse(card.getSubtasks().contains("Subtask 1"));
 
-        // Try to remove a subtask that doesn't exist and check that the size and contents of the subtasks list haven't changed
+        // Try to remove a subtask that doesn't exist and check that the size and contents of the
+        // subtasks list haven't changed
         card.removeSubTask("Subtask 3");
         assertEquals(1, card.getSubtasks().size());
         assertFalse(card.getSubtasks().contains("Subtask 3"));
