@@ -185,7 +185,7 @@ public class LocalUtilsTest {
         String contents = new String(Files.readAllBytes(Paths.get(filePath)));
 
         // expected contents of the file
-        String expectedContents = "1:value1\r\n2:value2\r\n";
+        String expectedContents = "1:value1\n2:value2\n";
 
         // compare the actual and expected contents of the file
         assertEquals(expectedContents, contents);
