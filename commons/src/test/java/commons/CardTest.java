@@ -349,4 +349,28 @@ class CardTest {
         assertEquals(tagColors, card.getTags());
     }
 
+    @Test
+    public void testRemoveSubtasks() {
+        // Create a card with two subtasks
+        Card card = new Card("Test card");
+        card.addSubTask("Subtask 1");
+        card.addSubTask("Subtask 2");
+
+        // Check that both subtasks are present
+        assertEquals(2, card.getSubtasks().size());
+        assertTrue(card.getSubtasks().contains("Subtask 1"));
+        assertTrue(card.getSubtasks().contains("Subtask 2"));
+
+        // Remove one subtask and check that it's no longer present
+        card.removeSubTask("Subtask 1");
+        assertEquals(1, card.getSubtasks().size());
+        assertFalse(card.getSubtasks().contains("Subtask 1"));
+
+        // Try to remove a subtask that doesn't exist and check that the size and contents of the subtasks list haven't changed
+        card.removeSubTask("Subtask 3");
+        assertEquals(1, card.getSubtasks().size());
+        assertFalse(card.getSubtasks().contains("Subtask 3"));
+        assertTrue(card.getSubtasks().contains("Subtask 2"));
+    }
+
 }
