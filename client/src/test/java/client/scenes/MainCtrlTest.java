@@ -15,12 +15,25 @@
  */
 package client.scenes;
 
+import client.MyFXML;
+import client.MyModule;
+import com.google.inject.Injector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testfx.framework.junit.ApplicationTest;
 
-public class MainCtrlTest {
+
+import static com.google.inject.Guice.createInjector;
+
+public class MainCtrlTest extends ApplicationTest {
 
     private MainCtrl sut;
+
+
+    private static final Injector INJECTOR = createInjector(new MyModule());
+    private static final MyFXML FXML = new MyFXML(INJECTOR);
+
+
 
     @BeforeEach
     public void setup() {
@@ -29,8 +42,10 @@ public class MainCtrlTest {
 
     @Test
     public void writeSomeTests() {
-        // TODO create replacement objects and write some tests
+// TODO create replacement objects and write some tests
         // sut.initialize(null, null, null);
     }
+
+
 }
 

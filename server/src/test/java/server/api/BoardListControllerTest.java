@@ -126,7 +126,7 @@ public class BoardListControllerTest {
         var ret2 = controller.addCardToId(0L, c1);
         assertNotEquals(BAD_REQUEST, ret2.getStatusCode());
 
-        var ret = controller.deleteCardFromId(99L, Pair.of(false, c1));
+        var ret = controller.deleteCardFromId(99L, Pair.of(true, c1));
         assertEquals(BAD_REQUEST, ret.getStatusCode());
         ret = controller.deleteCardFromId(0L, Pair.of(false, c2));
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
