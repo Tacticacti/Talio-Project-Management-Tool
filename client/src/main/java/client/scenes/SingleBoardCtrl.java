@@ -82,11 +82,11 @@ public class SingleBoardCtrl implements Initializable {
     @Inject
     public SingleBoardCtrl(
             ServerUtils server,
-            MainCtrl mainCtrl,
+            MainCtrl mainCtrl, BoardOverviewCtrl boardOverviewCtrl,
             Boolean isUnlocked,
             LocalUtils localUtils) {
         Injector injector = Guice.createInjector(new MyModule());
-        this.boardOverviewCtrl = injector.getInstance(BoardOverviewCtrl.class);
+        this.boardOverviewCtrl = boardOverviewCtrl;
         this.mainCtrl = mainCtrl;
         this.server = server;
         this.isUnlocked = isUnlocked;

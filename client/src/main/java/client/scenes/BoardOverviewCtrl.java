@@ -166,8 +166,8 @@ public class BoardOverviewCtrl implements Initializable {
         // Check if the board is already joined
         boolean isUnlocked = drawnBoards.contains(new_board.getId());
 
-        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl, isUnlocked,
-                localUtils);
+        SingleBoardCtrl singleBoardCtrl = new SingleBoardCtrl(server, mainCtrl, this,
+                isUnlocked, localUtils);
         singleBoardCtrl.setBoard(new_board);
         loader.setController(singleBoardCtrl);
 
