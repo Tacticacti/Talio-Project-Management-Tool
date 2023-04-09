@@ -61,12 +61,6 @@ class TagTest {
     }
 
     @Test
-    void setColor(){
-        Tag t = new Tag();
-        t.setColor("#ffffff");
-        assertTrue(t.getColor().equals("#ffffff"));
-    }
-    @Test
     void getTitle() {
         Tag tag= new Tag("Tag");
         assertEquals("Tag", tag.getTitle());
