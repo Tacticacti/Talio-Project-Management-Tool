@@ -186,6 +186,8 @@ class CardTest {
         assertEquals(1, c1.getCompletedSubs());
         c1.uncompleteSubTask("research otters");
         assertEquals(0, c1.getCompletedSubs());
+        c1.uncompleteSubTask("research otters");
+        assertEquals(0, c1.getCompletedSubs());
         c1.completeSubTask("research monkeys");
         c1.completeSubTask("research otters");
         List<String> completed = new ArrayList<>();
@@ -195,6 +197,25 @@ class CardTest {
         c1.uncompleteSubTask("research monkeys");
         completed.remove("research monkeys");
         assertEquals(completed, c1.getCompletedTasks());
+
+    }
+
+    @Test
+    void limitComplete(){
+        Card c1 = new Card("Slides", "prep slide 3-5");
+        c1.addSubTask("research otters");
+        c1.completeSubTask("research otters");
+        c1.completeSubTask("research monkeys");
+        assertEquals(1, c1.getCompletedSubs());
+    }
+    @Test
+    void limitUnComplete(){
+        Card c1 = new Card("Slides", "prep slide 3-5");
+        c1.addSubTask("research otters");
+        c1.completeSubTask("research otters");
+        c1.setCompletedSubs(0);
+        c1.uncompleteSubTask("research otters");
+        assertEquals(0, c1.getCompletedSubs());
     }
 
     @Test
@@ -302,6 +323,9 @@ class CardTest {
         card.completeSubTask("Task 1");
         card.completeSubTask("Task 3");
         assertEquals(2, card.getCompletedSubs());
+        card.completeSubTask("Task 2");
+        card.completeSubTask("Task 2");
+        assertEquals(3, card.getCompletedSubs());
     }
 
     @Test

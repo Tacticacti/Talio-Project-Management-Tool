@@ -98,6 +98,8 @@ public class CardControllerTest {
         var ret = controller.add(c1);
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
 
+        c1.board.addBoardTag("anim", "#ffffff");
+
         ret = controller.addTag(null, 99L);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
@@ -105,8 +107,12 @@ public class CardControllerTest {
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
         ret = controller.addTag(Pair.of("anim", "#ffffff"), 0L);
+        assertFalse(c1.board.getTagLists().containsKey("anime"));
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        assertTrue(ret.getBody().getTags().keySet().contains("anim"));
+
+        ret = controller.addTag(Pair.of("anime", "#ffffff"), 0L);
+        assertTrue(c1.board.getTagLists().containsKey("anime"));
+        assertTrue(ret.getBody().getTags().keySet().contains("anime"));
     }
 
     @Test

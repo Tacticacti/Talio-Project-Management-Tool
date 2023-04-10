@@ -157,7 +157,6 @@ public class Card implements Serializable {
     }
 
     public void uncompleteSubTask(String text) {
-
         if (completedTasks.contains(text)) {
             completedTasks.remove(text);
             if (completedSubs != 0)

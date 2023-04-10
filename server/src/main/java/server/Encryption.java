@@ -9,9 +9,11 @@ import java.util.HexFormat;
 
 @Service
 public class Encryption {
+
+    private String algorithm = "SHA-256";
     public String getHash(String x) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            MessageDigest md = MessageDigest.getInstance(algorithm);
             var bytes = md.digest(x.getBytes(StandardCharsets.UTF_8));
             HexFormat hf = HexFormat.of();
             return hf.formatHex(bytes);
@@ -21,4 +23,13 @@ public class Encryption {
             return null;
         }
     }
+
+    public void setAlgorithm(String al){
+        algorithm = al;
+    }
+
+    public String getAlgorithm(){
+        return algorithm;
+    }
+
 }

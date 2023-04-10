@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.util.Pair;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.Admin;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.DatabaseUtils;
@@ -35,6 +37,9 @@ public class BoardListControllerTest {
     private BoardList bl1;
     private Card c1, c2;
 
+    DeferredResult<ResponseEntity<Card>> result = new DeferredResult<>();
+
+
     @BeforeEach
     public void setup() {
         databaseUtils = new DatabaseUtils();
@@ -61,6 +66,7 @@ public class BoardListControllerTest {
         c2.id = 1L;
 
         boardController.add(b1);
+        result = controller.cardChanges();
     }
 
     @Test
@@ -158,5 +164,24 @@ public class BoardListControllerTest {
         ret = controller.insertAt(0L, Pair.of(0L, c2));
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals(List.of(c2, c1), ret.getBody().getCards());
+    }
+
+
+    @Test
+    public void cardChanges(){
+        controller.addList(bl1);
+        var ret2 = controller.addCardToId(0L, c1);
+        assertNotEquals(BAD_REQUEST, ret2.getStatusCode());
+
+        var ret = controller.deleteCardFromId(99L, Pair.of(true, c1));
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.deleteCardFromId(0L, Pair.of(false, c2));
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        ret = controller.deleteCardFromId(0L, Pair.of(false, c1));
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertFalse(ret.getBody().getCards().contains(c1));
+
+        assertEquals(ResponseEntity.ok(c1), result.getResult());
+
     }
 }

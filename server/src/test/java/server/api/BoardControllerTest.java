@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,10 +142,9 @@ public class BoardControllerTest {
         var ret = controller.addTagToId(99L, tag);
         assertEquals(BAD_REQUEST, ret.getStatusCode());
 
-        //ret = controller.addTagToId(0L, t1);
-        //assertNotEquals(BAD_REQUEST, ret.getStatusCode());
-        // TODO
-        // assertTrue(ret.getBody().getTags().contains(t1));
+        ret = controller.addTagToId(0L, tag);
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+        assertTrue(ret.getBody().getTagLists().containsKey(tag.getFirst()));
     }
 
     @Test
@@ -219,4 +219,49 @@ public class BoardControllerTest {
         assertNotEquals(BAD_REQUEST, ret.getStatusCode());
         assertEquals(null, ret.getBody().getPassword());
     }
+
+    @Test
+    public void deleteTag(){
+        controller.add(b1);
+        Pair<String, String> tag = Pair.of("animals", "#ffffff");
+        bl1.addCard(c1);
+        b1.addList(bl1);
+        c1.addTag("animals", "#ffffff");
+        var ret = controller.addTagToId(0L, tag);
+        var retdel = controller.deleteTag(99L, tag.getFirst());
+        assertEquals(BAD_REQUEST, retdel.getStatusCode());
+        retdel = controller.deleteTag(0L, tag.getFirst());
+        assertEquals(OK, retdel.getStatusCode());
+        for (BoardList boardList : b1.getLists()) {
+            for (Card card : boardList.getCards()) {
+                assertFalse(card.getTags().containsKey(tag.getFirst()));
+            }
+        }
+        assertEquals(b1, retdel.getBody());
+        assertNotEquals(BAD_REQUEST, ret.getStatusCode());
+    }
+
+    @Test
+    public void updateTags(){
+        controller.add(b1);
+        Pair<String, String> tag = Pair.of("animals", "#ffffff");
+        bl1.addCard(c1);
+        b1.addList(bl1);
+        c1.addTag("animals", "#ffffff");
+        c2 = new Card();
+        bl1.addCard(c2);
+        b1.addBoardTag(tag.getFirst(), tag.getSecond());
+        Pair<String, String> tagNew = Pair.of("animal", "#fffffc");
+
+        var ret = controller.updateTags(99L, tag.getFirst(), tagNew);
+        assertEquals(BAD_REQUEST, ret.getStatusCode());
+
+        ret = controller.updateTags(0L, tag.getFirst(), tagNew);
+        assertEquals(OK, ret.getStatusCode());
+        assertTrue(c1.getTags().containsKey(tagNew.getFirst()));
+        assertFalse(c2.getTags().containsKey(tagNew.getFirst()));
+        assertEquals(b1, ret.getBody());
+    }
+
+
 }
