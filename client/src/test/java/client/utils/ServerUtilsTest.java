@@ -28,9 +28,11 @@ import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -72,6 +74,7 @@ public class ServerUtilsTest {
         serverUtils.stompSession = stompSession;
 
     }
+
 
     @Test
     public void testSetServer() {
@@ -213,6 +216,12 @@ public class ServerUtilsTest {
     }
 
 
+    @Test
+    public void changeNullListName(){
+        assertThrows(Exception.class, () ->{
+            serverUtils.changeListName(0L, "");
+        });
+    }
 
     @Test
     public void changeListName() throws Exception {
@@ -247,43 +256,42 @@ public class ServerUtilsTest {
         verify(invocationBuilder).post(Entity.entity("List", APPLICATION_JSON), BoardList.class);
 
         // Verify that the returned BoardList has the expected name
-        assertEquals(expectedList.getName(), actualList.getName());
+        Assertions.assertEquals(expectedList.getName(), actualList.getName());
 
         server.shutdown();
     }
 
-//    @Test
-//    public void testDeleteBoardById() throws IOException {
-//        // Start the mock server
-//        server.start();
-//        serverUtils.setTestServer(server.url("/").toString());
-//
-//        // Create a mock Board object with some data
-//        Board mockBoard = new Board("Board", "password");
-//        mockBoard.setId(1L);
-//
-//        // Mock the ClientBuilder and its behavior
-//        mockStatic(ClientBuilder.class);
-//        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
-//        when(client.target(Mockito.anyString())).thenReturn(webTarget);
-//
-//        // Mock the WebTarget and its behavior
-//        when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
-//        when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
-//        when(invocationBuilder.accept(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
-//
-//        // Call the method being tested
-//        serverUtils.deleteBoardById(mockBoard.getId());
-//
-//        // Verify that the expected request was sent
-//        verify(webTarget).path("api/boards/delete/" + mockBoard.getId());
-//        verify(webTarget).request(MediaType.APPLICATION_JSON);
-//        verify(invocationBuilder).accept(MediaType.APPLICATION_JSON);
-//        verify(invocationBuilder).post(any(Entity.class), eq(boolean.class));
-//
-//        // Shutdown the mock server
-//        server.shutdown();
-//    }
+    @Test
+    public void testDeleteBoardById() throws IOException {
+        // Start the mock server
+        server.start();
+        serverUtils.setTestServer(server.url("/").toString());
+
+        // Create a mock Board object with some data
+        Board mockBoard = new Board("Board", "password");
+        mockBoard.setId(1L);
+
+        // Mock the ClientBuilder and its behavior
+        mockStatic(ClientBuilder.class);
+        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+        when(client.target(Mockito.anyString())).thenReturn(webTarget);
+
+        // Mock the WebTarget and its behavior
+        when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+        when(webTarget.request()).thenReturn(invocationBuilder);
+        when(invocationBuilder.accept(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+
+        // Call the method being tested
+        serverUtils.deleteBoardById(mockBoard.getId());
+
+        // Verify that the expected request was sent
+        verify(webTarget).path("api/boards/delete/" + mockBoard.getId());
+        verify(webTarget).request();
+        verify(invocationBuilder).post(any(Entity.class), eq(boolean.class));
+
+        // Shutdown the mock server
+        server.shutdown();
+    }
 
 
     @Test
@@ -320,7 +328,7 @@ public class ServerUtilsTest {
         verify(invocationBuilder).post(any(Entity.class), eq(Board.class));
 
         // Verify that the returned Board object matches the expected one
-        assertEquals(mockBoard, result);
+        Assertions.assertEquals(mockBoard, result);
 
         // Shutdown the mock server
         server.shutdown();
@@ -356,7 +364,7 @@ public class ServerUtilsTest {
         verify(invocationBuilder).post(any(Entity.class), eq(Board.class));
 
         // Verify that the returned Board object matches the expected one
-        assertEquals(mockBoard, result);
+        Assertions.assertEquals(mockBoard, result);
 
         // Shutdown the mock server
         server.shutdown();
@@ -571,6 +579,47 @@ public class ServerUtilsTest {
     }
 
     @Test
+    public void addBoardFail() throws IOException {
+        // Start the mock server
+        server.start();
+        serverUtils.setTestServer(server.url("/").toString());
+
+        // Create a mock Card object with some data
+        Board mockBoard = new Board("Board");
+        mockBoard.setId(1L);
+
+        // Mock the ClientBuilder and its behavior
+        mockStatic(ClientBuilder.class);
+        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+        when(client.target(Mockito.anyString())).thenReturn(webTarget);
+
+        when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+        when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        when(invocationBuilder.accept(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+
+        // Mock the Response object and return it from the post() method call
+        Response mockResponse = mock(Response.class);
+        when(mockResponse.getStatus()).thenReturn(Response.Status.BAD_REQUEST.getStatusCode());
+        when(mockResponse.readEntity(Board.class)).thenReturn(mockBoard);
+        when(invocationBuilder.post(Entity.entity(mockBoard, APPLICATION_JSON)))
+                .thenReturn(mockResponse);
+
+
+        assertThrows(RuntimeException.class, ()->{
+            Board result = serverUtils.addBoard(mockBoard);
+        });
+
+        // Verify that the expected request was sent
+        verify(webTarget).path("api/boards/add");
+        verify(webTarget).request(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).accept(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).post(Entity.entity(mockBoard, APPLICATION_JSON));
+
+
+        // Shutdown the mock server
+        server.shutdown();
+    }
+    @Test
     public void deleteCardFromList() throws IOException {
         // Start the mock server
         server.start();
@@ -719,6 +768,18 @@ public class ServerUtilsTest {
 
         // Shutdown the mock server
         server.shutdown();
+    }
+
+    @Test
+    void testNullAdminPassword(){
+        boolean check = serverUtils.checkAdminPassword(null);
+        assertFalse(check);
+    }
+
+    @Test
+    void testEmptyAdminPassword(){
+        boolean check = serverUtils.checkAdminPassword("");
+        assertFalse(check);
     }
 
 
