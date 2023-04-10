@@ -30,6 +30,14 @@ public class SomeControllerTest {
         var ret = sc.checkAdminPassword(null);
         assertEquals(false, ret.getBody());
     }
+
+    @Test
+    public void checkEmpty(){
+        Admin admin = new Admin();
+        SomeController sc = new SomeController(admin);
+        var ret = sc.checkAdminPassword("");
+        assertEquals(false, ret.getBody());
+    }
     
     @Test
     public void checkTruePassword(){
