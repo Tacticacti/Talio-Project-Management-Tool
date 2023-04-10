@@ -109,6 +109,10 @@ public class ServerUtils {
         stompSession = connectToSockets("ws://" + addr + "/websocket");
     }
 
+    public void setTestServer(String addr){
+        server = addr;
+    }
+
     StompSession connectToSockets(String url) {
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
