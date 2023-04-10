@@ -16,8 +16,7 @@
          <children>
             <Group>
                <children>
-                  <Button layoutX="247.0" layoutY="110.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" scaleX="0.9" scaleY="0.9" text="Reset" textOverrun="CLIP" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-43.0" layoutY="90.0" prefHeight="57.0" prefWidth="347.0" text="Customization" textAlignment="CENTER">
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-43.0" layoutY="130.0" prefHeight="57.0" prefWidth="347.0" text="Customization" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold Italic" size="28.0" />
                      </font>
@@ -25,7 +24,12 @@
                         <Insets top="3.0" />
                      </padding>
                   </Label>
+                  <Button fx:id="resetBtn" defaultButton="true" layoutX="257.0" layoutY="116.0" mnemonicParsing="false" onAction="#resetCustomization" prefHeight="25.0" prefWidth="58.0" scaleX="0.9" scaleY="0.9" text="Reset" textOverrun="CLIP" />
+                  <Button fx:id="restore" defaultButton="true" layoutX="185.0" layoutY="116.0" mnemonicParsing="false" onAction="#restoreCustomization" prefHeight="25.0" prefWidth="61.0" scaleX="0.9" scaleY="0.9" text="Restore" textOverrun="CLIP" />
                </children>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
             </Group>
             <Group>
                <children>

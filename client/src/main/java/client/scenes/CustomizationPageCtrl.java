@@ -7,17 +7,18 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 
 
-
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -67,27 +68,7 @@ public class CustomizationPageCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         // background, foreground, cardColour, text, accesibility, listcolor
-
-        b_bg.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 0)));
-
-        b_fg.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 1)));
-
-        card_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 2)));
-
-        text_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 3)));
-
-        accessibility_mode.setSelected(Boolean.parseBoolean(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 4)));
-
-        list_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
-
-        bb_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 6)));
+        updateCustomization();
 
     }
 
@@ -137,11 +118,9 @@ public class CustomizationPageCtrl implements Initializable {
 
         for (Node card : SingleBoardCtrl.nodeCardMap.keySet()) {
             card.setStyle(card.getStyle() + "-fx-background-color: "+ cssColor +";");
-
-            // this removes the radii of the card until refresh!
-            card.setStyle(card.getStyle() + "-fx-border-radius: 10;");
-
         }
+
+
 
 
 
@@ -160,11 +139,6 @@ public class CustomizationPageCtrl implements Initializable {
                 String.valueOf(text_colour.getValue()), 3);
 
         CustomizationUtils.updateTextColor(anchor, SingleBoardCtrl.getBoardID());
-
-        //anchor.setStyle("-fx-text-fill: red;");
-        //anchor.getChildren().forEach(child -> child.setStyle("-fx-text-fill: red;"));
-
-        // change default text color when added
 
         // save to file
         writeCustomization();
@@ -232,6 +206,64 @@ public class CustomizationPageCtrl implements Initializable {
 
         writeCustomization();
     }
+
+
+    public void resetCustomization() throws IOException {
+        System.out.println("resetting customization!");
+
+        // save all customization and alert
+        SingleBoardCtrl.restore_data = CustomizationUtils.getBoardCustomization(SingleBoardCtrl.getBoardID());
+
+        CustomizationUtils.addDefaultCustomization(SingleBoardCtrl.getBoardID());
+        writeCustomization();
+        updateCustomization();
+
+        // only show if it has to change aka. it has been saved already // only write customization
+        if(!SingleBoardCtrl.restore_data.equals("white,#403e3e,white,black,false,white,black")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Reset Customization");
+            alert.setHeaderText(null);
+            alert.setContentText("to undo reset, press restore.\nto view changes, reopen board");
+            alert.showAndWait();
+        }
+
+
+
+    }
+
+    public void restoreCustomization() {
+        if (SingleBoardCtrl.restore_data != null) {
+            if (!SingleBoardCtrl.restore_data.isEmpty()) {
+                String old_customization = SingleBoardCtrl.restore_data;
+                CustomizationUtils.setBoardCustomization(SingleBoardCtrl.getBoardID(), old_customization);
+                updateCustomization();
+            }
+        }
+    }
+
+    public void updateCustomization() {
+        b_bg.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 0)));
+
+        b_fg.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 1)));
+
+        card_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 2)));
+
+        text_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 3)));
+
+        accessibility_mode.setSelected(Boolean.parseBoolean(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 4)));
+
+        list_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
+
+        bb_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 6)));
+    }
+
 
 
 

@@ -83,6 +83,8 @@ public class SingleBoardCtrl implements Initializable {
     Button copyInvite;
     boolean isUnlocked;
 
+    static String restore_data = "";
+
     @Inject
     public SingleBoardCtrl(
             ServerUtils server,
