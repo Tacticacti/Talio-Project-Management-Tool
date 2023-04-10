@@ -11,7 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -212,7 +212,8 @@ public class CustomizationPageCtrl implements Initializable {
         System.out.println("resetting customization!");
 
         // save all customization and alert
-        SingleBoardCtrl.restore_data = CustomizationUtils.getBoardCustomization(SingleBoardCtrl.getBoardID());
+        SingleBoardCtrl.restore_data = CustomizationUtils
+                .getBoardCustomization(SingleBoardCtrl.getBoardID());
 
         CustomizationUtils.addDefaultCustomization(SingleBoardCtrl.getBoardID());
         writeCustomization();
@@ -235,7 +236,8 @@ public class CustomizationPageCtrl implements Initializable {
         if (SingleBoardCtrl.restore_data != null) {
             if (!SingleBoardCtrl.restore_data.isEmpty()) {
                 String old_customization = SingleBoardCtrl.restore_data;
-                CustomizationUtils.setBoardCustomization(SingleBoardCtrl.getBoardID(), old_customization);
+                CustomizationUtils.setBoardCustomization(SingleBoardCtrl
+                        .getBoardID(), old_customization);
                 updateCustomization();
             }
         }
