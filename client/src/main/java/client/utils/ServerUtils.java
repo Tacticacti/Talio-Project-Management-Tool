@@ -15,7 +15,21 @@
  */
 package client.utils;
 
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import commons.Board;
+import commons.BoardList;
+import commons.Card;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
+import org.glassfish.jersey.client.ClientConfig;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -27,24 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import jakarta.ws.rs.core.Response;
-
-import commons.BoardList;
-import org.glassfish.jersey.client.ClientConfig;
-
-import commons.Board;
-import commons.Card;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.GenericType;
-
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompFrameHandler;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @SuppressWarnings("checkstyle:Indentation")
 class CustomPair<S, T> {
@@ -202,7 +199,7 @@ public class ServerUtils {
                 .post(Entity.entity(tag, APPLICATION_JSON), Board.class);
     }
 
-//    public Card addTagToCard(Long cardId, String tag, String color) {
+//    public Card addTagToCard231(Long cardId, String tag, String color) {
 //        return ClientBuilder.newClient(new ClientConfig()) //
 //                .target(server).path("api/cards/addTag/" + cardId.toString()) //
 //                .request(APPLICATION_JSON) //
@@ -220,9 +217,9 @@ public class ServerUtils {
                 .post(Entity.entity(new CustomPair(tag, color), APPLICATION_JSON), Board.class);
     }
 
-//    public Card deleteTagToCard(Long cardId, String tag) {
+//    public Card deleteTagToCardOld(Long cardId, String tag) {
 //        return ClientBuilder.newClient(new ClientConfig()) //
-//                .target(server).path("api/cards/deleteTag/" + cardId.toString()) //
+//                .target(server).path("api/cards/deleteTagOld/" + cardId.toString()) //
 //                .request(APPLICATION_JSON) //
 //                .accept(APPLICATION_JSON) //
 //                .post(Entity.entity(tag, APPLICATION_JSON), Card.class);

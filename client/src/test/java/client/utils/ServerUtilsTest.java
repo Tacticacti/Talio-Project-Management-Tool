@@ -252,6 +252,150 @@ public class ServerUtilsTest {
         server.shutdown();
     }
 
+//    @Test
+//    public void testDeleteBoardById() throws IOException {
+//        // Start the mock server
+//        server.start();
+//        serverUtils.setTestServer(server.url("/").toString());
+//
+//        // Create a mock Board object with some data
+//        Board mockBoard = new Board("Board", "password");
+//        mockBoard.setId(1L);
+//
+//        // Mock the ClientBuilder and its behavior
+//        mockStatic(ClientBuilder.class);
+//        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+//        when(client.target(Mockito.anyString())).thenReturn(webTarget);
+//
+//        // Mock the WebTarget and its behavior
+//        when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+//        when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+//        when(invocationBuilder.accept(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+//
+//        // Call the method being tested
+//        serverUtils.deleteBoardById(mockBoard.getId());
+//
+//        // Verify that the expected request was sent
+//        verify(webTarget).path("api/boards/delete/" + mockBoard.getId());
+//        verify(webTarget).request(MediaType.APPLICATION_JSON);
+//        verify(invocationBuilder).accept(MediaType.APPLICATION_JSON);
+//        verify(invocationBuilder).post(any(Entity.class), eq(boolean.class));
+//
+//        // Shutdown the mock server
+//        server.shutdown();
+//    }
+
+
+    @Test
+    public void testAddTagToBoard() throws IOException {
+        // Start the mock server
+        server.start();
+        serverUtils.setTestServer(server.url("/").toString());
+
+        // Create a mock Board object with some data
+        Board mockBoard = new Board("Board", "password");
+        mockBoard.setId(1L);
+        BoardList mockBoardList = new BoardList("List");
+        mockBoardList.setId(2L);
+        mockBoard.addList(mockBoardList);
+
+        // Mock the ClientBuilder and its behavior
+        mockStatic(ClientBuilder.class);
+        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+        when(client.target(Mockito.anyString())).thenReturn(webTarget);
+
+        // Mock the WebTarget and its behavior
+        when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+        when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        when(invocationBuilder.accept(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        when(invocationBuilder.post(any(Entity.class), eq(Board.class))).thenReturn(mockBoard);
+
+        // Call the method being tested
+        Board result = serverUtils.addTagToBoard(mockBoardList.getId(), "tag1", "red");
+
+        // Verify that the expected request was sent
+        verify(webTarget).path("api/boards/addTag/" + mockBoardList.getId());
+        verify(webTarget).request(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).accept(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).post(any(Entity.class), eq(Board.class));
+
+        // Verify that the returned Board object matches the expected one
+        assertEquals(mockBoard, result);
+
+        // Shutdown the mock server
+        server.shutdown();
+    }
+
+    @Test
+    public void testDeleteTagToBoard() throws IOException {
+        server.start();
+        serverUtils.setTestServer(server.url("/").toString());
+
+        // Create a mock Board object with some data
+        Board mockBoard = new Board("Board", "password");
+        mockBoard.setId(1L);
+
+        // Mock the ClientBuilder and its behavior
+        mockStatic(ClientBuilder.class);
+        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+        when(client.target(Mockito.anyString())).thenReturn(webTarget);
+
+        // Mock the WebTarget and its behavior
+        when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+        when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        when(invocationBuilder.accept(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        when(invocationBuilder.post(any(Entity.class), eq(Board.class))).thenReturn(mockBoard);
+
+        // Call the method being tested
+        Board result = serverUtils.deleteTagToBoard(mockBoard.getId(), "tag");
+
+        // Verify that the expected request was sent
+        verify(webTarget).path("api/boards/tag/delete/" + mockBoard.getId().toString());
+        verify(webTarget).request(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).accept(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).post(any(Entity.class), eq(Board.class));
+
+        // Verify that the returned Board object matches the expected one
+        assertEquals(mockBoard, result);
+
+        // Shutdown the mock server
+        server.shutdown();
+    }
+
+    @Test
+    public void testUpdateCardsTag() throws IOException {
+        server.start();
+        serverUtils.setTestServer(server.url("/").toString());
+
+        // Create a mock Board object with some data
+        Board mockBoard = new Board("Board", "password");
+        mockBoard.setId(1L);
+
+        // Mock the ClientBuilder and its behavior
+        mockStatic(ClientBuilder.class);
+        when(ClientBuilder.newClient(any(ClientConfig.class))).thenReturn(client);
+        when(client.target(Mockito.anyString())).thenReturn(webTarget);
+
+        // Mock the WebTarget and its behavior
+        when(webTarget.path(Mockito.anyString())).thenReturn(webTarget);
+        when(webTarget.request(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        when(invocationBuilder.accept(MediaType.APPLICATION_JSON)).thenReturn(invocationBuilder);
+        when(invocationBuilder.post(any(Entity.class), eq(Board.class))).thenReturn(mockBoard);
+
+        // Call the method being tested
+        serverUtils.updateCardsTag(mockBoard.getId(), "oldTag", "newTag", "color");
+
+        // Verify that the expected request was sent
+        verify(webTarget).path("api/boards/updateTags/" + mockBoard.getId().toString() + "/oldTag");
+        verify(webTarget).request(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).accept(MediaType.APPLICATION_JSON);
+        verify(invocationBuilder).post(any(Entity.class), eq(Board.class));
+
+        // Shutdown the mock server
+        server.shutdown();
+    }
+
+
     @Test
     public void removeBoardList() throws Exception {
         server.start();
