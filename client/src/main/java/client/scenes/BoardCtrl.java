@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.utils.LocalUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -9,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -83,6 +85,18 @@ public class BoardCtrl {
         popUpStage.setResizable(false);
         popUpStage.setScene(scene);
         popUpStage.initModality(Modality.APPLICATION_MODAL);
+
+        popUpStage.setOnCloseRequest(new EventHandler<>() {
+            @Override
+            public void handle(WindowEvent event) {
+                System.out.println("Closed customization window!");
+                writeCustomization();
+            }
+        });
+
         popUpStage.showAndWait();
+
+
+
     }
 }

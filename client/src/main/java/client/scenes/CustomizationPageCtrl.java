@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static client.scenes.MainCtrl.primaryStage;
-import static client.utils.LocalUtils.writeCustomization;
 
 public class CustomizationPageCtrl implements Initializable {
 
@@ -85,7 +84,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
         // save to file
-        writeCustomization();
+        //writeCustomization();
     }
 
     public void setForegroundColour() {
@@ -102,7 +101,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
         // save to file
-        writeCustomization();
+        //writeCustomization();
     }
 
     public void setDefaultCardColour() {
@@ -126,7 +125,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
         // save tof file
-        writeCustomization();
+        //writeCustomization();
     }
 
     public void setTextColour() {
@@ -141,7 +140,7 @@ public class CustomizationPageCtrl implements Initializable {
         CustomizationUtils.updateTextColor(anchor, SingleBoardCtrl.getBoardID());
 
         // save to file
-        writeCustomization();
+        //writeCustomization();
     }
 
 
@@ -177,7 +176,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
 
-        writeCustomization();
+        //writeCustomization();
 
         // save to file
     }
@@ -195,7 +194,7 @@ public class CustomizationPageCtrl implements Initializable {
 
         // save to file
 
-        writeCustomization();
+        //writeCustomization();
 
     }
 
@@ -204,7 +203,7 @@ public class CustomizationPageCtrl implements Initializable {
         String cssColor = bb_colour.getValue().toString().replace("0x", "#");
         CustomizationUtils.setCustomizationField(SingleBoardCtrl.getBoardID(), cssColor, 6);
 
-        writeCustomization();
+        //writeCustomization();
     }
 
 
@@ -216,7 +215,7 @@ public class CustomizationPageCtrl implements Initializable {
                 .getBoardCustomization(SingleBoardCtrl.getBoardID());
 
         CustomizationUtils.addDefaultCustomization(SingleBoardCtrl.getBoardID());
-        writeCustomization();
+        //writeCustomization();
         updateCustomization();
 
         // only show if it has to change aka. it has been saved already // only write customization
