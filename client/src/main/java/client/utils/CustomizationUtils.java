@@ -27,16 +27,16 @@ public class CustomizationUtils {
 
 
     public static void updateTextColor(Node node, Long boardID) {
-
         String color = getCustomizationField(boardID, 3);
+        System.out.println("update text colour!");
+        System.out.println(boardID + color + node);
 
-        //System.out.println(boardID + color + node);
-
+        System.out.println(node.getStyleClass());
 
         if (node.getStyle().isEmpty()) {
-            node.setStyle("-fx-text-fill:  "+ color + ";");
+            node.setStyle("-fx-text-fill:  " + color + ";");
         } else if (!node.getStyle().contains("-fx-text-fill: " + color + ";")) {
-            node.setStyle(node.getStyle() + "-fx-text-fill: "+ color + ";");
+            node.setStyle(node.getStyle() + "-fx-text-fill: " + color + ";");
         }
 
         if (node instanceof Parent) {
@@ -46,6 +46,7 @@ public class CustomizationUtils {
                 }
             });
         }
+
 
     }
 
@@ -154,6 +155,15 @@ public class CustomizationUtils {
 
         return (boardData.split(",")[index]).replace("0x", "#");
     }
+
+    public static String getBoardCustomization(Long board) {
+        return customizationData.get(board);
+    }
+
+    public static void setBoardCustomization(Long board, String data) {
+        customizationData.put(board, data);
+    }
+
 
     // takes in main anchor-pane of single board
     public static void updateAccessibilityMode(Node node) {

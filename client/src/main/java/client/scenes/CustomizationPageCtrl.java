@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
@@ -17,12 +18,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 
 
-
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import static client.scenes.MainCtrl.primaryStage;
-import static client.utils.LocalUtils.writeCustomization;
 
 public class CustomizationPageCtrl implements Initializable {
 
@@ -67,27 +67,7 @@ public class CustomizationPageCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         // background, foreground, cardColour, text, accesibility, listcolor
-
-        b_bg.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 0)));
-
-        b_fg.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 1)));
-
-        card_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 2)));
-
-        text_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 3)));
-
-        accessibility_mode.setSelected(Boolean.parseBoolean(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 4)));
-
-        list_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
-
-        bb_colour.setValue(Color.valueOf(CustomizationUtils
-                .getCustomizationField(SingleBoardCtrl.getBoardID(), 6)));
+        updateCustomization();
 
     }
 
@@ -104,7 +84,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
         // save to file
-        writeCustomization();
+        //writeCustomization();
     }
 
     public void setForegroundColour() {
@@ -121,7 +101,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
         // save to file
-        writeCustomization();
+        //writeCustomization();
     }
 
     public void setDefaultCardColour() {
@@ -137,17 +117,15 @@ public class CustomizationPageCtrl implements Initializable {
 
         for (Node card : SingleBoardCtrl.nodeCardMap.keySet()) {
             card.setStyle(card.getStyle() + "-fx-background-color: "+ cssColor +";");
-
-            // this removes the radii of the card until refresh!
-            card.setStyle(card.getStyle() + "-fx-border-radius: 10;");
-
         }
 
 
 
 
+
+
         // save tof file
-        writeCustomization();
+        //writeCustomization();
     }
 
     public void setTextColour() {
@@ -161,13 +139,8 @@ public class CustomizationPageCtrl implements Initializable {
 
         CustomizationUtils.updateTextColor(anchor, SingleBoardCtrl.getBoardID());
 
-        //anchor.setStyle("-fx-text-fill: red;");
-        //anchor.getChildren().forEach(child -> child.setStyle("-fx-text-fill: red;"));
-
-        // change default text color when added
-
         // save to file
-        writeCustomization();
+        //writeCustomization();
     }
 
 
@@ -203,7 +176,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
 
-        writeCustomization();
+        //writeCustomization();
 
         // save to file
     }
@@ -221,7 +194,7 @@ public class CustomizationPageCtrl implements Initializable {
 
         // save to file
 
-        writeCustomization();
+        //writeCustomization();
 
     }
 
@@ -230,8 +203,68 @@ public class CustomizationPageCtrl implements Initializable {
         String cssColor = bb_colour.getValue().toString().replace("0x", "#");
         CustomizationUtils.setCustomizationField(SingleBoardCtrl.getBoardID(), cssColor, 6);
 
-        writeCustomization();
+        //writeCustomization();
     }
+
+
+    public void resetCustomization() throws IOException {
+        System.out.println("resetting customization!");
+
+        // save all customization and alert
+        SingleBoardCtrl.restore_data = CustomizationUtils
+                .getBoardCustomization(SingleBoardCtrl.getBoardID());
+
+        CustomizationUtils.addDefaultCustomization(SingleBoardCtrl.getBoardID());
+        //writeCustomization();
+        updateCustomization();
+
+        // only show if it has to change aka. it has been saved already // only write customization
+        if(!SingleBoardCtrl.restore_data.equals("white,#403e3e,white,black,false,white,black")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Reset Customization");
+            alert.setHeaderText(null);
+            alert.setContentText("to undo reset, press restore.\nto view changes, reopen board");
+            alert.showAndWait();
+        }
+
+
+
+    }
+
+    public void restoreCustomization() {
+        if (SingleBoardCtrl.restore_data != null) {
+            if (!SingleBoardCtrl.restore_data.isEmpty()) {
+                String old_customization = SingleBoardCtrl.restore_data;
+                CustomizationUtils.setBoardCustomization(SingleBoardCtrl
+                        .getBoardID(), old_customization);
+                updateCustomization();
+            }
+        }
+    }
+
+    public void updateCustomization() {
+        b_bg.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 0)));
+
+        b_fg.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 1)));
+
+        card_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 2)));
+
+        text_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 3)));
+
+        accessibility_mode.setSelected(Boolean.parseBoolean(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 4)));
+
+        list_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 5)));
+
+        bb_colour.setValue(Color.valueOf(CustomizationUtils
+                .getCustomizationField(SingleBoardCtrl.getBoardID(), 6)));
+    }
+
 
 
 

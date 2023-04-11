@@ -163,8 +163,8 @@ public class CardCtrl {
             System.out.println(CustomizationUtils.customizationData);
 
 
-            CustomizationUtils.updateTextColor(cardNode, singleBoardCtrl.BoardID);
-            CustomizationUtils.updateCardColour(cardNode, singleBoardCtrl.BoardID);
+            CustomizationUtils.updateTextColor(cardNode, SingleBoardCtrl.BoardID);
+            CustomizationUtils.updateCardColour(cardNode, SingleBoardCtrl.BoardID);
 
 
 
