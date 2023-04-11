@@ -270,7 +270,7 @@ public class AddCardCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         server.registerForCardUpdate(card->{
             if(card.getId()==current.getId()){
-                System.out.println("close popup");
+                // System.out.println("close popup");
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Deleted task");

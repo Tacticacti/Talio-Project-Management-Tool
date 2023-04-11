@@ -29,7 +29,7 @@ public class BoardServiceImpl implements BoardService {
             return ResponseEntity.badRequest().build();
         }
 
-        System.out.println("deleting " + boardId + " " + listId);
+        // System.out.println("deleting " + boardId + " " + listId);
 
         Board board = boardRepository.findById(boardId).get();
         board.getLists().removeIf(x -> Objects.equals(x.getId(), listId));
@@ -65,8 +65,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
 
     public ResponseEntity<Long> addListToBoard( long boardId, String listName){
-        System.out.println("addListToBoard: ");
-        System.out.println(boardId + " " + listName);
+        // System.out.println("addListToBoard: ");
+        // System.out.println(boardId + " " + listName);
 
         if (!boardRepository.existsById(boardId)) {
             return ResponseEntity.badRequest().build();

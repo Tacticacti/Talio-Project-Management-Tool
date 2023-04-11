@@ -72,7 +72,7 @@ public class CustomizationPageCtrl implements Initializable {
     }
 
     public void setBackgroundColour() {
-        System.out.println("Set the background colour" +  primaryStage.getScene());
+        // System.out.println("Set the background colour" +  primaryStage.getScene());
         Scene current_scene =  primaryStage.getScene();
 
 
@@ -88,7 +88,7 @@ public class CustomizationPageCtrl implements Initializable {
     }
 
     public void setForegroundColour() {
-        System.out.println("Set the foreground colour");
+        // System.out.println("Set the foreground colour");
 
         Scene current_scene =  primaryStage.getScene();
 
@@ -105,7 +105,7 @@ public class CustomizationPageCtrl implements Initializable {
     }
 
     public void setDefaultCardColour() {
-        System.out.println("Set the default card colour");
+        // System.out.println("Set the default card colour");
 
         Scene current_scene =  primaryStage.getScene();
         String cssColor = card_colour.getValue().toString().replace("0x", "#");
@@ -113,7 +113,7 @@ public class CustomizationPageCtrl implements Initializable {
         CustomizationUtils.setCustomizationField(SingleBoardCtrl.BoardID, cssColor, 2);
         CustomizationUtils.updateCardColour(current_scene.getRoot(), SingleBoardCtrl.getBoardID());
 
-        System.out.println(cssColor);
+        // System.out.println(cssColor);
 
         for (Node card : SingleBoardCtrl.nodeCardMap.keySet()) {
             card.setStyle(card.getStyle() + "-fx-background-color: "+ cssColor +";");
@@ -129,7 +129,7 @@ public class CustomizationPageCtrl implements Initializable {
     }
 
     public void setTextColour() {
-        System.out.println("Set the text colour");
+        // System.out.println("Set the text colour");
 
         Scene current_scene =  primaryStage.getScene();
         AnchorPane anchor = (AnchorPane) current_scene.getRoot();
@@ -145,7 +145,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
     public void setAccessibilityMode() {
-        System.out.println("Set the accessibility mode");
+        // System.out.println("Set the accessibility mode");
 
         Scene current_scene =  primaryStage.getScene();
 
@@ -184,7 +184,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
     public void setListBackgroundColour() {
-        System.out.println("Set the list background colour");
+        // System.out.println("Set the list background colour");
 
         String cssColor = list_colour.getValue().toString().replace("0x", "#");
 
@@ -208,7 +208,7 @@ public class CustomizationPageCtrl implements Initializable {
 
 
     public void resetCustomization() throws IOException {
-        System.out.println("resetting customization!");
+        // System.out.println("resetting customization!");
 
         // save all customization and alert
         SingleBoardCtrl.restore_data = CustomizationUtils

@@ -28,7 +28,7 @@ public class DatabaseUtils {
     }
 
     public void updateCard(Card card, Card newCard) {
-        System.out.println(newCard.getTitle());
+        // System.out.println(newCard.getTitle());
         if (!newCard.getTitle().trim().isEmpty())
             card.setTitle(newCard.getTitle());
 

@@ -161,7 +161,7 @@ public class SingleBoardCtrl implements Initializable {
         scrollTags.setStyle("-fx-background-color: transparent;" +
                 " -fx-background: transparent; -fx-border-color: transparent;");
         refresh();
-        System.out.println(server);
+        // System.out.println(server);
         server.checkForUpdatesToRefresh(
                 "/topic/lists", BoardList.class, boardList -> Platform.runLater(this::refresh));
         server.checkForUpdatesToRefresh(
@@ -244,7 +244,7 @@ public class SingleBoardCtrl implements Initializable {
         if (!name.equals(board_name.getText()))
             board_name.setText(name);
         try {
-            System.out.println("Refreshes Single Board");
+            // System.out.println("Refreshes Single Board");
             drawLists();
             CustomizationUtils.updateListColour(BoardID);
         } catch (Exception e) {

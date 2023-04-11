@@ -64,7 +64,7 @@ public class BoardListServiceImpl implements BoardListServices {
             return ResponseEntity.badRequest().build();
         }
 
-        System.out.println("deleting " + listId);
+        // System.out.println("deleting " + listId);
         BoardList bl = boardListRepository.getById(listId);
         boardListRepository.deleteById(listId);
         simpMessagingTemplate.convertAndSend("/topic/lists", bl);
@@ -72,7 +72,7 @@ public class BoardListServiceImpl implements BoardListServices {
     }
 
     public ResponseEntity<BoardList> addCard(long listId, Card card){
-        System.out.println("add card: " + listId + " " + card);
+        // System.out.println("add card: " + listId + " " + card);
 
         var list = boardListRepository.findById(listId);
 
@@ -89,7 +89,7 @@ public class BoardListServiceImpl implements BoardListServices {
     }
 
     public ResponseEntity<BoardList> deleteCard(long listId, Card card){
-        System.out.println("delete from: " + listId + " " + card);
+        // System.out.println("delete from: " + listId + " " + card);
 
         var list = boardListRepository.findById(listId);
 
@@ -113,8 +113,8 @@ public class BoardListServiceImpl implements BoardListServices {
         Long index = req.getFirst();
         Card card = req.getSecond();
 
-        System.out.println("inserting card: ");
-        System.out.println(listId + " " + card + " at: " + index);
+        // System.out.println("inserting card: ");
+        // System.out.println(listId + " " + card + " at: " + index);
 
         list.get().getCards().add(index.intValue(), card);
 

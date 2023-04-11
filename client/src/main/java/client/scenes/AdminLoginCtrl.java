@@ -41,7 +41,7 @@ public class AdminLoginCtrl {
         }
 
         if(res) {
-            System.out.println("psswd ok");
+            // System.out.println("psswd ok");
             server.setAdminPassword(psswd);
             mainCtrl.showDashboard();
         }
