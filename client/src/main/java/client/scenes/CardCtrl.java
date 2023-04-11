@@ -159,9 +159,10 @@ public class CardCtrl {
                 index = 0;
             }
 
+            /*
             System.out.println("updating!");
             System.out.println(CustomizationUtils.customizationData);
-
+             */
 
             CustomizationUtils.updateTextColor(cardNode, SingleBoardCtrl.BoardID);
             CustomizationUtils.updateCardColour(cardNode, SingleBoardCtrl.BoardID);
@@ -335,7 +336,7 @@ public class CardCtrl {
                     current.addSubTask(subtask.getText());
             } else {
                 CheckBox cb = (CheckBox) ((HBox) hb).getChildren().get(0);
-                System.out.println("Text of cur subtask processed: " + cb.getText());
+                // System.out.println("Text of cur subtask processed: " + cb.getText());
                 if (!current.getSubtasks().contains(cb.getText()))
                     current.addSubTask(cb.getText());
 
@@ -390,7 +391,7 @@ public class CardCtrl {
                 //singleBoardCtrl.refresh();
                 Button source = (Button) event.getSource();
                 Stage popup = (Stage) source.getScene().getWindow();
-                System.out.println(popup);
+                // System.out.println(popup);
                 //popup.close();
             }
         });

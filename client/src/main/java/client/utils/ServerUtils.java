@@ -154,7 +154,7 @@ public class ServerUtils {
 
     public void setAdminPassword(String password) {
         this.password = password;
-        System.out.println("setting password: " + this.password);
+        // System.out.println("setting password: " + this.password);
     }
 
     public Board getBoardById(Long id) {
@@ -183,7 +183,7 @@ public class ServerUtils {
     }
 
     public Board addTagToBoard(Long boardListId, String tag, String color) {
-        System.out.println("reached tag");
+        // System.out.println("reached tag");
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(server).path("api/boards/addTag/" + boardListId.toString()) //
                 .request(APPLICATION_JSON) //
@@ -297,7 +297,7 @@ public class ServerUtils {
     }
 
     public void deleteBoardById(Long id) {
-        System.out.println("sending delete by id: " + password + " " + id.toString());
+        // System.out.println("sending delete by id: " + password + " " + id.toString());
         ClientBuilder.newClient(new ClientConfig())
                 .target(server)
                 .path("api/boards/delete/" + id)
@@ -386,7 +386,7 @@ public class ServerUtils {
         EXEC = Executors.newSingleThreadExecutor();
         EXEC.submit(() -> {
             while (!Thread.interrupted()) {
-                System.out.println("running");
+                // System.out.println("running");
                 var result = ClientBuilder.newClient(new ClientConfig())
                         .target(server).path("api/lists/deletedtask")
                         .request(APPLICATION_JSON)
@@ -395,7 +395,7 @@ public class ServerUtils {
                 if (result.getStatus() == 204) {
                     continue;
                 }
-                System.out.println("sent card here");
+                // System.out.println("sent card here");
                 result.getStatus();
                 var card = result.readEntity(Card.class);
                 cardConsumer.accept(card);

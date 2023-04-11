@@ -34,7 +34,7 @@ public class BoardCtrl {
             }
             String name = text.getText().trim();
             singleBoardCtrl.current_board.setName(name);
-            System.out.println("set, " + singleBoardCtrl.current_board + " to " + name);
+            // System.out.println("set, " + singleBoardCtrl.current_board + " to " + name);
             singleBoardCtrl.server.addBoard(singleBoardCtrl.current_board);
         } else {
             throw new Exception("board name cannot be empty");
@@ -44,7 +44,7 @@ public class BoardCtrl {
     public void openBoardSettings(long BoardID,
                                   ConnectHomeCtrl connectHomeCtrl) throws IOException {
 
-        System.out.println("running!" + singleBoardCtrl.server.getBoards());
+        // System.out.println("running!" + singleBoardCtrl.server.getBoards());
         FXMLLoader loader = new FXMLLoader(
                 singleBoardCtrl.getClass().getResource("customizationPage.fxml"));
         AnchorPane customization = loader.load();
@@ -59,7 +59,7 @@ public class BoardCtrl {
             Stage stage = (Stage) source.getScene().getWindow();
 
             // remove board with this id from Board Overview
-            System.out.println("remove: " + BoardID);
+            // System.out.println("remove: " + BoardID);
             try {
                 localUtils.remove(BoardID);
             } catch (IOException e) {
@@ -89,7 +89,7 @@ public class BoardCtrl {
         popUpStage.setOnCloseRequest(new EventHandler<>() {
             @Override
             public void handle(WindowEvent event) {
-                System.out.println("Closed customization window!");
+                // System.out.println("Closed customization window!");
                 writeCustomization();
             }
         });

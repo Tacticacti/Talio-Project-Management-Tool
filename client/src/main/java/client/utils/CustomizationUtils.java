@@ -28,10 +28,13 @@ public class CustomizationUtils {
 
     public static void updateTextColor(Node node, Long boardID) {
         String color = getCustomizationField(boardID, 3);
+
+        /*
         System.out.println("update text colour!");
         System.out.println(boardID + color + node);
 
         System.out.println(node.getStyleClass());
+         */
 
         if (node.getStyle().isEmpty()) {
             node.setStyle("-fx-text-fill:  " + color + ";");

@@ -57,7 +57,7 @@ public class ListCtrl {
         for (Node anchorPane : singleBoardCtrl.hbox_lists.getChildren()) {
             anchorPane.setOnDragEntered(event -> {
                 event.acceptTransferModes(TransferMode.MOVE);
-                System.out.println("I'm bigParent alpha!");
+                // System.out.println("I'm bigParent alpha!");
             });
         }
         // set up putting list title
@@ -65,7 +65,7 @@ public class ListCtrl {
         list.setOnDragOver(event -> {
             if (singleBoardCtrl.dragboard.hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
-                System.out.println("draggin vbox");
+                // System.out.println("draggin vbox");
             }
             event.consume();
         });
@@ -116,10 +116,12 @@ public class ListCtrl {
 
     public void requestNameChange(TextField title, Node list) throws Exception {
         if (!title.getText().isEmpty()) {
-            System.out.println(title.getText().trim());
+            // System.out.println(title.getText().trim());
             BoardList changedBoardList = (BoardList) list.getUserData();
+            /*
             System.out.println("requesting change name: " + singleBoardCtrl.BoardID + " " +
                     changedBoardList.getId() + " " + title.getText().trim());
+             */
             singleBoardCtrl.server.changeListName(changedBoardList.getId(), title.getText().trim());
         } else {
             throw new Exception("List name cannot be empty.");

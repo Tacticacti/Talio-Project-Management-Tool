@@ -100,8 +100,10 @@ public class BoardListController {
     public ResponseEntity<BoardList> updateCardInId(@PathVariable("id") long listId,
                                                     @RequestBody Card card){
 
+        /*
         System.out.println("updating card: ");
         System.out.println(listId + " " + card);
+         */
 
         var list = repo.findById(listId);
 

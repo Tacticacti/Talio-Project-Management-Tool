@@ -157,7 +157,7 @@ public class BoardOverviewCtrl implements Initializable {
     }
 
     private void enterBoard(Board new_board) throws IOException {
-        System.out.println(server.getBoards());
+        // System.out.println(server.getBoards());
 
         primaryStage.setTitle("Board");
 
@@ -182,9 +182,9 @@ public class BoardOverviewCtrl implements Initializable {
 
         Scene new_scene = new Scene(singleBoard);
         TextField board_name = (TextField) new_scene.lookup("#board_name");
-        System.out.println("board name" + new_board.getName());
+        // System.out.println("board name" + new_board.getName());
         board_name.setText(new_board.getName());
-        System.out.println(new_board.getName());
+        // System.out.println(new_board.getName());
 
         primaryStage.setScene(new_scene);
         primaryStage.getScene().getRoot().getChildrenUnmodifiable()
@@ -200,7 +200,7 @@ public class BoardOverviewCtrl implements Initializable {
                 .getRoot());
 
         CustomizationUtils.updateListColour(BoardID);
-        System.out.println(new_scene);
+        // System.out.println(new_scene);
     }
 
 
@@ -209,7 +209,7 @@ public class BoardOverviewCtrl implements Initializable {
         boolean boardFound = false;
 
         // debug
-        System.out.println(server.getBoards());
+        // System.out.println(server.getBoards());
 
         for (Board board : server.getBoards()) {
             if (board.getId().toString().equals(text)) {
