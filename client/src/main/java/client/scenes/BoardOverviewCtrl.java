@@ -276,6 +276,11 @@ public class BoardOverviewCtrl implements Initializable {
                         }
                     }
                 }
+                else {
+                    addJoinedBoard(board);
+                    localUtils.add(board.getId());
+                    enterBoard(board);
+                }
             }
         }
 
