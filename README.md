@@ -1,30 +1,14 @@
-# Starting template
+# Description of project
 
-This README will need to contain a description of your project, how to run it, how to set up the development environment, and who worked on it.
-This information can be added throughout the course, except for the names of the group members.
-Add your own name (do not add the names for others!) to the section below.
-
-## Description of project
+This application is a task and schedule organising tool called "Talio".  It was made in 10 weeks with a team of 6 students as part of the Object Oriented Programming Project course in my university. We have all equally contributed to all feautres of the application(front-end, backend, devops, etc.)
 
 ## Group members
 
-| Profile Picture | Name | Email |
-|---|---|---|
-| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5816/avatar.png?width=400) | Edward Oh Jang Hun | J.oh-2@student.tudelft.nl |
-| ![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5789/avatar.png?width=400) | Wiktor Cupiał | w.m.cupial@student.tudelft.nl |
-|![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5855/avatar.png?width=400)| Eduard Faraon | e.faraon@student.tudelft.nl |
-|![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/6008/avatar.png?width=400)| Eduardo Hernández | e.hernandez-melian@student.tudelft.nl |
-|![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5980/avatar.png?width=400)| Bobi Marinov | b.k.marinov-1@student.tudelft.nl |
-|![](https://gitlab.ewi.tudelft.nl/uploads/-/system/user/avatar/5931/avatar.png?width=400)| Jaouad Hidayat | j.hidayat@student.tudelft.nl |
-
-<!-- Instructions (remove once assignment has been completed -->
-<!-- - Add (only!) your own name to the table above (use Markdown formatting) -->
-<!-- - Mention your *student* email address -->
-<!-- - Preferably add a recognizable photo, otherwise add your GitLab photo -->
-<!-- - (please make sure the photos have the same size) --> 
-
-## How to run it
-
-## How to contribute to it
-
-## Copyright / License (opt.)
+| Profile Picture                           | Name | Email |
+|-------------------------------------------|---|---|
+| ![](./pfpPictures/Edward Oh Jang Hun.png) | Edward Oh Jang Hun | J.oh-2@student.tudelft.nl |
+| ![](./pfpPictures/Wiktor Cupiał.png)      | Wiktor Cupiał | w.m.cupial@student.tudelft.nl |
+| ![](./pfpPictures/Eduard Faraon.png)      | Eduard Faraon | e.faraon@student.tudelft.nl |
+| ![](./pfpPictures/Eduardo Hernández.png)  | Eduardo Hernández | e.hernandez-melian@student.tudelft.nl |
+| ![](./pfpPictures/Bobi Marinov.png)       | Bobi Marinov | b.k.marinov-1@student.tudelft.nl |
+| ![](./pfpPictures/Jaouad Hidayat.png)                                   | Jaouad Hidayat | j.hidayat@student.tudelft.nl |
