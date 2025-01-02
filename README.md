@@ -4,11 +4,11 @@ This application is a task and schedule organising tool called "Talio".  It was 
 
 ## Group members
 
-| Profile Picture                           | Name | Email |
-|-------------------------------------------|---|---|
-| ![](./pfpPictures/Edward Oh Jang Hun.png) | Edward Oh Jang Hun | J.oh-2@student.tudelft.nl |
-| ![](./pfpPictures/Wiktor Cupiał.png)      | Wiktor Cupiał | w.m.cupial@student.tudelft.nl |
-| ![](./pfpPictures/Eduard Faraon.png)      | Eduard Faraon | e.faraon@student.tudelft.nl |
-| ![](./pfpPictures/Eduardo Hernández.png)  | Eduardo Hernández | e.hernandez-melian@student.tudelft.nl |
-| ![](./pfpPictures/Bobi Marinov.png)       | Bobi Marinov | b.k.marinov-1@student.tudelft.nl |
-| ![](./pfpPictures/Jaouad Hidayat.png)                                   | Jaouad Hidayat | j.hidayat@student.tudelft.nl |
+| Profile Picture                     | Name | Email |
+|-------------------------------------|---|---|
+| ![](./pfpPictures/EdwardOhJangHun.png) | Edward Oh Jang Hun | J.oh-2@student.tudelft.nl |
+| ![](./pfpPictures/WiktorCupiał.png) | Wiktor Cupiał | w.m.cupial@student.tudelft.nl |
+| ![](./pfpPictures/EduardFaraon.png) | Eduard Faraon | e.faraon@student.tudelft.nl |
+| ![](./pfpPictures/EduardoHernández.png) | Eduardo Hernández | e.hernandez-melian@student.tudelft.nl |
+| ![](./pfpPictures/BobiMarinov.png)  | Bobi Marinov | b.k.marinov-1@student.tudelft.nl |
+| ![](./pfpPictures/JaouadHidayat.png)                            | Jaouad Hidayat | j.hidayat@student.tudelft.nl |
